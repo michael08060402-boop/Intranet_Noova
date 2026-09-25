@@ -22,7 +22,7 @@ export default function StudentHome({ usuario, onSalir }: StudentHomeProps) {
         </div>
       </header>
       <section className="student-welcome">
-        <span className="auth-eyebrow auth-eyebrow--blue">NOOVA LEARN MINING</span>
+        <span className="student-eyebrow">NOOVA LEARN MINING</span>
         <h1>Hola, {nombre}.</h1>
         <p>Tu cuenta está verificada. Aquí aparecerán tus cursos asignados.</p>
         <div className="student-empty"><span aria-hidden="true">↗</span><p>Tu espacio de aprendizaje está listo para el siguiente paso.</p></div>

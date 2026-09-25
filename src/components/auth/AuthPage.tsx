@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Image from "next/image";
+import logoNoova from "@/public/assets/login/logo_noova.png";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -20,6 +22,21 @@ import "@/src/components/auth/AuthPage.css";
 
 type Vista = "acceso" | "verificacion" | "inicio";
 type Modo = "entrar" | "registrar" | "recuperar";
+
+function Icono({ nombre }: { nombre: "usuario" | "registro" | "correo" | "candado" | "ojo" | "libro" | "grafico" | "equipo" }) {
+  const trazos = {
+    usuario: "M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM4 21v-3a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v3Z",
+    registro: "M14 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM2 21v-3a6 6 0 0 1 6-6h3M18 11v8m-4-4h8",
+    correo: "M3 5h18v14H3ZM3 6l9 7 9-7",
+    candado: "M5 10h14v11H5ZM8 10V6a4 4 0 0 1 8 0v4m-4 5v2",
+    ojo: "M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Zm13 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z",
+    libro: "M12 5C8 2 4 2 2 3v17c3-1 6-1 10 2 4-3 7-3 10-2V3c-2-1-6-1-10 2Zm0 0v17",
+    grafico: "M3 13h4v9H3Zm7-6h4v15h-4Zm7-5h4v20h-4Z",
+    equipo: "M15 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM7 22v-5a5 5 0 0 1 10 0v5ZM4 4a3 3 0 0 0 0 6m16-6a3 3 0 0 1 0 6M4 13a4 4 0 0 0-3 4v4h3m16-8a4 4 0 0 1 3 4v4h-3",
+  };
+
+  return <svg className="auth-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={trazos[nombre]} /></svg>;
+}
 
 function mensajeDeError(error: unknown) {
   const codigo = (error as { code?: string })?.code;
@@ -164,26 +181,36 @@ export default function AuthPage() {
 
   return (
     <main className="auth-shell">
-      <section className="auth-visual" aria-hidden="true" />
+      <section className="auth-visual" aria-label="Mining learning">
+        <div className="auth-visual__brand">Mining <em>learning</em><span>Una experiencia de Noova Consulting</span></div>
+        <div className="auth-visual__message">
+          <span className="auth-visual__eyebrow">CONOCIMIENTO QUE TE IMPULSA</span>
+          <h2>Tu próximo nivel<br /><em>comienza aquí.</em></h2>
+          <p>Desarrolla tus habilidades y construye tu futuro en la industria minera.</p>
+        </div>
+        <ul className="auth-benefits">
+          <li><span className="auth-benefits__icon"><Icono nombre="libro" /></span><h3>Cursos especializados</h3></li>
+          <li><span className="auth-benefits__icon"><Icono nombre="grafico" /></span><h3>Aprendizaje continuo</h3></li>
+          <li><span className="auth-benefits__icon"><Icono nombre="equipo" /></span><h3>Desarrollo profesional</h3></li>
+        </ul>
+      </section>
 
       <section className="auth-panel">
+        <Image className="auth-logo" src={logoNoova} alt="Noova Consulting" sizes="140px" />
         <div className="auth-card">
-          <span className="auth-eyebrow auth-eyebrow--blue">
-            {modo === "registrar" ? "NUEVA CUENTA" : modo === "recuperar" ? "RECUPERAR ACCESO" : "BIENVENIDO DE NUEVO"}
-          </span>
-          <h2>{modo === "registrar" ? "Crea tu cuenta" : modo === "recuperar" ? "Restablece tu contraseña" : "Ingresa a tu espacio"}</h2>
+          <h1>{modo === "registrar" ? "Crea tu cuenta" : modo === "recuperar" ? "Restablece tu contraseña" : "Bienvenido de nuevo"}</h1>
           <p className="auth-card__lead">
             {modo === "registrar"
               ? "Regístrate para comenzar tu recorrido de aprendizaje."
               : modo === "recuperar"
                 ? "Te enviaremos un enlace para que recuperes el acceso."
-                : "Continúa tu formación en Noova Learn Mining."}
+                : "Ingresa a tu cuenta para continuar aprendiendo."}
           </p>
 
           {modo !== "recuperar" && (
             <div className="auth-tabs" role="tablist" aria-label="Tipo de acceso">
-              <button type="button" role="tab" aria-selected={modo === "entrar"} className={modo === "entrar" ? "is-active" : ""} onClick={() => cambiarModo("entrar")}>Iniciar sesión</button>
-              <button type="button" role="tab" aria-selected={modo === "registrar"} className={modo === "registrar" ? "is-active" : ""} onClick={() => cambiarModo("registrar")}>Crear cuenta</button>
+              <button type="button" role="tab" aria-selected={modo === "entrar"} className={modo === "entrar" ? "is-active" : ""} onClick={() => cambiarModo("entrar")}><Icono nombre="usuario" />Iniciar sesión</button>
+              <button type="button" role="tab" aria-selected={modo === "registrar"} className={modo === "registrar" ? "is-active" : ""} onClick={() => cambiarModo("registrar")}><Icono nombre="registro" />Crear cuenta</button>
             </div>
           )}
 
@@ -196,19 +223,20 @@ export default function AuthPage() {
             )}
             <label className="auth-field">
               <span>Correo electrónico</span>
-              <input type="email" autoComplete="email" value={correo} onChange={(evento) => setCorreo(evento.target.value)} placeholder="nombre@empresa.com" required />
+              <span className="auth-input"><Icono nombre="correo" /><input type="email" autoComplete="email" value={correo} onChange={(evento) => setCorreo(evento.target.value)} placeholder="nombre@empresa.com" required /></span>
             </label>
             {modo !== "recuperar" && (
               <label className="auth-field">
                 <span>Contraseña</span>
-                <span className="auth-password">
-                  <input type={mostrarClave ? "text" : "password"} autoComplete={modo === "registrar" ? "new-password" : "current-password"} minLength={6} value={clave} onChange={(evento) => setClave(evento.target.value)} placeholder="Mínimo 6 caracteres" required />
-                  <button type="button" onClick={() => setMostrarClave(!mostrarClave)} aria-label={mostrarClave ? "Ocultar contraseña" : "Mostrar contraseña"}>{mostrarClave ? "Ocultar" : "Mostrar"}</button>
+                <span className="auth-input auth-password">
+                  <Icono nombre="candado" />
+                  <input type={mostrarClave ? "text" : "password"} autoComplete={modo === "registrar" ? "new-password" : "current-password"} minLength={6} value={clave} onChange={(evento) => setClave(evento.target.value)} placeholder={modo === "registrar" ? "Mínimo 6 caracteres" : "Ingresa tu contraseña"} required />
+                  <button type="button" onClick={() => setMostrarClave(!mostrarClave)} aria-label={mostrarClave ? "Ocultar contraseña" : "Mostrar contraseña"} aria-pressed={mostrarClave}><Icono nombre="ojo" /></button>
                 </span>
               </label>
             )}
 
-            {modo === "entrar" && <button className="auth-text-button auth-forgot" type="button" onClick={() => cambiarModo("recuperar")}>¿Olvidaste tu contraseña?</button>}
+            {modo === "entrar" && <div className="auth-options"><label className="auth-remember"><input type="checkbox" />Recordarme</label><button className="auth-text-button" type="button" onClick={() => cambiarModo("recuperar")}>¿Olvidaste tu contraseña?</button></div>}
             {error && <p className="auth-message auth-message--error" role="alert">{error}</p>}
             {aviso && <p className="auth-message auth-message--success" role="status">{aviso}</p>}
             <button className="auth-submit" type="submit" disabled={enviando}>
@@ -229,9 +257,7 @@ export default function AuthPage() {
 
           {modo === "recuperar" && <button className="auth-back" type="button" onClick={() => cambiarModo("entrar")}>← Volver al inicio de sesión</button>}
           {modo !== "recuperar" && <p className="auth-switch">{modo === "registrar" ? "¿Ya tienes una cuenta?" : "¿Es tu primera vez?"}{" "}<button className="auth-text-button" type="button" onClick={() => cambiarModo(modo === "registrar" ? "entrar" : "registrar")}>{modo === "registrar" ? "Inicia sesión" : "Crea tu cuenta"}</button></p>}
-          <p className="auth-security"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 1.7 14.8 4v4.3c0 3.4-2.4 6.2-5.8 8-3.4-1.8-5.8-4.6-5.8-8V4L9 1.7Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/><path d="m6.6 8.8 1.6 1.6 3.3-3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg> Acceso seguro con Firebase Authentication</p>
         </div>
-        <footer className="auth-panel__footer">© {new Date().getFullYear()} Noova Learn Mining</footer>
       </section>
     </main>
   );

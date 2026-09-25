@@ -20,7 +20,7 @@ export default function EmailVerification({
   return (
     <main className="verification-page">
       <section className="verification-card" aria-labelledby="verification-title">
-        <span className="auth-eyebrow">VERIFICA TU CORREO</span>
+        <span className="verification-eyebrow">VERIFICA TU CORREO</span>
         <h1 id="verification-title">Confirma tu cuenta</h1>
         <p>
           Enviamos un enlace de verificación a <strong>{correo}</strong>. Abre
