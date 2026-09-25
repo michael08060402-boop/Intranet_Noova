@@ -15,7 +15,7 @@ export default function StudentHome({ usuario, onSalir }: StudentHomeProps) {
   return (
     <main className="student-shell">
       <header className="student-header">
-        <Image src="/noova-academy.svg" alt="Noova Academy" width={144} height={36} priority />
+        <Image src="/noova-academy.svg" alt="Noova Academy" width={144} height={36} priority unoptimized />
         <div className="student-account">
           <span>{usuario.email}</span>
           <button type="button" onClick={onSalir}>Cerrar sesión</button>
