@@ -196,7 +196,7 @@ export default function AuthPage() {
       </section>
 
       <section className="auth-panel">
-        <Image className="auth-logo" src={logoNoova} alt="Noova Consulting" sizes="140px" />
+        <Image className="auth-logo" src={logoNoova} alt="Noova Consulting" sizes="140px" unoptimized />
         <div className="auth-card">
           <h1>{modo === "registrar" ? "Crea tu cuenta" : modo === "recuperar" ? "Restablece tu contraseña" : "Bienvenido de nuevo"}</h1>
           <p className="auth-card__lead">
