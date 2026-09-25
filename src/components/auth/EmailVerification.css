@@ -1,0 +1,65 @@
+.verification-page {
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: 24px;
+  background: #f4f7f9;
+}
+
+.verification-card {
+  width: min(100%, 440px);
+  padding: 36px;
+  border: 1px solid #e0e8ed;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 40px #10263b0c;
+}
+
+.verification-card h1 {
+  margin: 12px 0 8px;
+  color: #10263b;
+  font-size: 30px;
+  letter-spacing: -0.04em;
+}
+
+.verification-card > p {
+  color: #60758a;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.verification-card strong {
+  color: #18354d;
+  overflow-wrap: anywhere;
+}
+
+.verification-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.verification-secondary,
+.verification-link {
+  min-height: 40px;
+  border: 1px solid #d3dfe7;
+  border-radius: 6px;
+  background: #fff;
+  color: #087f9b;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.verification-link {
+  border-color: transparent;
+  min-height: 32px;
+  font-size: 12px;
+}
+
+@media (max-width: 480px) {
+  .verification-card {
+    padding: 28px 22px;
+  }
+}

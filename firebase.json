@@ -17,7 +17,7 @@
     "providers": {
       "emailPassword": true,
       "googleSignIn": {
-        "oAuthBrandDisplayName": "My App",
+        "oAuthBrandDisplayName": "Noova Learn Mining",
         "supportEmail": "sistemas.noova@gmail.com"
       }
     }
