@@ -2,35 +2,313 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // usuarios/{UID}: nombre (1–120), correo (1–320), rol, plan y creadoEn (timestamp).
-    // El cliente solo crea perfiles alumno/gratis y actualiza el nombre; permisos vía consola IAM.
+    function sesionIniciada() {
+      return request.auth != null;
+    }
+
+    function rutaPerfil(uid) {
+      return /databases/$(database)/documents/usuarios/$(uid);
+    }
+
     function esPropietario(uid) {
-      return request.auth != null && request.auth.uid == uid;
+      return sesionIniciada() && request.auth.uid == uid;
+    }
+
+    function correoVerificado() {
+      return sesionIniciada() && request.auth.token.email_verified == true;
     }
 
     function perfilValido(datos) {
       return datos.keys().hasAll(['nombre', 'correo', 'rol', 'plan', 'creadoEn'])
         && datos.keys().hasOnly(['nombre', 'correo', 'rol', 'plan', 'creadoEn'])
-        && datos.nombre is string && datos.nombre.size() > 0 && datos.nombre.size() <= 120
-        && datos.correo is string && datos.correo.size() > 0 && datos.correo.size() <= 320
+        && datos.nombre is string
+        && datos.nombre.size() > 0
+        && datos.nombre.size() <= 120
+        && datos.correo is string
+        && datos.correo.size() > 0
+        && datos.correo.size() <= 320
         && datos.rol in ['alumno', 'admin']
         && datos.plan in ['gratis', 'premium']
         && datos.creadoEn is timestamp;
     }
 
+    function esAlumnoVerificado() {
+      return correoVerificado()
+        && exists(rutaPerfil(request.auth.uid))
+        && perfilValido(get(rutaPerfil(request.auth.uid)).data)
+        && get(rutaPerfil(request.auth.uid)).data.rol == 'alumno';
+    }
+
+    function esAdministrador() {
+      return correoVerificado()
+        && exists(rutaPerfil(request.auth.uid))
+        && perfilValido(get(rutaPerfil(request.auth.uid)).data)
+        && get(rutaPerfil(request.auth.uid)).data.rol == 'admin';
+    }
+
+    function tienePlanPremium() {
+      return esAlumnoVerificado()
+        && get(rutaPerfil(request.auth.uid)).data.plan == 'premium';
+    }
+
+    function textoValido(texto, minimo, maximo) {
+      return texto is string
+        && texto.size() >= minimo
+        && texto.size() <= maximo;
+    }
+
+    function idValido(id) {
+      return id is string && id.matches('^[A-Za-z0-9_-]{1,120}$');
+    }
+
+    function categoriaActiva(categoriaId) {
+      let ruta = /databases/$(database)/documents/categorias/$(categoriaId);
+      return exists(ruta) && get(ruta).data.activa == true;
+    }
+
+    function cursoPublicado(cursoId) {
+      let ruta = /databases/$(database)/documents/cursos/$(cursoId);
+      return exists(ruta) && get(ruta).data.publicado == true;
+    }
+
+    function rutaCurso(cursoId) {
+      return /databases/$(database)/documents/cursos/$(cursoId);
+    }
+
+    function rutaClase(cursoId, claseId) {
+      return /databases/$(database)/documents/cursos/$(cursoId)/clases/$(claseId);
+    }
+
+    function clasePublicada(cursoId, claseId) {
+      return exists(rutaClase(cursoId, claseId))
+        && get(rutaClase(cursoId, claseId)).data.publicado == true;
+    }
+
+    function categoriaValida(datos) {
+      return datos.keys().hasAll(['nombre', 'descripcion', 'activa', 'creadoEn', 'actualizadoEn'])
+        && datos.keys().hasOnly(['nombre', 'descripcion', 'activa', 'creadoEn', 'actualizadoEn'])
+        && textoValido(datos.nombre, 2, 80)
+        && textoValido(datos.descripcion, 0, 500)
+        && datos.activa is bool
+        && datos.creadoEn is timestamp
+        && datos.actualizadoEn == request.time;
+    }
+
+    function portadaValida(datos, cursoId) {
+      return !('portadaKey' in datos)
+        || (datos.portadaKey is string
+          && datos.portadaKey.matches('^portadas/' + cursoId + '$'));
+    }
+
+    function cursoValido(datos, cursoId) {
+      return idValido(cursoId)
+        && datos.keys().hasAll([
+          'nombre', 'descripcion', 'categoriaId', 'nivel', 'publicado',
+          'acceso', 'creadoEn', 'actualizadoEn', 'creadoPor'
+        ])
+        && datos.keys().hasOnly([
+          'nombre', 'descripcion', 'categoriaId', 'nivel', 'publicado',
+          'acceso', 'portadaKey', 'creadoEn', 'actualizadoEn', 'creadoPor'
+        ])
+        && textoValido(datos.nombre, 2, 120)
+        && textoValido(datos.descripcion, 0, 2000)
+        && idValido(datos.categoriaId)
+        && categoriaActiva(datos.categoriaId)
+        && datos.nivel in ['basico', 'intermedio', 'avanzado']
+        && datos.publicado is bool
+        && datos.acceso in ['gratis', 'premium']
+        && portadaValida(datos, cursoId)
+        && datos.creadoEn is timestamp
+        && datos.actualizadoEn == request.time
+        && textoValido(datos.creadoPor, 1, 128);
+    }
+
+    function claseValida(datos) {
+      return datos.keys().hasAll([
+          'nombre', 'descripcion', 'orden', 'publicado', 'creadoEn',
+          'actualizadoEn', 'creadoPor'
+        ])
+        && datos.keys().hasOnly([
+          'nombre', 'descripcion', 'orden', 'publicado', 'creadoEn',
+          'actualizadoEn', 'creadoPor'
+        ])
+        && textoValido(datos.nombre, 2, 120)
+        && textoValido(datos.descripcion, 0, 2000)
+        && datos.orden is int
+        && datos.orden >= 0
+        && datos.orden <= 10000
+        && datos.publicado is bool
+        && datos.creadoEn is timestamp
+        && datos.actualizadoEn == request.time
+        && textoValido(datos.creadoPor, 1, 128);
+    }
+
+    function contenidoValido(datos, cursoId, claseId, contenidoId) {
+      return datos.keys().hasAll([
+          'nombre', 'tipo', 'rutaR2', 'orden', 'acceso', 'creadoEn', 'actualizadoEn'
+        ])
+        && datos.keys().hasOnly([
+          'nombre', 'tipo', 'rutaR2', 'orden', 'acceso', 'creadoEn', 'actualizadoEn'
+        ])
+        && textoValido(datos.nombre, 2, 160)
+        && datos.tipo in ['video', 'documento']
+        && datos.rutaR2 is string
+        && datos.rutaR2.matches(
+          '^cursos/' + cursoId + '/clases/' + claseId + '/' + contenidoId + '$'
+        )
+        && datos.orden is int
+        && datos.orden >= 0
+        && datos.orden <= 10000
+        && datos.acceso in ['gratis', 'premium']
+        && datos.creadoEn is timestamp
+        && datos.actualizadoEn == request.time;
+    }
+
+    function progresoValido(datos, progresoId) {
+      return datos.keys().hasAll([
+          'cursoId', 'claseId', 'completado', 'completadoEn', 'actualizadoEn'
+        ])
+        && datos.keys().hasOnly([
+          'cursoId', 'claseId', 'completado', 'completadoEn', 'actualizadoEn'
+        ])
+        && idValido(datos.cursoId)
+        && idValido(datos.claseId)
+        && progresoId == datos.cursoId + '_' + datos.claseId
+        && datos.completado is bool
+        && ((datos.completado == true && datos.completadoEn == request.time)
+          || (datos.completado == false && datos.completadoEn == null))
+        && datos.actualizadoEn == request.time
+        && cursoPublicado(datos.cursoId)
+        && clasePublicada(datos.cursoId, datos.claseId);
+    }
+
     match /usuarios/{uid} {
       allow get: if esPropietario(uid);
-      allow create: if esPropietario(uid) && perfilValido(request.resource.data)
+      allow list: if false;
+
+      // El registro crea siempre un alumno gratis, incluso antes de verificar el correo.
+      allow create: if esPropietario(uid)
+        && perfilValido(request.resource.data)
         && request.resource.data.correo == request.auth.token.email
         && request.resource.data.rol == 'alumno'
         && request.resource.data.plan == 'gratis'
         && request.resource.data.creadoEn == request.time;
-      allow update: if esPropietario(uid) && perfilValido(request.resource.data)
+
+      // El dueño solo puede cambiar su nombre; rol y plan requieren un proceso confiable.
+      allow update: if esPropietario(uid)
+        && perfilValido(request.resource.data)
+        && request.resource.data.correo == resource.data.correo
+        && request.resource.data.rol == resource.data.rol
+        && request.resource.data.plan == resource.data.plan
+        && request.resource.data.creadoEn == resource.data.creadoEn
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nombre']);
-      allow list, delete: if false;
+
+      allow delete: if false;
+
+      match /progreso/{progresoId} {
+        allow get, list: if (esPropietario(uid) && esAlumnoVerificado()) || esAdministrador();
+
+        allow create: if esPropietario(uid)
+          && esAlumnoVerificado()
+          && progresoValido(request.resource.data, progresoId);
+
+        allow update: if esPropietario(uid)
+          && esAlumnoVerificado()
+          && progresoValido(request.resource.data, progresoId)
+          && request.resource.data.cursoId == resource.data.cursoId
+          && request.resource.data.claseId == resource.data.claseId
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['completado', 'completadoEn', 'actualizadoEn']);
+
+        allow delete: if false;
+      }
     }
 
-    match /{document=**} {
+    match /categorias/{categoriaId} {
+      allow get, list: if esAdministrador()
+        || (esAlumnoVerificado() && resource.data.activa == true);
+
+      allow create: if esAdministrador()
+        && categoriaValida(request.resource.data)
+        && request.resource.data.creadoEn == request.time;
+
+      allow update: if esAdministrador()
+        && categoriaValida(request.resource.data)
+        && request.resource.data.creadoEn == resource.data.creadoEn;
+
+      allow delete: if esAdministrador();
+    }
+
+    match /cursos/{cursoId} {
+      // El catálogo muestra cursos premium; el contenido se protege por separado.
+      allow get, list: if esAdministrador()
+        || (esAlumnoVerificado() && resource.data.publicado == true);
+
+      allow create: if esAdministrador()
+        && cursoValido(request.resource.data, cursoId)
+        && request.resource.data.creadoPor == request.auth.uid
+        && request.resource.data.creadoEn == request.time;
+
+      allow update: if esAdministrador()
+        && cursoValido(request.resource.data, cursoId)
+        && request.resource.data.creadoEn == resource.data.creadoEn
+        && request.resource.data.creadoPor == resource.data.creadoPor;
+
+      allow delete: if esAdministrador();
+
+      match /clases/{claseId} {
+        allow get, list: if esAdministrador()
+          || (esAlumnoVerificado()
+            && cursoPublicado(cursoId)
+            && resource.data.publicado == true);
+
+        allow create: if esAdministrador()
+          && idValido(claseId)
+          && exists(rutaCurso(cursoId))
+          && claseValida(request.resource.data)
+          && request.resource.data.creadoPor == request.auth.uid
+          && request.resource.data.creadoEn == request.time;
+
+        allow update: if esAdministrador()
+          && idValido(claseId)
+          && exists(rutaCurso(cursoId))
+          && claseValida(request.resource.data)
+          && request.resource.data.creadoEn == resource.data.creadoEn
+          && request.resource.data.creadoPor == resource.data.creadoPor;
+
+        allow delete: if esAdministrador();
+
+        match /contenidos/{contenidoId} {
+          allow get, list: if esAdministrador()
+            || (esAlumnoVerificado()
+              && cursoPublicado(cursoId)
+              && clasePublicada(cursoId, claseId)
+              && (resource.data.acceso == 'gratis' || tienePlanPremium()));
+
+          allow create: if esAdministrador()
+            && idValido(cursoId)
+            && idValido(claseId)
+            && idValido(contenidoId)
+            && exists(rutaCurso(cursoId))
+            && exists(rutaClase(cursoId, claseId))
+            && contenidoValido(request.resource.data, cursoId, claseId, contenidoId)
+            && request.resource.data.creadoEn == request.time;
+
+          allow update: if esAdministrador()
+            && idValido(cursoId)
+            && idValido(claseId)
+            && idValido(contenidoId)
+            && exists(rutaCurso(cursoId))
+            && exists(rutaClase(cursoId, claseId))
+            && contenidoValido(request.resource.data, cursoId, claseId, contenidoId)
+            && request.resource.data.creadoEn == resource.data.creadoEn;
+
+          allow delete: if esAdministrador();
+        }
+      }
+    }
+
+    match /{documento=**} {
       allow read, write: if false;
     }
   }
