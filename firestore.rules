@@ -1,7 +1,35 @@
-rules_version='2'
+rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // usuarios/{UID}: nombre (1–120), correo (1–320), rol, plan y creadoEn (timestamp).
+    // El cliente solo crea perfiles alumno/gratis y actualiza el nombre; permisos vía consola IAM.
+    function esPropietario(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function perfilValido(datos) {
+      return datos.keys().hasAll(['nombre', 'correo', 'rol', 'plan', 'creadoEn'])
+        && datos.keys().hasOnly(['nombre', 'correo', 'rol', 'plan', 'creadoEn'])
+        && datos.nombre is string && datos.nombre.size() > 0 && datos.nombre.size() <= 120
+        && datos.correo is string && datos.correo.size() > 0 && datos.correo.size() <= 320
+        && datos.rol in ['alumno', 'admin']
+        && datos.plan in ['gratis', 'premium']
+        && datos.creadoEn is timestamp;
+    }
+
+    match /usuarios/{uid} {
+      allow get: if esPropietario(uid);
+      allow create: if esPropietario(uid) && perfilValido(request.resource.data)
+        && request.resource.data.correo == request.auth.token.email
+        && request.resource.data.rol == 'alumno'
+        && request.resource.data.plan == 'gratis'
+        && request.resource.data.creadoEn == request.time;
+      allow update: if esPropietario(uid) && perfilValido(request.resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nombre']);
+      allow list, delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

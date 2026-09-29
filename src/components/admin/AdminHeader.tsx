@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "@/src/components/admin/AdminHeader.css";
+import { useSesion } from "@/src/components/auth/SesionProvider";
 
 const enlaces = [
   { href: "/admin", etiqueta: "Dashboard", icono: "tablero" as const },
@@ -34,7 +35,8 @@ function Icono({
 
 export default function AdminHeader() {
   const ruta = usePathname();
-  const nombre = "Administrador";
+  const { perfil } = useSesion();
+  const nombre = perfil?.nombre.split(" ")[0] || "Administrador";
 
   return (
     <header className="admin-header">
@@ -66,7 +68,7 @@ export default function AdminHeader() {
         </button>
         <div className="admin-header__user">
           <span className="admin-header__avatar">{nombre.charAt(0).toUpperCase()}</span>
-          <span className="admin-header__identity">{nombre}<small>Panel</small></span>
+          <span className="admin-header__identity">{nombre}<small>Admin</small></span>
         </div>
         <button type="button" className="admin-header__icon admin-header__logout" aria-label="Cerrar sesión" title="Cerrar sesión">
           <Icono nombre="salir" />

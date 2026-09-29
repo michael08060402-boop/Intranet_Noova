@@ -19,6 +19,8 @@ import { auth } from "@/src/firebase/config";
 import EmailVerification from "@/src/components/auth/EmailVerification";
 import StudentHome from "@/src/components/dashboard/StudentHome";
 import "@/src/components/auth/AuthPage.css";
+import AccesoPorRol from "./AccesoPorRol";
+import { guardarNombreRegistro } from "@/src/firebase/perfiles";
 
 type Vista = "acceso" | "verificacion" | "inicio";
 type Modo = "entrar" | "registrar" | "recuperar";
@@ -98,6 +100,7 @@ export default function AuthPage() {
         const credencial = await createUserWithEmailAndPassword(auth, correo.trim(), clave);
         await updateProfile(credencial.user, { displayName: nombre.trim() });
         await sendEmailVerification(credencial.user);
+        await guardarNombreRegistro(credencial.user, nombre);
         setUsuario(credencial.user);
         setVista("verificacion");
         setAviso("Revisa tu correo para verificar tu cuenta.");
@@ -149,6 +152,7 @@ export default function AuthPage() {
     try {
       await usuario.reload();
       if (usuario.emailVerified) {
+        await usuario.getIdToken(true);
         setVista("inicio");
       } else {
         setAviso("Todavía no aparece como verificado. Abre el enlace del correo e inténtalo de nuevo.");
@@ -176,7 +180,7 @@ export default function AuthPage() {
   }
 
   if (vista === "inicio" && usuario) {
-    return <StudentHome usuario={usuario} onSalir={() => signOut(auth)} />;
+    return <AccesoPorRol rol="alumno"><StudentHome usuario={usuario} onSalir={() => signOut(auth)} /></AccesoPorRol>;
   }
 
   return (
