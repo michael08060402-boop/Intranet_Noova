@@ -1,4 +1,4 @@
-export default function Icono({ nombre }: { nombre: "inicio" | "libro" | "herramientas" | "flecha" | "buscar" | "campana" | "salir" | "derecha" | "corona" | "video" | "documento" | "explorar" }) {
+export default function Icono({ nombre }: { nombre: "inicio" | "libro" | "herramientas" | "flecha" | "buscar" | "salir" | "derecha" | "corona" | "video" | "documento" | "explorar" }) {
   const trazos = {
     inicio: "m3 11 9-8 9 8M5 10v11h5v-7h4v7h5V10",
     explorar: "M3 3h18v18H3ZM8 8l8 2-6 6Z",
@@ -6,7 +6,6 @@ export default function Icono({ nombre }: { nombre: "inicio" | "libro" | "herram
     herramientas: "M5 3h14v18H5ZM8 6h8M8 10h2m4 0h2M8 14h2m4 0h2M8 18h2m4 0h2",
     flecha: "m7 10 5 5 5-5",
     buscar: "M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm6-2 5 5",
-    campana: "M6 9a6 6 0 0 1 12 0c0 6 3 7 3 9H3c0-2 3-3 3-9Zm4 12h4",
     salir: "M9 4H4v16h5M9 12h12m-5-5 5 5-5 5",
     derecha: "M4 12h16m-6-6 6 6-6 6",
     corona: "m3 6 5 4 4-6 4 6 5-4-3 12H6ZM6 21h12",

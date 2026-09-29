@@ -9,6 +9,10 @@ export type Perfil = {
   plan: "gratis" | "premium";
 };
 
+export function capitalizarNombre(nombre: string) {
+  return nombre.trim().split(/\s+/).map((palabra) => palabra.charAt(0).toUpperCase() + palabra.slice(1)).join(" ");
+}
+
 export function leerPerfil(datos: Record<string, unknown> | undefined): Perfil | null {
   if (!datos || typeof datos.nombre !== "string" || !datos.nombre.trim() || typeof datos.correo !== "string") return null;
   if (datos.rol !== "alumno" && datos.rol !== "admin") return null;
@@ -22,7 +26,7 @@ export async function asegurarPerfil(usuario: User) {
     const perfil = await transaccion.get(referencia);
     if (!perfil.exists()) {
       transaccion.set(referencia, {
-        nombre: (usuario.displayName?.trim() || usuario.email?.split("@")[0] || "Usuario").slice(0, 120),
+        nombre: capitalizarNombre(usuario.displayName?.trim() || usuario.email?.split("@")[0] || "Usuario").slice(0, 120),
         correo: usuario.email ?? "",
         rol: "alumno",
         plan: "gratis",
@@ -35,5 +39,5 @@ export async function asegurarPerfil(usuario: User) {
 
 export async function guardarNombreRegistro(usuario: User, nombre: string) {
   const referencia = await asegurarPerfil(usuario);
-  await updateDoc(referencia, { nombre: nombre.trim().slice(0, 120) });
+  await updateDoc(referencia, { nombre: capitalizarNombre(nombre).slice(0, 120) });
 }

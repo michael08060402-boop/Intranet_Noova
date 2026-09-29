@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "@/src/components/admin/AdminHeader.css";
 import { useSesion } from "@/src/components/auth/SesionProvider";
+import { capitalizarNombre } from "@/src/firebase/perfiles";
 
 const enlaces = [
   { href: "/admin", etiqueta: "Dashboard", icono: "tablero" as const },
@@ -36,7 +37,7 @@ function Icono({
 export default function AdminHeader() {
   const ruta = usePathname();
   const { perfil } = useSesion();
-  const nombre = perfil?.nombre.split(" ")[0] || "Administrador";
+  const nombre = capitalizarNombre(perfil?.nombre.split(" ")[0] || "Administrador");
 
   return (
     <header className="admin-header">

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Icono from "./StudentIcon";
 import "./StudentCourses.css";
 
@@ -15,33 +14,20 @@ export default function StudentCourses() {
     <main className="my-courses" id="cursos">
       <div className="my-courses__top">
         <header className="my-courses__heading">
-          <h1>Mis cursos</h1>
+          <h1>Mis <span>cursos</span></h1>
           <p>Continúa tu formación donde la dejaste.</p>
         </header>
-        <aside className="my-courses__premium" aria-label="Descubre Premium">
-          <div className="my-courses__offer">
-            <div className="my-courses__brand"><Image src="/assets/login/noova_logo.png" alt="" width={50} height={26} /><span>NOOVA LEARN MINING</span></div>
-            <h2>¿Buscas contenido<br /><em>más especializado?</em></h2>
-            <p>Accede a todos los cursos, clases avanzadas y nuevos contenidos de la plataforma.</p>
-            <button type="button"><Icono nombre="corona" />Descubrir Premium<Icono nombre="derecha" /></button>
+        <div className="my-courses__toolbar">
+          <div className="my-courses__filters" aria-label="Filtrar cursos por progreso">
+            {filtros.map((nombre, indice) => <button key={nombre} type="button" aria-pressed={filtro === nombre} className={filtro === nombre ? "is-active" : ""} onClick={() => setFiltro(nombre)}><FiltroIcono indice={indice} />{nombre} (0)</button>)}
           </div>
-          <ul>
-            <li><span><Icono nombre="libro" /></span>Cursos y clases<br />Premium</li>
-            <li><span><Icono nombre="herramientas" /></span>Contenido especializado<br />de la industria minera</li>
-            <li><span><Icono nombre="video" /></span>Nuevas clases<br />y actualizaciones</li>
-          </ul>
-        </aside>
-      </div>
-      <div className="my-courses__toolbar">
-        <div className="my-courses__filters" aria-label="Filtrar cursos por progreso">
-          {filtros.map((nombre, indice) => <button key={nombre} type="button" aria-pressed={filtro === nombre} className={filtro === nombre ? "is-active" : ""} onClick={() => setFiltro(nombre)}><FiltroIcono indice={indice} />{nombre} (0)</button>)}
-        </div>
-        <div className="my-courses__controls">
-          <div className="my-courses__views" aria-label="Vista de cursos">
-            <button type="button" aria-label="Vista de cuadrícula" aria-pressed={vista === "cuadricula"} onClick={() => setVista("cuadricula")}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M3 3h7v7H3Zm11 0h7v7h-7ZM3 14h7v7H3Zm11 0h7v7h-7Z" /></svg></button>
-            <button type="button" aria-label="Vista de lista" aria-pressed={vista === "lista"} onClick={() => setVista("lista")}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M8 5h13M8 12h13M8 19h13M3 5h2M3 12h2M3 19h2" /></svg></button>
+          <div className="my-courses__controls">
+            <div className="my-courses__views" aria-label="Vista de cursos">
+              <button type="button" aria-label="Vista de cuadrícula" aria-pressed={vista === "cuadricula"} onClick={() => setVista("cuadricula")}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M3 3h7v7H3Zm11 0h7v7h-7ZM3 14h7v7H3Zm11 0h7v7h-7Z" /></svg></button>
+              <button type="button" aria-label="Vista de lista" aria-pressed={vista === "lista"} onClick={() => setVista("lista")}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M8 5h13M8 12h13M8 19h13M3 5h2M3 12h2M3 19h2" /></svg></button>
+            </div>
+            <select aria-label="Ordenar cursos" defaultValue="recientes"><option value="recientes">Más recientes</option><option value="antiguos">Más antiguos</option><option value="nombre">Nombre: A–Z</option></select>
           </div>
-          <select aria-label="Ordenar cursos" defaultValue="recientes"><option value="recientes">Más recientes</option><option value="antiguos">Más antiguos</option><option value="nombre">Nombre: A–Z</option></select>
         </div>
       </div>
       <section className="my-courses__empty" aria-live="polite" aria-label="Resultados de cursos">
