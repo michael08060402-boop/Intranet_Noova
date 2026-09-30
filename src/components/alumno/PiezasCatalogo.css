@@ -1,0 +1,98 @@
+.student-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  background: rgb(255 255 255 / 90%);
+  text-align: center;
+}
+
+.student-vacio > span {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  border-radius: 24px;
+  background: var(--acento-suave);
+  color: var(--acento);
+}
+
+.student-vacio svg {
+  width: 42px;
+  height: 42px;
+}
+
+.student-vacio h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 650;
+}
+
+.student-vacio p {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+
+.student-orden {
+  height: 44px;
+  width: 190px;
+  padding: 0 14px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: #fff;
+  color: var(--texto);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.student-orden:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+
+.student-vistas {
+  display: flex;
+  gap: 9px;
+}
+
+.student-vistas button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 44px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: #fff;
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+
+.student-vistas button[aria-pressed="true"] {
+  border-color: var(--acento);
+  color: var(--acento);
+  background: var(--acento-suave);
+}
+
+.student-vistas button:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+
+.titulo-pagina h1 span {
+  color: var(--acento);
+}
+
+.titulo-pagina p {
+  margin: 0;
+  color: #3d5872;
+  font-size: clamp(14px, 1.2vw, 17px);
+  font-weight: 500;
+  line-height: 1.5;
+}

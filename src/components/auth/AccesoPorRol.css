@@ -1,5 +1,0 @@
-.acceso-rol { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; min-height: 100svh; padding: 24px; background: #f2f8fd; color: #092342; text-align: center; }
-.acceso-rol h1 { margin: 0; font-size: 24px; font-weight: 700; }
-.acceso-rol p { max-width: 480px; margin: 0; }
-.acceso-rol button { padding: 12px 24px; border: 1px solid #bad9ed; border-radius: 10px; background: white; color: #092342; font: inherit; cursor: pointer; }
-.acceso-rol button:focus-visible { outline: 2px solid #009bd0; outline-offset: 3px; }

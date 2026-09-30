@@ -1,88 +1,53 @@
-# 🏢 Noova Intranet
+# Noova Learn Mining
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-06B6D4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+Intranet de capacitación minera de Contratistas Generales Noova S.A.C. (Noova Consulting). Alumnos y administradores acceden con correo o Google; los cursos se gestionan desde el panel de administración.
 
-Plataforma web interna desarrollada para **NOOVA CONSULTING**, orientada a la gestión, centralización de procesos e información estratégica corporativa.
+Estado actual: el diseño de las pantallas está terminado; los botones aún no ejecutan acciones. Solo funcionan el registro, el inicio de sesión, la verificación de correo y el cierre de sesión.
 
----
+## Tecnologías
 
-## 🛠️ Tecnologías Utilizadas
+- Next.js 16 (App Router) con TypeScript, exportado como sitio estático (`output: "export"`).
+- Firebase: Authentication (correo y Google), Firestore y Hosting.
+- Iconos con `lucide-react`. Estilos en CSS junto a cada página o componente.
+- Cloudflare R2 (videos y documentos) y Culqi (pagos) están planificados; ver `docs/FIREBASE_R2_SETUP.md`.
 
-* **Framework:** [Next.js](https://nextjs.org/) (App Router)
-* **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
-* **Estilos:** [Tailwind CSS](https://tailwindcss.com/) + PostCSS
-* **Linter & Formateo:** ESLint
+## Puesta en marcha
 
----
+Requiere Node.js 20 o superior.
 
-## 🚀 Inicio Rápido
-
-Sigue estos pasos para ejecutar el proyecto en tu entorno de desarrollo local:
-
-### 1. Requisitos previos
-Asegúrate de tener instalado [Node.js](https://nodejs.org/) (versión 18.x o superior) y `npm`.
-
-### 2. Clonar el repositorio
-```bash
-git clone [https://github.com/NOOVA-CONSULTING/Noova-Intranet.git](https://github.com/NOOVA-CONSULTING/Noova-Intranet.git)
-cd Noova-Intranet
-```
-
-### 3. Instalar dependencias
 ```bash
 npm install
+npm run dev
 ```
 
-### 4. Variables de entorno
-Crea un archivo `.env.local` en la raíz del proyecto a partir del archivo de ejemplo (si aplica) o configura las claves requeridas:
+Abre <http://localhost:3000>. La configuración pública de Firebase está en `src/firebase/config.ts`.
 
-```env
-# Ejemplo de variables
-NEXT_PUBLIC_API_URL=[https://api.tu-dominio.com](https://api.tu-dominio.com)
-```
+| Comando | Qué hace |
+| :--- | :--- |
+| `npm run dev` | Servidor de desarrollo. |
+| `npm run build` | Genera el sitio estático en `out/`. |
+| `npm run lint` | Revisa el código con ESLint. |
 
-### 5. Iniciar el servidor de desarrollo
-```bash
-    npm run dev
-```
-
-Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver el resultado.
-
----
-
-## 📁 Estructura del Proyecto
+## Estructura
 
 ```text
-noova-learn-mining/
-├── app/                  # Rutas, componentes e interfaces principales (App Router)
-│   ├── favicon.ico
-│   ├── globals.css       # Estilos globales y utilidades de Tailwind
-│   ├── layout.tsx        # Layout principal de la aplicación
-│   └── page.tsx          # Página de inicio
-├── public/               # Archivos estáticos (imágenes, SVGs, fuentes)
-├── .gitignore            # Archivos excluidos del control de versiones
-├── eslint.config.mjs     # Configuración de reglas de ESLint
-├── next.config.ts        # Configuración de Next.js
-├── package.json          # Dependencias y scripts del proyecto
-├── postcss.config.mjs   # Configuración de PostCSS
-└── tsconfig.json         # Configuración del compilador de TypeScript
+src/
+├── app/                  Rutas (cada carpeta es una URL)
+│   ├── page.tsx            /          acceso (login, registro, recuperar)
+│   ├── admin/              /admin     panel, cursos y alumnos
+│   └── alumno/             /alumno    inicio, mis cursos y explorar
+├── components/           Piezas reutilizables, agrupadas por zona
+│   ├── acceso/             sesión, guardia por rol y formulario de acceso
+│   ├── admin/              encabezado y listado compartido del panel
+│   └── alumno/             encabezado y selectores de la vista de alumno
+├── firebase/             Conexión, perfiles de usuario y mensajes de error
+└── assets/               Imágenes importadas desde el código (marca y fondos)
 ```
 
----
+Cada `.tsx` importa su propio `.css` desde la misma carpeta. `globals.css` solo contiene el reinicio base.
 
-## 📜 Scripts Disponibles
+## Reglas del proyecto
 
-En el directorio del proyecto, puedes ejecutar:
-
-| Comando | Descripción |
-| :--- | :--- |
-| `npm run dev` | Inicia la aplicación en modo de desarrollo con Hot Reloading. |
-| `npm run build` | Compila la aplicación optimizada para producción. |
-| `npm run start` | Inicia el servidor de producción generado tras la compilación. |
-| `npm run lint` | Ejecuta ESLint para analizar y corregir errores de código. |
-
----
-
-🏢 **Desarrollado por el equipo de IT de NOOVA CONSULTING**
+- Firestore: `firestore.rules`, con los datos en español (`usuarios`, `categorias`, `cursos`, `clases`, `contenidos`, `progreso`).
+- Hosting: `firebase.json` publica `out/` con `cleanUrls`.
+- Convenciones de código: `CLAUDE.md` y `AGENTS.md`.

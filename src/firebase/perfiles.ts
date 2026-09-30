@@ -10,11 +10,16 @@ export type Perfil = {
 };
 
 export function capitalizarNombre(nombre: string) {
-  return nombre.trim().split(/\s+/).map((palabra) => palabra.charAt(0).toUpperCase() + palabra.slice(1)).join(" ");
+  return nombre
+    .trim()
+    .split(/\s+/)
+    .map((palabra) => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+    .join(" ");
 }
 
 export function leerPerfil(datos: Record<string, unknown> | undefined): Perfil | null {
-  if (!datos || typeof datos.nombre !== "string" || !datos.nombre.trim() || typeof datos.correo !== "string") return null;
+  if (!datos || typeof datos.nombre !== "string" || !datos.nombre.trim()) return null;
+  if (typeof datos.correo !== "string") return null;
   if (datos.rol !== "alumno" && datos.rol !== "admin") return null;
   if (datos.plan !== "gratis" && datos.plan !== "premium") return null;
   return { nombre: datos.nombre, correo: datos.correo, rol: datos.rol, plan: datos.plan };
@@ -25,11 +30,13 @@ export async function asegurarPerfil(usuario: User) {
   await runTransaction(db, async (transaccion) => {
     const perfil = await transaccion.get(referencia);
     if (!perfil.exists()) {
+      const nombre = usuario.displayName?.trim() || usuario.email?.split("@")[0] || "Usuario";
       transaccion.set(referencia, {
-        nombre: capitalizarNombre(usuario.displayName?.trim() || usuario.email?.split("@")[0] || "Usuario").slice(0, 120),
+        nombre: capitalizarNombre(nombre).slice(0, 120),
         correo: usuario.email ?? "",
         rol: "alumno",
         plan: "gratis",
+        estado: "activo",
         creadoEn: serverTimestamp(),
       });
     }

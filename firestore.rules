@@ -18,9 +18,10 @@ service cloud.firestore {
       return sesionIniciada() && request.auth.token.email_verified == true;
     }
 
+    // `estado` es opcional para que los perfiles creados antes de este campo sigan siendo válidos.
     function perfilValido(datos) {
       return datos.keys().hasAll(['nombre', 'correo', 'rol', 'plan', 'creadoEn'])
-        && datos.keys().hasOnly(['nombre', 'correo', 'rol', 'plan', 'creadoEn'])
+        && datos.keys().hasOnly(['nombre', 'correo', 'rol', 'plan', 'creadoEn', 'estado'])
         && datos.nombre is string
         && datos.nombre.size() > 0
         && datos.nombre.size() <= 120
@@ -29,26 +30,32 @@ service cloud.firestore {
         && datos.correo.size() <= 320
         && datos.rol in ['alumno', 'admin']
         && datos.plan in ['gratis', 'premium']
+        && datos.get('estado', 'activo') in ['activo', 'suspendido']
         && datos.creadoEn is timestamp;
     }
 
-    function esAlumnoVerificado() {
+    function perfilActual() {
+      return get(rutaPerfil(request.auth.uid)).data;
+    }
+
+    // Perfil existente, válido y no suspendido de quien tiene el correo verificado.
+    function perfilActivo() {
       return correoVerificado()
         && exists(rutaPerfil(request.auth.uid))
-        && perfilValido(get(rutaPerfil(request.auth.uid)).data)
-        && get(rutaPerfil(request.auth.uid)).data.rol == 'alumno';
+        && perfilValido(perfilActual())
+        && perfilActual().get('estado', 'activo') == 'activo';
+    }
+
+    function esAlumnoVerificado() {
+      return perfilActivo() && perfilActual().rol == 'alumno';
     }
 
     function esAdministrador() {
-      return correoVerificado()
-        && exists(rutaPerfil(request.auth.uid))
-        && perfilValido(get(rutaPerfil(request.auth.uid)).data)
-        && get(rutaPerfil(request.auth.uid)).data.rol == 'admin';
+      return perfilActivo() && perfilActual().rol == 'admin';
     }
 
     function tienePlanPremium() {
-      return esAlumnoVerificado()
-        && get(rutaPerfil(request.auth.uid)).data.plan == 'premium';
+      return esAlumnoVerificado() && perfilActual().plan == 'premium';
     }
 
     function textoValido(texto, minimo, maximo) {
@@ -113,7 +120,6 @@ service cloud.firestore {
         && textoValido(datos.nombre, 2, 120)
         && textoValido(datos.descripcion, 0, 2000)
         && idValido(datos.categoriaId)
-        && categoriaActiva(datos.categoriaId)
         && datos.nivel in ['basico', 'intermedio', 'avanzado']
         && datos.publicado is bool
         && datos.acceso in ['gratis', 'premium']
@@ -183,8 +189,9 @@ service cloud.firestore {
     }
 
     match /usuarios/{uid} {
-      allow get: if esPropietario(uid);
-      allow list: if false;
+      // El dueño lee su perfil (también sin verificar el correo); el admin lista a los alumnos.
+      allow get: if esPropietario(uid) || esAdministrador();
+      allow list: if esAdministrador();
 
       // El registro crea siempre un alumno gratis, incluso antes de verificar el correo.
       allow create: if esPropietario(uid)
@@ -192,6 +199,7 @@ service cloud.firestore {
         && request.resource.data.correo == request.auth.token.email
         && request.resource.data.rol == 'alumno'
         && request.resource.data.plan == 'gratis'
+        && request.resource.data.get('estado', 'activo') == 'activo'
         && request.resource.data.creadoEn == request.time;
 
       // El dueño solo puede cambiar su nombre; rol y plan requieren un proceso confiable.
@@ -202,6 +210,11 @@ service cloud.firestore {
         && request.resource.data.plan == resource.data.plan
         && request.resource.data.creadoEn == resource.data.creadoEn
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nombre']);
+
+      // El admin solo gestiona plan y estado; el rol se cambia fuera de la app.
+      allow update: if esAdministrador()
+        && perfilValido(request.resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['plan', 'estado']);
 
       allow delete: if false;
 
@@ -246,11 +259,15 @@ service cloud.firestore {
 
       allow create: if esAdministrador()
         && cursoValido(request.resource.data, cursoId)
+        && categoriaActiva(request.resource.data.categoriaId)
         && request.resource.data.creadoPor == request.auth.uid
         && request.resource.data.creadoEn == request.time;
 
+      // Una categoría desactivada no bloquea editar sus cursos; solo se exige al moverlos a otra.
       allow update: if esAdministrador()
         && cursoValido(request.resource.data, cursoId)
+        && (request.resource.data.categoriaId == resource.data.categoriaId
+          || categoriaActiva(request.resource.data.categoriaId))
         && request.resource.data.creadoEn == resource.data.creadoEn
         && request.resource.data.creadoPor == resource.data.creadoPor;
 

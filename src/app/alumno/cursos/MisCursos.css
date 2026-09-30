@@ -1,0 +1,104 @@
+.my-courses {
+  width: min(94%, 1600px);
+  margin: 0 auto;
+  padding: 26px 0 32px;
+}
+.my-courses__top {
+  position: relative;
+  isolation: isolate;
+  padding-bottom: 18px;
+}
+.my-courses__top::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -26px;
+  bottom: 0;
+  right: calc((100% - 100vw) / 2);
+  width: 100vw;
+  background:
+    linear-gradient(90deg, #f3f6f9 0%, rgb(243 246 249 / 75%) 20%, transparent 45%),
+    linear-gradient(0deg, #f3f6f9, transparent 60%),
+    linear-gradient(#1a7299, #1a7299),
+    url("../../../assets/fondos/paisaje-mina.png") center top / cover;
+  background-blend-mode: normal, normal, color, normal;
+  opacity: 0.85;
+  pointer-events: none;
+}
+.my-courses__heading {
+  padding: 12px 0 32px;
+}
+.my-courses__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.my-courses__filters,
+.my-courses__controls {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.my-courses__filters {
+  flex-wrap: wrap;
+}
+.my-courses__filters button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 17px;
+  border: 1px solid var(--borde);
+  border-radius: 30px;
+  background: #fff;
+  color: var(--texto-suave);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.my-courses__filters svg {
+  width: 20px;
+  height: 20px;
+}
+.my-courses__filters .is-active {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: #fff;
+}
+.my-courses__filters button:hover {
+  border-color: var(--acento);
+}
+.my-courses__filters button:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .my-courses__heading {
+    padding: 0 0 24px;
+  }
+  .my-courses__top::before {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .my-courses__filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+  .my-courses__filters button {
+    justify-content: center;
+    padding: 10px 12px;
+  }
+  .my-courses__controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+.my-courses__controls .student-orden {
+  margin-left: 4px;
+}
+.my-courses__vacio {
+  min-height: clamp(220px, 42svh, 460px);
+}

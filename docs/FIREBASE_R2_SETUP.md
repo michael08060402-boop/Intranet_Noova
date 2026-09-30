@@ -1,10 +1,10 @@
 # Firebase y Cloudflare R2: configuración paso a paso
 
-Esta guía corresponde a `noova-intranet` y al modelo descrito para Noova Learn Mining. Las reglas de Firestore ya están en `firestore.rules`. R2 almacena los archivos; Firestore conserva sus metadatos y la clave privada del objeto.
+Esta guía corresponde al proyecto Firebase `noova-intranet` y al modelo descrito para Noova Learn Mining. Las reglas de Firestore ya están en `firestore.rules`. R2 almacena los archivos; Firestore conserva sus metadatos y la clave privada del objeto.
 
 ## 1. Modelo usado por las reglas
 
-El perfil que ya usa la app es `usuarios/{uid}` con `nombre`, `correo`, `rol` (`alumno` o `admin`), `plan` (`gratis` o `premium`) y `creadoEn`. El alta crea perfiles `alumno/gratis`; el dueño solo puede cambiar su nombre. El rol y el plan se asignan desde un proceso confiable.
+El perfil que ya usa la app es `usuarios/{uid}` con `nombre`, `correo`, `rol` (`alumno` o `admin`), `plan` (`gratis` o `premium`), `creadoEn` y `estado` (`activo` o `suspendido`; opcional, si falta se trata como `activo`). El alta crea perfiles `alumno/gratis/activo`; el dueño solo puede cambiar su nombre. Un administrador puede leer los perfiles y cambiar únicamente `plan` y `estado`; el `rol` se cambia desde la consola o un proceso confiable. Una cuenta `suspendido` pierde el acceso a catálogo, contenidos y funciones de administración.
 
 El esquema de catálogo aún no está conectado a Firestore en la interfaz. Las reglas preparan este modelo en español:
 
@@ -18,7 +18,7 @@ El campo `usuarios/{uid}.plan` es la fuente del acceso Premium en esta versión;
 
 ## 2. Comprueba el proyecto Firebase
 
-1. En Firebase Console abre el proyecto **noova-intranet**. El repositorio lo identifica como proyecto por defecto en `.firebaserc` y en `src/firebase/config.js`.
+1. En Firebase Console abre el proyecto **noova-intranet**. El repositorio lo identifica como proyecto por defecto en `.firebaserc` y en `src/firebase/config.ts`.
 2. En **Firestore Database**, comprueba si ya existe la base `(default)`. `firebase.json` declara la ubicación `us-east1`; verifica que la base real coincida. Si no existe, créala en modo **Native** y selecciona `us-east1` antes de crear datos. La ubicación de una base existente no se cambia desde las reglas.
 3. En **Authentication → Sign-in method**, habilita **Email/Password** y **Google**. Configura el correo de soporte y agrega los dominios de desarrollo y producción en **Settings → Authorized domains**.
 4. Conserva la verificación de correo. El perfil se crea antes de que se verifique el correo, como hace el flujo actual. Luego la vista protegida exige un correo verificado; al confirmar, la app renueva el ID token con `getIdToken(true)`.
@@ -44,6 +44,7 @@ El helper `asegurarPerfil` del proyecto crea `usuarios/{uid}` tras iniciar sesi�
   "correo": "correo-obtenido-de-currentUser.email",
   "rol": "alumno",
   "plan": "gratis",
+  "estado": "activo",
   "creadoEn": "serverTimestamp()"
 }
 ```
@@ -56,7 +57,7 @@ Para cuentas existentes, el flujo de inicio de sesión crea el perfil si falta. 
 
 1. Crea la cuenta desde Authentication o regístrala por el flujo normal y verifica el correo.
 2. Identifica su UID en **Authentication → Users**.
-3. En Firestore Console edita `usuarios/{uid}` y cambia `rol` a `admin`; conserva `nombre`, `correo`, `plan`, `creadoEn`. El perfil debe tener `plan: "gratis"` o `"premium"`.
+3. En Firestore Console edita `usuarios/{uid}` y cambia `rol` a `admin`; conserva `nombre`, `correo`, `plan`, `estado`, `creadoEn`. El perfil debe tener `plan: "gratis"` o `"premium"`.
 4. Comprueba que esa cuenta puede abrir `/admin`. El registro público solo puede crear `rol: "alumno"` y `plan: "gratis"`.
 5. Protege también la ruta `/admin` en la interfaz. Ocultar botones mejora la navegación, pero las reglas siguen siendo la protección que decide si se leen o escriben datos.
 
@@ -90,24 +91,29 @@ En Firebase Console abre **Firestore Database → Rules → Rules Playground**. 
 | Alumno gratis leer contenido `premium` | Denegado |
 | Alumno premium leer contenido `premium` | Permitido |
 | Administrador crear/editar contenido | Permitido |
+| Administrador listar alumnos y cambiar `plan`/`estado` | Permitido |
+| Administrador cambiar el `rol` de un perfil | Denegado |
+| Administrador editar un curso cuya categoría quedó inactiva | Permitido; solo se exige categoría activa al crear el curso o moverlo |
+| Alumno con `estado: "suspendido"` leer el catálogo | Denegado |
 | Cuenta sin correo verificado leer el catálogo | Denegado |
 
 Repite las pruebas con el emulador de Firestore antes de publicar cambios importantes. El Firebase Admin SDK y otros clientes de servidor omiten estas reglas; en ellos debes validar identidad y rol en el propio backend.
 
 ### Revisión de intentos de abuso
 
-El 29 de septiembre de 2026 se validó esta versión en Firestore Emulator con 27 aserciones: 27/27 aprobadas. El arnés fue temporal y quedó fuera del repositorio. La prueba comprueba reglas y consultas de Firestore; no valida una instancia real, la interfaz, Cloudflare R2, Culqi ni el backend que firmará URLs. Repite la matriz en el emulador antes de publicar cambios posteriores.
+Las reglas cambiaron el 30 de septiembre de 2026 (lectura de perfiles por el admin, campo `estado`, una categoría inactiva ya no bloquea editar sus cursos), por lo que la validación anterior en el emulador ya no aplica. Vuelve a pasar la matriz de arriba en el emulador de Firestore antes de publicar. Una prueba de reglas no valida una instancia real, la interfaz, Cloudflare R2, Culqi ni el backend que firmará URLs.
 
 | Intento | Protección de estas reglas |
 |---|---|
 | Leer datos sin autenticación o sin correo verificado | Denegado para contenido y operaciones administrativas |
-| Leer el perfil de otra persona | Denegado; el perfil solo permite lectura propia |
-| Crear una cuenta admin/premium o cambiarse `rol`/`plan` | Denegado; el alta solo permite `alumno/gratis` y el dueño solo cambia su nombre |
+| Leer el perfil de otra persona | Denegado; solo lo lee su dueño o un administrador |
+| Crear una cuenta admin/premium o cambiarse `rol`/`plan`/`estado` | Denegado; el alta solo permite `alumno/gratis/activo` y el dueño solo cambia su nombre |
 | Leer un borrador o consultar catálogo sin filtrar publicación | Denegado; la consulta debe incluir `publicado == true` |
 | Leer contenido premium con plan gratis | Denegado; el campo `plan` lo actualiza un proceso confiable |
 | Crear clases/contenido bajo un curso inexistente | Denegado mediante comprobación de los documentos padre |
 | Agregar campos desconocidos, strings largos o tipos incorrectos | Denegado por validadores y listas cerradas de campos |
-| Cambiar `correo`, `rol`, `plan` o `creadoEn` desde el perfil propio | Denegado como campo inmutable para el cliente |
+| Cambiar `correo`, `rol`, `plan`, `estado` o `creadoEn` desde el perfil propio | Denegado como campo inmutable para el cliente |
+| Usar la app con una cuenta `suspendido` | Denegado; deja de contar como alumno o administrador para las reglas |
 | Asignar Premium tras un pago | El backend debe verificar el evento de Culqi y actualizar `usuarios/{uid}.plan` |
 | Usar Firebase Admin SDK sin verificar el llamante | Las rules no protegen este caso; el backend debe autenticar y autorizar cada operación |
 | Reutilizar una URL R2 filtrada antes de vencer | La firma permite el acceso hasta su expiración; usar TTL corto y no registrarla |
@@ -127,7 +133,7 @@ El progreso solo acepta una combinación válida de curso y clase publicados. El
 
 1. En **R2 → Overview → Manage R2 API Tokens**, crea un token S3 con acceso **Object Read & Write** limitado únicamente a `noova-learn-media`.
 2. Copia **Access Key ID**, **Secret Access Key** y **Account ID** en un gestor seguro. El secreto no se puede volver a consultar después de cerrar la pantalla.
-3. No pongas esas credenciales en `src/firebase/config.js`, código del navegador, variables `NEXT_PUBLIC_*`, Git ni un archivo entregable.
+3. No pongas esas credenciales en `src/firebase/config.ts`, código del navegador, variables `NEXT_PUBLIC_*`, Git ni un archivo entregable.
 4. Como el frontend usa `output: "export"`, no tiene rutas API de Next.js para firmar accesos. Necesitas un backend separado: recomiendo un Cloudflare Worker que use el SDK S3 compatible y guarde las credenciales como Worker Secrets. No subas un video directamente a R2 desde el navegador usando las credenciales de cuenta.
 
 El endpoint S3 de R2 tiene la forma `https://<ACCOUNT_ID>.r2.cloudflarestorage.com` y la región del cliente S3 es `auto`.
@@ -177,7 +183,7 @@ Usa solamente los métodos y headers que realmente firmen tus URLs. El origen de
 
 ## 12. Revocación, backups y mantenimiento
 
-- El modelo actual no tiene un campo de desactivación. Para bloquear una cuenta, deshabilítala en Firebase Authentication o agrega un estado controlado por backend y actualiza las reglas para exigirlo.
+- Para bloquear una cuenta, cambia `usuarios/{uid}.estado` a `suspendido`: las reglas dejan de reconocerla como alumno o administrador. Un ID token ya emitido sigue siendo válido en Firebase Auth hasta que expire; si necesitas cortar también el inicio de sesión, deshabilita la cuenta en Firebase Authentication.
 - Una URL R2 ya prefirmada no se puede revocar individualmente antes de su expiración. Usa vencimientos cortos y no la registres en logs.
 - Configura export/backups de Firestore antes de producción. R2 requiere una estrategia de respaldo independiente; verifica periódicamente que puedes recuperar los objetos.
 - Las Firestore Rules no protegen R2. La autorización de cada operación R2 debe repetirse en el Worker.
