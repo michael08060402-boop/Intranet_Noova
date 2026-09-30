@@ -18,7 +18,6 @@ function Icono({ nombre }: { nombre: "buscar" | "lista" | "cuadricula" | "alumno
 export default function AlumnosPage() {
   return (
     <main className="alumnos-page">
-      <div className="alumnos-landscape" aria-hidden="true" />
       <header className="alumnos-heading">
         <div>
           <span className="alumnos-eyebrow">Comunidad de aprendizaje</span>
@@ -38,10 +37,10 @@ export default function AlumnosPage() {
             <Icono nombre="buscar" />
             <input type="search" placeholder="Buscar por nombre o correo..." aria-label="Buscar alumno por nombre o correo" />
           </label>
-          <select className="alumnos-status" aria-label="Filtrar por estado" defaultValue="todos">
-            <option value="todos">Todos los estados</option>
-            <option value="activo">Activo</option>
-            <option value="inactivo">Inactivo</option>
+          <select className="alumnos-plan" aria-label="Filtrar por plan" defaultValue="todos">
+            <option value="todos">Todos los planes</option>
+            <option value="gratis">Gratis</option>
+            <option value="premium">Premium</option>
           </select>
           <div className="alumnos-views" aria-label="Vista de alumnos">
             <button type="button" className="is-selected" aria-label="Vista de lista" aria-pressed="true"><Icono nombre="lista" /></button>
@@ -52,7 +51,7 @@ export default function AlumnosPage() {
         <div className="alumnos-table-wrap">
           <table className="alumnos-table">
             <thead>
-              <tr>{["Alumno", "Correo electrónico", "Fecha de registro", "Estado", "Acciones"].map((titulo) => <th key={titulo} scope="col">{titulo}</th>)}</tr>
+              <tr>{["Alumno", "Correo electrónico", "Fecha de registro", "Plan", "Acciones"].map((titulo) => <th key={titulo} scope="col">{titulo}</th>)}</tr>
             </thead>
             <tbody>
               <tr>

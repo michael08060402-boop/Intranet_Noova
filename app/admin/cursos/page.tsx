@@ -19,12 +19,11 @@ function Icono({ nombre }: { nombre: "buscar" | "lista" | "cuadricula" | "libro"
 export default function CursosPage() {
   return (
     <main className="cursos-page">
-      <div className="cursos-landscape" aria-hidden="true" />
       <header className="cursos-heading">
         <div>
           <span className="cursos-eyebrow">Gestión académica</span>
           <h1>Cursos</h1>
-          <p>Administra tus cursos y sus videos.</p>
+          <p>Administra tus cursos y sus clases.</p>
         </div>
         <NuevoCurso />
       </header>
@@ -52,15 +51,15 @@ export default function CursosPage() {
         <div className="cursos-table-wrap">
           <table className="cursos-table">
             <thead>
-              <tr>{["Curso", "Categoría", "Estado", "Videos", "Alumnos", "Acciones"].map((titulo) => <th key={titulo} scope="col">{titulo}</th>)}</tr>
+              <tr>{["Curso", "Categoría", "Nivel", "Acceso", "Estado", "Clases", "Acciones"].map((titulo) => <th key={titulo} scope="col">{titulo}</th>)}</tr>
             </thead>
             <tbody>
               <tr>
-                <td colSpan={6}>
+                <td colSpan={7}>
                   <div className="cursos-empty">
                     <div className="cursos-empty__illustration"><Icono nombre="libro" /><span /></div>
                     <h2>Aún no hay cursos registrados</h2>
-                    <p>Comienza creando tu primer curso para poder gestionar sus videos<br className="cursos-empty__break" /> y alumnos desde aquí.</p>
+                    <p>Comienza creando tu primer curso para poder gestionar sus clases<br className="cursos-empty__break" /> y contenidos desde aquí.</p>
                   </div>
                 </td>
               </tr>

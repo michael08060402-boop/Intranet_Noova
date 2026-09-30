@@ -28,7 +28,7 @@ export default function StudentHome({ usuario, onSalir }: StudentHomeProps) {
     <div className="student-shell">
       <header className="student-header">
         <Link href="/" className="student-brand" aria-label="Noova Learn Mining, inicio">
-          <Image src="/assets/login/noova_logo.png" alt="" width={80} height={42} preload />
+          <Image src="/assets/login/noova_logo.webp" alt="" width={80} height={42} preload />
           <span className="student-brand__texto"><span className="student-brand__nombre">NOOVA</span><small>LEARN MINING</small></span>
         </Link>
         <nav className="student-nav" aria-label="Navegación del alumno">

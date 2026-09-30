@@ -1,37 +1,37 @@
 body:has(.nuevo-curso[open]) { overflow: hidden; }
-.nuevo-curso { width: min(540px, calc(100% - 32px)); max-height: calc(100svh - 32px); margin: auto; padding: 26px 28px; overflow-y: auto; border: 1px solid #e8edf4; border-radius: 15px; background: #fff; color: #092342; box-shadow: 0 24px 80px rgb(3 27 46 / 20%); }
-.nuevo-curso::backdrop { background: rgb(15 39 61 / 40%); }
+.nuevo-curso { width: min(540px, calc(100% - 32px)); max-height: calc(100svh - 32px); margin: auto; padding: 26px 28px; overflow-y: auto; border: 1px solid var(--borde); border-radius: var(--radio-grande); background: #fff; color: var(--texto); box-shadow: 0 20px 50px rgb(3 35 55 / 25%); }
+.nuevo-curso::backdrop { background: rgb(3 35 55 / 45%); }
 .nuevo-curso__heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
-.nuevo-curso__heading h2 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -.8px; }
-.nuevo-curso__heading button { display: grid; place-items: center; width: 32px; height: 32px; padding: 4px; border: 0; border-radius: 7px; background: transparent; color: #5c7194; cursor: pointer; }
+.nuevo-curso__heading h2 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.6px; }
+.nuevo-curso__heading button { display: grid; place-items: center; width: 32px; height: 32px; padding: 4px; border: 0; border-radius: var(--radio); background: transparent; color: var(--texto-suave); cursor: pointer; }
 .nuevo-curso__heading svg { width: 24px; height: 24px; }
-.nuevo-curso__heading button:hover { background: #edf5fc; }
+.nuevo-curso__heading button:hover { background: var(--acento-suave); }
 .nuevo-curso__field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
 .nuevo-curso__field > span, .nuevo-curso__states legend { font-size: 14px; font-weight: 650; }
-.nuevo-curso__field > input, .nuevo-curso__field textarea { width: 100%; padding: 12px 16px; border: 1px solid #ccd8e9; border-radius: 8px; background: #fff; color: #092342; font: inherit; font-size: 14px; }
+.nuevo-curso__field > input, .nuevo-curso__field textarea { width: 100%; padding: 12px 16px; border: 1px solid #cfdbe7; border-radius: var(--radio); background: #fff; color: var(--texto); font: inherit; font-size: 14px; }
 .nuevo-curso__field textarea { min-height: 100px; resize: vertical; }
-.nuevo-curso__field input::placeholder, .nuevo-curso__field textarea::placeholder { color: #5c739b; }
-.nuevo-curso__counter { align-self: flex-end; color: #5c739b; font-size: 14px; }
-.nuevo-curso__upload { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 128px; padding: 16px; border: 1px dashed #69b7ff; border-radius: 9px; background: #f1f8ff; color: #50698f; cursor: pointer; text-align: center; font-size: 14px; }
-.nuevo-curso__upload:hover { background: #e8f4ff; }
+.nuevo-curso__field input::placeholder, .nuevo-curso__field textarea::placeholder { color: var(--texto-suave); }
+.nuevo-curso__counter { align-self: flex-end; color: var(--texto-suave); font-size: 13px; }
+.nuevo-curso__upload { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 128px; padding: 16px; border: 1px dashed var(--acento); border-radius: var(--radio); background: var(--acento-suave); color: var(--texto-suave); cursor: pointer; text-align: center; font-size: 14px; }
+.nuevo-curso__upload:hover { background: #dff1fb; }
 .nuevo-curso__upload input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-.nuevo-curso__upload svg { width: 32px; height: 32px; margin-bottom: 5px; }
+.nuevo-curso__upload svg { width: 32px; height: 32px; margin-bottom: 5px; color: var(--acento); }
 .nuevo-curso__upload img { width: 160px; height: 80px; object-fit: contain; border-radius: 6px; }
 .nuevo-curso__upload span { max-width: 100%; overflow-wrap: anywhere; }
 .nuevo-curso__upload small { font-size: 13px; }
 .nuevo-curso__states { margin: 22px 0; padding: 0; border: 0; }
 .nuevo-curso__states legend { margin-bottom: 12px; }
 .nuevo-curso__states label { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 12px; cursor: pointer; font-size: 15px; font-weight: 500; }
-.nuevo-curso__states input { flex-shrink: 0; width: 25px; height: 25px; margin: 0; accent-color: #009bff; cursor: pointer; }
-.nuevo-curso__states small { display: block; margin-top: 2px; color: #5c739b; font-size: 13px; font-weight: 400; }
-.nuevo-curso__footer { display: flex; justify-content: flex-end; gap: 16px; padding-top: 20px; border-top: 1px solid #e0e8f2; }
-.nuevo-curso__footer button { padding: 12px 22px; border: 1px solid #c5d3e7; border-radius: 9px; background: #fff; color: #50698f; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
-.nuevo-curso__footer button:hover { background: #f0f6fc; }
-.nuevo-curso__footer .nuevo-curso__submit { border-color: #009bff; background: #009bff; color: #fff; }
-.nuevo-curso__footer .nuevo-curso__submit:hover { background: #0089e3; }
-.nuevo-curso :focus-visible, .nuevo-curso__upload:focus-within { outline: 2px solid #079bff; outline-offset: 3px; }
+.nuevo-curso__states input { flex-shrink: 0; width: 22px; height: 22px; margin: 0; accent-color: var(--acento); cursor: pointer; }
+.nuevo-curso__states small { display: block; margin-top: 2px; color: var(--texto-suave); font-size: 13px; font-weight: 400; }
+.nuevo-curso__footer { display: flex; justify-content: flex-end; gap: 10px; padding-top: 20px; border-top: 1px solid var(--borde); }
+.nuevo-curso__footer button { padding: 10px 20px; border: 1px solid var(--borde); border-radius: var(--radio); background: #fff; color: var(--texto); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.nuevo-curso__footer button:hover { background: var(--acento-suave); }
+.nuevo-curso__footer .nuevo-curso__submit { border-color: var(--acento); background: var(--acento); color: #fff; }
+.nuevo-curso__footer .nuevo-curso__submit:hover { background: var(--acento-oscuro); }
+.nuevo-curso :focus-visible, .nuevo-curso__upload:focus-within { outline: 2px solid var(--acento); outline-offset: 3px; }
 .nuevo-curso__error { margin: 0; color: #b42318; font-size: 13px; }
-.nuevo-curso__notice { padding: 12px; border-radius: 8px; background: #edf7ff; color: #365779; font-size: 13px; }
+.nuevo-curso__notice { padding: 12px; border-radius: var(--radio); background: var(--acento-suave); color: var(--texto-suave); font-size: 13px; }
 @media (max-height: 800px) {
   .nuevo-curso { padding: 20px 24px; }
   .nuevo-curso__heading { margin-bottom: 16px; }
@@ -43,5 +43,5 @@ body:has(.nuevo-curso[open]) { overflow: hidden; }
 }
 @media (max-width: 480px) {
   .nuevo-curso { padding: 20px; }
-  .nuevo-curso__heading h2 { font-size: 22px; }
+  .nuevo-curso__heading h2 { font-size: 20px; }
 }

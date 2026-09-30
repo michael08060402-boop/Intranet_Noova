@@ -1,31 +1,15 @@
 .admin-shell {
+  --acento: #0098db;
+  --acento-oscuro: #00678e;
+  --acento-claro: #3fd0f5;
+  --acento-suave: #e8f6fd;
+  --texto: #082747;
+  --texto-suave: #536d88;
+  --borde: #e2ebf4;
+  --radio: 8px;
+  --radio-grande: 14px;
   min-height: 100svh;
   overflow-x: clip;
-  background: #f2f8fd;
-  color: #10263b;
+  background: #f3f6f9;
+  color: var(--texto);
 }
-
-.admin-main {
-  width: min(100% - 32px, 1120px);
-  margin: 0 auto;
-  padding: 36px 0 64px;
-}
-
-.admin-kicker {
-  color: #5b7388;
-  font-size: 13px;
-}
-
-.admin-main h1 {
-  margin: 4px 0 6px;
-  font-size: clamp(28px, 4vw, 36px);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-}
-
-.admin-lead {
-  margin: 0 0 28px;
-  color: #60758a;
-  font-size: 15px;
-}
-

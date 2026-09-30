@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import Image from "next/image";
-import logoNoova from "@/public/assets/login/logo_noova.png";
+import logoNoova from "@/public/assets/login/logo_noova.webp";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,

@@ -1,6 +1,6 @@
 .my-courses { width: min(94%, 1600px); margin: 0 auto; padding: 26px 0 32px; }
 .my-courses__top { position: relative; isolation: isolate; padding-bottom: 18px; }
-.my-courses__top::before { content: ''; position: absolute; z-index: -1; top: -26px; bottom: 0; right: calc((100% - 100vw) / 2); width: 100vw; background: linear-gradient(90deg, #f3f6f9 0%, rgb(243 246 249 / 75%) 20%, transparent 45%), linear-gradient(0deg, #f3f6f9, transparent 60%), linear-gradient(#1a7299, #1a7299), url('/assets/admin/mina.png') center top / cover; background-blend-mode: normal, normal, color, normal; opacity: .85; pointer-events: none; }
+.my-courses__top::before { content: ''; position: absolute; z-index: -1; top: -26px; bottom: 0; right: calc((100% - 100vw) / 2); width: 100vw; background: linear-gradient(90deg, #f3f6f9 0%, rgb(243 246 249 / 75%) 20%, transparent 45%), linear-gradient(0deg, #f3f6f9, transparent 60%), linear-gradient(#1a7299, #1a7299), url('/assets/admin/mina.webp') center top / cover; background-blend-mode: normal, normal, color, normal; opacity: .85; pointer-events: none; }
 .my-courses__heading { padding: 12px 0 32px; }
 .my-courses__heading h1 { margin: 0 0 2px; font-size: clamp(26px, 2.4vw, 34px); font-weight: 750; letter-spacing: -1px; line-height: 1.2; }
 .my-courses__heading h1 span { color: var(--acento); }

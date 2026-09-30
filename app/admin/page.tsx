@@ -3,14 +3,14 @@ import "./AdminPage.css";
 
 const metricas = [
   { clave: "cursos", etiqueta: "Cursos", icono: "libro" as const, href: "/admin/cursos" },
-  { clave: "videos", etiqueta: "Videos", icono: "video" as const, href: "/admin/cursos" },
+  { clave: "categorias", etiqueta: "Categorías", icono: "capas" as const, href: "/admin/cursos" },
   { clave: "alumnos", etiqueta: "Alumnos", icono: "alumnos" as const, href: "/admin/alumnos" },
 ];
 
-function Icono({ nombre }: { nombre: "libro" | "video" | "alumnos" | "mas" | "flecha" | "reloj" | "rayo" | "documento" }) {
+function Icono({ nombre }: { nombre: "libro" | "capas" | "alumnos" | "mas" | "flecha" | "reloj" | "rayo" | "documento" }) {
   const trazos = {
     libro: "M4 5c2.2-1 5.2-1 8 1 2.8-2 5.8-2 8-1v14c-2.2-1-5.2-1-8 1-2.8-2-5.8-2-8-1Z M12 6v14",
-    video: "M9 7.5 17 12 9 16.5Z",
+    capas: "m3 7 9-4 9 4-9 4ZM3 12l9 4 9-4M3 17l9 4 9-4",
     alumnos: "M14 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM3 21v-3a5 5 0 0 1 14 0v3M18 4a3 3 0 0 1 0 6M20 21v-4a4 4 0 0 0-2-3",
     mas: "M12 5v14M5 12h14",
     flecha: "m9 6 6 6-6 6",
@@ -19,8 +19,8 @@ function Icono({ nombre }: { nombre: "libro" | "video" | "alumnos" | "mas" | "fl
     documento: "M7 3h10a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3ZM9 9h6M9 13h6M9 17h3",
   };
   return (
-    <svg viewBox="0 0 24 26" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      {nombre === "video" || nombre === "reloj" ? <circle cx="12" cy="12" r="9" /> : null}
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {nombre === "reloj" && <circle cx="12" cy="12" r="9" />}
       <path d={trazos[nombre]} />
     </svg>
   );
@@ -28,11 +28,10 @@ function Icono({ nombre }: { nombre: "libro" | "video" | "alumnos" | "mas" | "fl
 
 export default function AdminPage() {
   return (
-    <main className="admin-main admin-dashboard">
-      <div className="admin-dashboard__landscape" aria-hidden="true" />
+    <main className="admin-dashboard">
       <section className="admin-welcome" aria-labelledby="bienvenida-titulo">
         <p className="admin-kicker">Panel administrativo</p>
-        <h1 id="bienvenida-titulo">Panel de administración <span className="admin-wave" aria-hidden="true">👋</span></h1>
+        <h1 id="bienvenida-titulo">Panel de administración</h1>
         <p className="admin-lead">Administra el contenido de Noova Learn Mining.</p>
       </section>
       <section className="admin-metrics" aria-label="Indicadores">
@@ -45,7 +44,7 @@ export default function AdminPage() {
         ))}
       </section>
       <div className="admin-panels">
-        <section className="admin-card admin-activity" aria-labelledby="actividad-titulo">
+        <section className="admin-card" aria-labelledby="actividad-titulo">
           <h2 id="actividad-titulo"><Icono nombre="reloj" />Actividad reciente</h2>
           <div className="admin-empty">
             <span className="admin-empty__document"><Icono nombre="documento" /></span>
@@ -61,7 +60,7 @@ export default function AdminPage() {
               <span>Crear curso</span>
               <span className="admin-arrow"><Icono nombre="flecha" /></span>
             </Link>
-            <Link href="/admin/cursos" className="admin-tone--videos">
+            <Link href="/admin/cursos" className="admin-tone--categorias">
               <span className="admin-shortcut__icon"><Icono nombre="libro" /></span>
               <span>Gestionar cursos</span>
               <span className="admin-arrow"><Icono nombre="flecha" /></span>

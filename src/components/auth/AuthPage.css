@@ -20,7 +20,7 @@
   justify-content: space-between;
   padding: clamp(28px, 3.5vw, 64px) clamp(28px, 3.5vw, 64px) clamp(28px, 3.5vw, 64px) clamp(40px, 4.5vw, 78px);
   color: #fff;
-  background: linear-gradient(180deg, #00172b65 0%, #00172b35 35%, #00172bed 100%), #0d2c49 url("/assets/login/fnd_login.png") center 20% / cover no-repeat;
+  background: linear-gradient(180deg, #00172b65 0%, #00172b35 35%, #00172bed 100%), #0d2c49 url("/assets/login/fnd_login.webp") center 20% / cover no-repeat;
 }
 
 .auth-visual::after {
