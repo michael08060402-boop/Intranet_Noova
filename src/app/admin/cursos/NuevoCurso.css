@@ -3,29 +3,30 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  gap: 12px;
-  padding: 16px 28px;
+  gap: 10px;
+  padding: 12px 22px;
   border: 0;
-  border-radius: 13px;
-  background: #009ec6;
+  border-radius: var(--radio);
+  background: var(--acento);
   color: #fff;
   font: inherit;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
 .nuevo-curso__abrir svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   stroke-width: 1.8;
 }
 .nuevo-curso__abrir:hover {
-  background: #008bad;
+  background: var(--acento-oscuro);
 }
 .nuevo-curso__abrir:active {
   transform: translateY(1px);
 }
 .nuevo-curso__abrir:focus-visible {
-  outline: 2px solid #079bff;
+  outline: 2px solid var(--acento);
   outline-offset: 3px;
 }
 body:has(.nuevo-curso[open]) {
@@ -37,14 +38,14 @@ body:has(.nuevo-curso[open]) {
   margin: auto;
   padding: 26px 28px;
   overflow-y: auto;
-  border: 1px solid #e8edf4;
-  border-radius: 15px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
   background: #fff;
-  color: #092342;
-  box-shadow: 0 24px 80px rgb(3 27 46 / 20%);
+  color: var(--texto);
+  box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
 }
 .nuevo-curso::backdrop {
-  background: rgb(15 39 61 / 40%);
+  background: rgb(3 35 55 / 45%);
 }
 .nuevo-curso__heading {
   display: flex;
@@ -55,9 +56,9 @@ body:has(.nuevo-curso[open]) {
 }
 .nuevo-curso__heading h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.8px;
+  letter-spacing: -.6px;
 }
 .nuevo-curso__heading button {
   display: grid;
@@ -66,9 +67,9 @@ body:has(.nuevo-curso[open]) {
   height: 32px;
   padding: 4px;
   border: 0;
-  border-radius: 7px;
+  border-radius: var(--radio);
   background: transparent;
-  color: #5c7194;
+  color: var(--texto-suave);
   cursor: pointer;
 }
 .nuevo-curso__heading svg {
@@ -77,7 +78,7 @@ body:has(.nuevo-curso[open]) {
   stroke-width: 2;
 }
 .nuevo-curso__heading button:hover {
-  background: #edf5fc;
+  background: var(--acento-suave);
 }
 .nuevo-curso__field {
   display: flex;
@@ -94,10 +95,10 @@ body:has(.nuevo-curso[open]) {
 .nuevo-curso__field textarea {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid #ccd8e9;
-  border-radius: 8px;
+  border: 1px solid #cfdbe7;
+  border-radius: var(--radio);
   background: #fff;
-  color: #092342;
+  color: var(--texto);
   font: inherit;
   font-size: 14px;
 }
@@ -107,12 +108,12 @@ body:has(.nuevo-curso[open]) {
 }
 .nuevo-curso__field input::placeholder,
 .nuevo-curso__field textarea::placeholder {
-  color: #5c739b;
+  color: var(--texto-suave);
 }
 .nuevo-curso__counter {
   align-self: flex-end;
-  color: #5c739b;
-  font-size: 14px;
+  color: var(--texto-suave);
+  font-size: 13px;
 }
 .nuevo-curso__upload {
   position: relative;
@@ -123,16 +124,16 @@ body:has(.nuevo-curso[open]) {
   gap: 5px;
   min-height: 128px;
   padding: 16px;
-  border: 1px dashed #69b7ff;
-  border-radius: 9px;
-  background: #f1f8ff;
-  color: #50698f;
+  border: 1px dashed var(--acento);
+  border-radius: var(--radio);
+  background: var(--acento-suave);
+  color: var(--texto-suave);
   cursor: pointer;
   text-align: center;
   font-size: 14px;
 }
 .nuevo-curso__upload:hover {
-  background: #e8f4ff;
+  background: #dff1fb;
 }
 .nuevo-curso__upload input {
   position: absolute;
@@ -146,6 +147,7 @@ body:has(.nuevo-curso[open]) {
   width: 32px;
   height: 32px;
   margin-bottom: 5px;
+  color: var(--acento);
   stroke-width: 1.8;
 }
 .nuevo-curso__upload img {
@@ -180,51 +182,51 @@ body:has(.nuevo-curso[open]) {
 }
 .nuevo-curso__states input {
   flex-shrink: 0;
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   margin: 0;
-  accent-color: #009bff;
+  accent-color: var(--acento);
   cursor: pointer;
 }
 .nuevo-curso__states small {
   display: block;
   margin-top: 2px;
-  color: #5c739b;
+  color: var(--texto-suave);
   font-size: 13px;
   font-weight: 400;
 }
 .nuevo-curso__footer {
   display: flex;
   justify-content: flex-end;
-  gap: 16px;
+  gap: 10px;
   padding-top: 20px;
-  border-top: 1px solid #e0e8f2;
+  border-top: 1px solid var(--borde);
 }
 .nuevo-curso__footer button {
-  padding: 12px 22px;
-  border: 1px solid #c5d3e7;
-  border-radius: 9px;
+  padding: 10px 20px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
   background: #fff;
-  color: #50698f;
+  color: var(--texto);
   font: inherit;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
 .nuevo-curso__footer button:hover {
-  background: #f0f6fc;
+  background: var(--acento-suave);
 }
 .nuevo-curso__footer .nuevo-curso__submit {
-  border-color: #009bff;
-  background: #009bff;
+  border-color: var(--acento);
+  background: var(--acento);
   color: #fff;
 }
 .nuevo-curso__footer .nuevo-curso__submit:hover {
-  background: #0089e3;
+  background: var(--acento-oscuro);
 }
 .nuevo-curso :focus-visible,
 .nuevo-curso__upload:focus-within {
-  outline: 2px solid #079bff;
+  outline: 2px solid var(--acento);
   outline-offset: 3px;
 }
 .nuevo-curso__error {
@@ -272,6 +274,6 @@ body:has(.nuevo-curso[open]) {
     padding: 20px;
   }
   .nuevo-curso__heading h2 {
-    font-size: 22px;
+    font-size: 20px;
   }
 }

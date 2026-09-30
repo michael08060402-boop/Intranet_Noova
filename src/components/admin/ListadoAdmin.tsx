@@ -15,7 +15,6 @@ type Props = {
   etiquetaFiltro: string;
   opcionesFiltro: { valor: string; texto: string }[];
   columnas: string[];
-  anchoPrimeraColumna: string;
   vacioTitulo: string;
   vacioTexto: ReactNode;
 };
@@ -33,13 +32,11 @@ export default function ListadoAdmin({
   etiquetaFiltro,
   opcionesFiltro,
   columnas,
-  anchoPrimeraColumna,
   vacioTitulo,
   vacioTexto,
 }: Props) {
   return (
     <main className="listado-admin">
-      <div className="listado-admin__paisaje" aria-hidden="true" />
       <header
         className={
           accion
@@ -93,12 +90,8 @@ export default function ListadoAdmin({
           <table className="listado-admin__tabla">
             <thead>
               <tr>
-                {columnas.map((columna, indice) => (
-                  <th
-                    key={columna}
-                    scope="col"
-                    style={indice === 0 ? { width: anchoPrimeraColumna } : undefined}
-                  >
+                {columnas.map((columna) => (
+                  <th key={columna} scope="col">
                     {columna}
                   </th>
                 ))}

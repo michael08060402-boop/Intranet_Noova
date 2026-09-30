@@ -22,7 +22,7 @@
   color: #fff;
   background:
     linear-gradient(180deg, #00172b65 0%, #00172b35 35%, #00172bed 100%),
-    #0d2c49 url("../../assets/fondos/fondo-acceso.png") center 20% / cover no-repeat;
+    #0d2c49 url("../../assets/fondos/fondo-acceso.webp") center 20% / cover no-repeat;
 }
 
 .auth-visual::after {

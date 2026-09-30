@@ -20,7 +20,7 @@
     linear-gradient(90deg, #f3f6f9 0%, rgb(243 246 249 / 75%) 20%, transparent 45%),
     linear-gradient(0deg, #f3f6f9, transparent 60%),
     linear-gradient(#1a7299, #1a7299),
-    url("../../../assets/fondos/paisaje-mina.png") center top / cover;
+    url("../../../assets/fondos/paisaje-mina.webp") center top / cover;
   background-blend-mode: normal, normal, color, normal;
   opacity: 0.85;
   pointer-events: none;

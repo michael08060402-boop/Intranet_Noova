@@ -1,220 +1,254 @@
 .admin-header {
   display: grid;
-  grid-template-columns: auto auto minmax(180px, 1fr) auto;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 28px;
-  min-height: 86px;
-  padding: 16px clamp(20px, 2.5vw, 40px);
-  background: #031b2e;
+  gap: 12px clamp(18px, 2.4vw, 38px);
+  min-height: 76px;
+  padding: 14px 3%;
+  border-bottom: 1px solid rgb(63 208 245 / 25%);
+  background: linear-gradient(100deg, #072b43 0%, #0b3f5e 45%, #115a7f 100%);
   color: #fff;
+}
+.admin-header svg {
+  width: 23px;
+  height: 23px;
+  flex-shrink: 0;
+  stroke-width: 1.8;
 }
 .admin-header__brand {
+  justify-self: start;
   display: flex;
   align-items: center;
-  gap: 9px;
-  text-decoration: none;
+  gap: 12px;
   color: #fff;
+  text-decoration: none;
 }
 .admin-header__brand img {
-  width: 66px;
+  width: 78px;
   height: auto;
+  filter: drop-shadow(0 0 12px rgb(63 208 245 / 35%));
 }
-.admin-header__brand span {
-  font-size: 23px;
-  font-weight: 750;
-  line-height: 1.1;
+.admin-header__texto {
+  padding-left: 12px;
+  border-left: 1px solid rgb(255 255 255 / 25%);
+  line-height: 1;
 }
-.admin-header__brand small {
+.admin-header__nombre {
   display: block;
-  margin-top: 4px;
-  color: #25d7f3;
-  font-size: 9px;
-  letter-spacing: 1.3px;
+  background: linear-gradient(180deg, #fff 45%, #bfeaf8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+}
+/* El espaciado está calculado para que "LEARN MINING" mida lo mismo que "NOOVA". */
+.admin-header__texto small {
+  display: block;
+  margin-top: 5px;
+  color: var(--acento-claro);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 2.6px;
 }
 .admin-header__nav {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 .admin-header__nav a {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   padding: 12px 16px;
-  border-radius: 12px;
+  border-radius: var(--radio);
   color: #fff;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 550;
   text-decoration: none;
   white-space: nowrap;
 }
-.admin-header__nav a svg {
-  width: 23px;
-  height: 23px;
+.admin-header__nav a:hover {
+  background: rgb(255 255 255 / 9%);
 }
 .admin-header__nav a.is-active {
-  background: #103c63;
-  font-weight: 600;
-}
-.admin-header__search {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 368px;
-  margin-left: auto;
-  padding: 0 18px;
-  border-radius: 999px;
-  background: #172e42;
-}
-.admin-header__search svg {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-}
-.admin-header__search input {
-  width: 100%;
-  min-width: 0;
-  height: 46px;
-  border: 0;
-  background: transparent;
-  color: #fff;
-  font: inherit;
-  font-size: 14px;
-  outline: none;
-}
-.admin-header__search input::placeholder {
-  color: #d6e0ec;
+  background: rgb(255 255 255 / 14%);
+  color: var(--acento-claro);
 }
 .admin-header__actions {
+  justify-self: end;
   display: flex;
   align-items: center;
-  gap: 18px;
-}
-.admin-header__icon,
-.admin-header__user {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-}
-.admin-header__icon {
-  width: 36px;
-  height: 40px;
-  cursor: pointer;
-}
-.admin-header__icon svg {
-  width: 24px;
-  height: 24px;
-}
-.admin-header__user {
-  gap: 12px;
+  gap: 10px;
+  font-size: 14px;
   font-weight: 600;
-}
-.admin-header__identity {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  line-height: 1.3;
-}
-.admin-header__identity small {
-  color: #9cb2c7;
-  font-size: 12px;
-  font-weight: 400;
-}
-.admin-header__logout {
-  border-radius: 9px;
-}
-.admin-header__logout:hover {
-  background: #17384f;
-  color: #32d8f1;
-}
-.admin-header__logout:active {
-  transform: translateY(1px);
 }
 .admin-header__avatar {
   display: grid;
-  width: 44px;
-  height: 44px;
   place-items: center;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #06cef1, #00a4e5);
-  font-size: 20px;
-  font-weight: 500;
+  background: var(--acento);
+  color: #fff;
 }
-.admin-header a:focus-visible,
-.admin-header button:focus-visible,
-.admin-header__search:focus-within {
-  outline: 2px solid #32d8f1;
+.admin-header__identity {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-header__identity small {
+  display: block;
+  margin-top: 2px;
+  color: #c4dcea;
+  font-size: 11px;
+  font-weight: 400;
+}
+.admin-header__logout {
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border: 0;
+  border-radius: var(--radio);
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.admin-header__logout:hover {
+  background: rgb(255 255 255 / 12%);
+}
+.admin-header__logout svg {
+  width: 19px;
+}
+.admin-header a:focus-visible, .admin-header__logout:focus-visible {
+  outline: 2px solid var(--acento-claro);
   outline-offset: 4px;
 }
-.admin-header__nav a:hover {
-  background: #103c63;
+.admin-logout {
+  width: min(92%, 380px);
+  padding: 26px;
+  border: 0;
+  border-radius: var(--radio-grande);
+  background: #fff;
+  color: var(--texto);
+  box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
 }
-@media (max-width: 1100px) {
+.admin-logout::backdrop {
+  background: rgb(3 35 55 / 45%);
+}
+.admin-logout h2 {
+  margin: 0 0 6px;
+  font-size: 19px;
+  font-weight: 700;
+}
+.admin-logout p {
+  margin: 0 0 22px;
+  color: var(--texto-suave);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.admin-logout__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.admin-logout__actions button {
+  padding: 10px 18px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: #fff;
+  color: var(--texto);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.admin-logout__actions button:hover {
+  background: var(--acento-suave);
+}
+.admin-logout__actions .admin-logout__confirm {
+  border-color: #0b3f5e;
+  background: #0b3f5e;
+  color: #fff;
+}
+.admin-logout__actions .admin-logout__confirm:hover {
+  background: #115a7f;
+}
+.admin-logout button:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+@media (max-width: 1080px) {
   .admin-header {
     grid-template-columns: auto 1fr auto;
-    gap: 16px;
-  }
-  .admin-header__search {
-    grid-row: 2;
-    grid-column: 1 / -1;
-    max-width: none;
-  }
-}
-@media (max-width: 680px) {
-  .admin-header {
-    grid-template-columns: 1fr auto;
-    padding: 16px;
-  }
-  .admin-header__brand {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .admin-header__actions {
-    grid-column: 2;
-    grid-row: 1;
   }
   .admin-header__nav {
-    grid-row: 2;
-    grid-column: 1 / -1;
-    gap: 4px;
+    justify-self: center;
   }
-  .admin-header__nav a {
-    padding: 10px;
-    font-size: 14px;
+  .admin-header__brand img {
+    width: 60px;
   }
-  .admin-header__search {
-    grid-row: 3;
+  .admin-header__nombre {
+    font-size: 21px;
   }
-  .admin-header__actions {
-    gap: 8px;
+  .admin-header__texto small {
+    letter-spacing: 1.4px;
   }
-  .admin-header__user {
-    gap: 8px;
-    font-size: 13px;
-  }
-  .admin-header__avatar {
-    display: none;
-  }
-  .admin-header__actions > .admin-header__icon:first-child {
+  .admin-header__identity {
     display: none;
   }
 }
-
-.admin-header svg {
-  stroke-width: 1.8;
+@media (max-width: 900px) {
+  .admin-header__nav svg {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .admin-header {
+    grid-template-columns: 1fr auto;
+    row-gap: 10px;
+    padding: 12px 4% 6px;
+  }
+  .admin-header__brand img {
+    width: 56px;
+  }
+  .admin-header__nav {
+    grid-column: 1 / -1;
+    order: 4;
+    justify-self: stretch;
+    justify-content: space-around;
+  }
+  .admin-header__nav svg {
+    display: block;
+    width: 21px;
+    height: 21px;
+  }
+  .admin-header__nav a {
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
 }
 
 .admin-shell {
+  --acento: #0098db;
+  --acento-oscuro: #00678e;
+  --acento-claro: #3fd0f5;
+  --acento-suave: #e8f6fd;
+  --texto: #082747;
+  --texto-suave: #536d88;
+  --borde: #e2ebf4;
+  --radio: 8px;
+  --radio-grande: 14px;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   min-height: 100svh;
   overflow-x: clip;
-  background: #f2f8fd;
-  color: #10263b;
+  background: #f3f6f9;
+  color: var(--texto);
 }
 
 @media (min-width: 901px) {

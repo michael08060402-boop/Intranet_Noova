@@ -12,14 +12,13 @@ export default function AlumnosPage() {
       conteo="0 alumnos"
       placeholderBusqueda="Buscar por nombre o correo..."
       etiquetaBusqueda="Buscar alumno por nombre o correo"
-      etiquetaFiltro="Filtrar por estado"
+      etiquetaFiltro="Filtrar por plan"
       opcionesFiltro={[
-        { valor: "todos", texto: "Todos los estados" },
-        { valor: "activo", texto: "Activo" },
-        { valor: "inactivo", texto: "Inactivo" },
+        { valor: "todos", texto: "Todos los planes" },
+        { valor: "gratis", texto: "Gratis" },
+        { valor: "premium", texto: "Premium" },
       ]}
-      columnas={["Alumno", "Correo electrónico", "Fecha de registro", "Estado", "Acciones"]}
-      anchoPrimeraColumna="32%"
+      columnas={["Alumno", "Correo electrónico", "Fecha de registro", "Plan", "Acciones"]}
       vacioTitulo="Aún no hay alumnos registrados"
       vacioTexto={
         <>
