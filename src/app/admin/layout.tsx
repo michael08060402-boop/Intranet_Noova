@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import { signOut } from "firebase/auth";
 import { BookOpen, LayoutDashboard, LogOut, Users } from "lucide-react";
-import isotipo from "@/assets/marca/isotipo-noova.webp";
+import logoNoova from "@/assets/marca/noova.webp";
 import AccesoPorRol from "@/components/acceso/AccesoPorRol";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { auth } from "@/firebase/config";
@@ -34,11 +34,7 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
             className="admin-header__brand"
             aria-label="Noova Learn Mining, panel de administración"
           >
-            <Image src={isotipo} alt="" preload />
-            <span className="admin-header__texto">
-              <span className="admin-header__nombre">NOOVA</span>
-              <small>LEARN MINING</small>
-            </span>
+            <Image src={logoNoova} alt="" preload />
           </Link>
           <nav className="admin-header__nav" aria-label="Secciones de administración">
             {enlaces.map(({ href, etiqueta, Icono }) => {

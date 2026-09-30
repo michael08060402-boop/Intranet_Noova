@@ -56,6 +56,7 @@
   background: #fff;
   color: var(--texto);
   text-decoration: none;
+  box-shadow: var(--sombra);
 }
 .admin-metric__icon {
   display: grid;
@@ -115,6 +116,7 @@
   border: 1px solid var(--borde);
   border-radius: var(--radio-grande);
   background: #fff;
+  box-shadow: var(--sombra);
 }
 .admin-card h2 {
   display: flex;
@@ -161,6 +163,47 @@
 }
 .admin-empty > span:last-child {
   font-size: 14px;
+}
+.admin-actividad {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.admin-actividad li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+.admin-actividad__icono {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radio);
+  background: var(--tono-suave);
+  color: var(--tono);
+}
+.admin-actividad__icono svg {
+  width: 20px;
+  height: 20px;
+}
+.admin-actividad__texto {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-actividad time {
+  flex-shrink: 0;
+  color: var(--texto-suave);
+  font-size: 13px;
 }
 .admin-shortcuts {
   display: flex;

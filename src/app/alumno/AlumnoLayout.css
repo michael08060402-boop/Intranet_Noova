@@ -13,38 +13,10 @@
   justify-self: start;
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: #fff;
-  text-decoration: none;
 }
 .student-brand img {
-  width: 78px;
-  height: auto;
-  filter: drop-shadow(0 0 12px rgb(63 208 245 / 35%));
-}
-.student-brand__texto {
-  padding-left: 12px;
-  border-left: 1px solid rgb(255 255 255 / 25%);
-  line-height: 1;
-}
-.student-brand__nombre {
-  display: block;
-  background: linear-gradient(180deg, #fff 45%, #bfeaf8);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-size: 25px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-/* El espaciado está calculado para que "LEARN MINING" mida lo mismo que "NOOVA". */
-.student-brand small {
-  display: block;
-  margin-top: 5px;
-  color: var(--acento-claro);
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 2.6px;
+  width: auto;
+  height: 50px;
 }
 .student-nav {
   display: flex;
@@ -125,30 +97,9 @@
 .student-account button svg {
   width: 19px;
 }
-.student-account .student-premium {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-  margin-right: 6px;
-  padding: 8px 14px;
-  border: 1px solid #ffe78a;
-  border-radius: 30px;
-  background: linear-gradient(#fff095, #ffda5b);
-  color: #17202c;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 650;
-  white-space: nowrap;
-}
-.student-account .student-premium:hover {
-  background: #fff095;
-}
-.student-account .student-premium svg {
-  width: 18px;
-  height: 18px;
-}
 .student-logout {
   width: min(92%, 380px);
+  margin: auto;
   padding: 26px;
   border: 0;
   border-radius: var(--radio-grande);
@@ -191,11 +142,11 @@
 }
 .student-logout__actions .student-logout__confirm {
   border-color: #0c4566;
-  background: #0c4566;
+  background: linear-gradient(100deg, #0c4566, #1a7299);
   color: #fff;
 }
 .student-logout__actions .student-logout__confirm:hover {
-  background: #115a7f;
+  background: linear-gradient(100deg, #115a7f, #2186b3);
 }
 .student-shell .student-logout button:focus-visible {
   outline-color: var(--acento);
@@ -220,22 +171,9 @@
     justify-self: center;
   }
   .student-brand img {
-    width: 60px;
-  }
-  .student-brand__nombre {
-    font-size: 21px;
-  }
-  .student-brand small {
-    letter-spacing: 1.4px;
+    height: 44px;
   }
   .student-account__name {
-    display: none;
-  }
-  .student-account .student-premium {
-    padding: 7px;
-    border-radius: 50%;
-  }
-  .student-premium span {
     display: none;
   }
 }
@@ -251,7 +189,7 @@
     padding: 12px 4% 6px;
   }
   .student-brand img {
-    width: 56px;
+    height: 40px;
   }
   .student-nav {
     grid-column: 1 / -1;
@@ -282,7 +220,6 @@
   --acento-oscuro: #00678e;
   --acento-claro: #3fd0f5;
   --acento-suave: #e8f6fd;
-  --oscuro: #032337;
   --texto: #082747;
   --texto-suave: #536d88;
   --borde: #e2ebf4;

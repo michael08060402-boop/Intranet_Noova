@@ -57,38 +57,6 @@
   outline-offset: 3px;
 }
 
-.student-vistas {
-  display: flex;
-  gap: 9px;
-}
-
-.student-vistas button {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 44px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  background: #fff;
-  color: var(--texto-suave);
-  cursor: pointer;
-}
-
-.student-vistas button[aria-pressed="true"] {
-  border-color: var(--acento);
-  color: var(--acento);
-  background: var(--acento-suave);
-}
-
-.student-vistas button:focus-visible {
-  outline: 2px solid var(--acento);
-  outline-offset: 3px;
-}
-
-.titulo-pagina h1 span {
-  color: var(--acento);
-}
-
 .titulo-pagina p {
   margin: 0;
   color: #3d5872;

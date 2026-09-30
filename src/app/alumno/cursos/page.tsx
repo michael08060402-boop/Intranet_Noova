@@ -1,53 +1,37 @@
-import { BookOpen, CircleCheck, CirclePlay, Clock, Layers } from "lucide-react";
-import { EstadoVacio, SelectorOrden, SelectorVista, TituloPagina } from "@/components/alumno/PiezasCatalogo";
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { EstadoVacio, SelectorOrden, TituloPagina, type Orden } from "@/components/alumno/PiezasCatalogo";
 import "./MisCursos.css";
 
-const filtros = [
-  { nombre: "Todos", Icono: Layers },
-  { nombre: "En progreso", Icono: CirclePlay },
-  { nombre: "Completados", Icono: CircleCheck },
-  { nombre: "Sin empezar", Icono: Clock },
-];
+const filtros = ["Todos", "En progreso", "Completados", "Sin empezar"];
 
+// Solo diseño: los cursos y su avance se conectarán cuando exista el registro de progreso de las clases.
 export default function MisCursos() {
+  const [filtro, setFiltro] = useState("Todos");
+  const [orden, setOrden] = useState<Orden>("recientes");
+
   return (
     <main className="my-courses">
-      <div className="my-courses__top">
-        <TituloPagina
-          className="my-courses__heading"
-          titulo={
-            <>
-              Mis <span>cursos</span>
-            </>
-          }
-          descripcion="Continúa tu formación donde la dejaste."
-        />
-        <div className="my-courses__toolbar">
-          <div className="my-courses__filters" aria-label="Filtrar cursos por progreso">
-            {filtros.map(({ nombre, Icono }, indice) => (
-              <button
-                key={nombre}
-                type="button"
-                aria-pressed={indice === 0}
-                className={indice === 0 ? "is-active" : ""}
-              >
-                <Icono />
-                {nombre} (0)
-              </button>
-            ))}
-          </div>
-          <div className="my-courses__controls">
-            <SelectorVista />
-            <SelectorOrden />
-          </div>
+      <TituloPagina className="my-courses__heading" titulo="Mis cursos" descripcion="Continúa tu formación donde la dejaste." />
+      <div className="my-courses__toolbar">
+        <div className="my-courses__filters" aria-label="Filtrar cursos por progreso">
+          {filtros.map((nombre) => (
+            <button key={nombre} type="button" aria-pressed={filtro === nombre} className={filtro === nombre ? "is-active" : ""} onClick={() => setFiltro(nombre)}>
+              {nombre} · 0
+            </button>
+          ))}
         </div>
+        <SelectorOrden orden={orden} alCambiar={setOrden} />
       </div>
       <EstadoVacio
         className="my-courses__vacio"
-        Icono={BookOpen}
-        titulo="Aún no tienes cursos"
-        texto="Cuando tengas cursos disponibles, aparecerán aquí."
-      />
+        titulo={filtro === "Todos" ? "Aún no tienes cursos" : `No tienes cursos ${filtro.toLowerCase()}`}
+        texto="Cuando empieces un curso desde Explorar, aparecerá aquí con tu avance."
+      >
+        <Link href="/alumno/explorar" className="my-courses__explorar">Explorar cursos</Link>
+      </EstadoVacio>
     </main>
   );
 }

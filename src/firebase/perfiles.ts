@@ -1,5 +1,5 @@
 import type { User } from "firebase/auth";
-import { doc, runTransaction, serverTimestamp, updateDoc } from "firebase/firestore";
+import { collection, doc, onSnapshot, query, runTransaction, serverTimestamp, updateDoc, where } from "firebase/firestore";
 import { db } from "./config";
 
 export type Perfil = {
@@ -8,6 +8,18 @@ export type Perfil = {
   rol: "alumno" | "admin";
   plan: "gratis" | "premium";
 };
+
+export type Alumno = { id: string; nombre: string; correo: string; plan: Perfil["plan"]; creadoEn: number };
+
+export function escucharAlumnos(alCambiar: (alumnos: Alumno[]) => void, alFallar: () => void) {
+  return onSnapshot(query(collection(db, "usuarios"), where("rol", "==", "alumno")), (resultado) => {
+    const alumnos = resultado.docs.map((documento) => {
+      const datos = documento.data();
+      return { id: documento.id, nombre: datos.nombre, correo: datos.correo, plan: datos.plan, creadoEn: datos.creadoEn?.toMillis() ?? 0 };
+    });
+    alCambiar(alumnos.sort((a, b) => b.creadoEn - a.creadoEn));
+  }, alFallar);
+}
 
 export function capitalizarNombre(nombre: string) {
   return nombre

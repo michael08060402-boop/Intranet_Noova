@@ -1,0 +1,457 @@
+/* El layout del admin fija el alto de la pantalla; esta página puede ser más larga, así que usa el scroll normal. */
+.admin-shell:has(.curso-admin) {
+  height: auto;
+}
+.curso-admin {
+  width: min(94%, 1200px);
+  margin: 0 auto;
+  padding: 22px 0 48px;
+}
+.curso-admin svg,
+.clase-modal svg {
+  stroke-width: 1.8;
+}
+.curso-admin__estado {
+  color: var(--texto-suave);
+  font-size: 15px;
+}
+.curso-admin__migas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+.curso-admin__migas [aria-current] {
+  color: var(--texto);
+  font-weight: 700;
+}
+.curso-admin__migas-enlace:hover {
+  color: var(--acento-oscuro);
+  text-decoration: underline;
+}
+
+.curso-admin__heading {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+.curso-admin__volver {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: #fff;
+}
+.curso-admin__volver svg {
+  width: 20px;
+  height: 20px;
+}
+.curso-admin__volver:hover {
+  border-color: var(--acento);
+}
+.curso-admin__portada {
+  display: grid;
+  place-items: center;
+  width: 110px;
+  flex-shrink: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radio);
+  background: var(--acento-suave);
+  color: #7fb8d4;
+}
+.curso-admin__portada svg {
+  width: 24px;
+  height: 24px;
+}
+.curso-admin__titulo {
+  min-width: 0;
+}
+.curso-admin__titulo h1 {
+  font-size: clamp(22px, 2vw, 28px);
+  font-weight: 750;
+  letter-spacing: -.8px;
+  line-height: 1.2;
+}
+.curso-admin__titulo p {
+  margin-top: 2px;
+  color: var(--texto-suave);
+  font-size: 15px;
+}
+.curso-admin__heading > .curso-admin__estado-badge {
+  margin-left: 12px;
+}
+
+.curso-admin__estado-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.curso-admin__estado-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.curso-admin__estado-badge.is-publicado {
+  background: #e6f6ee;
+  color: #1a7f4b;
+}
+.curso-admin__estado-badge.is-borrador {
+  background: #fff1db;
+  color: #b25e00;
+}
+.curso-admin__error {
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radio);
+  background: #fdecea;
+  color: #b42318;
+  font-size: 13px;
+}
+
+.curso-admin__panel {
+  padding: 20px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  background: #fff;
+  box-shadow: var(--sombra);
+}
+.curso-admin__panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.curso-admin__panel-heading h2 {
+  font-size: 21px;
+  font-weight: 750;
+  letter-spacing: -.5px;
+}
+.curso-admin__panel-heading p {
+  margin-top: 2px;
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+.curso-admin__nueva {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: var(--radio);
+  background: var(--acento);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.curso-admin__nueva svg {
+  width: 18px;
+  height: 18px;
+}
+.curso-admin__nueva:hover {
+  background: var(--acento-oscuro);
+}
+
+.curso-admin__tabla-wrap {
+  overflow-x: auto;
+}
+.curso-admin__tabla {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+.curso-admin__tabla thead th {
+  padding: 10px 16px;
+  background: #f0f4f8;
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+}
+.curso-admin__tabla thead th:first-child {
+  width: 70px;
+  border-radius: var(--radio) 0 0 var(--radio);
+  text-align: center;
+}
+.curso-admin__tabla thead th:last-child {
+  width: 120px;
+  border-radius: 0 var(--radio) var(--radio) 0;
+}
+.curso-admin__tabla tbody td {
+  padding: 10px 16px;
+  border-block: 1px solid var(--borde);
+  vertical-align: middle;
+}
+.curso-admin__tabla tbody td:first-child {
+  border-left: 1px solid var(--borde);
+  border-radius: var(--radio) 0 0 var(--radio);
+  text-align: center;
+}
+.curso-admin__tabla tbody td:last-child {
+  border-right: 1px solid var(--borde);
+  border-radius: 0 var(--radio) var(--radio) 0;
+}
+.curso-admin__tabla .curso-admin__vacio {
+  padding: 28px 12px;
+  border: 1px dashed var(--borde);
+  border-radius: var(--radio);
+  color: var(--texto-suave);
+  font-size: 14px;
+  text-align: center;
+}
+.curso-admin__oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.curso-admin__numero {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  color: var(--texto-suave);
+  font-size: 14px;
+  font-weight: 600;
+}
+.curso-admin__clase {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.curso-admin__miniatura {
+  display: grid;
+  place-items: center;
+  width: 110px;
+  flex-shrink: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radio);
+  background: linear-gradient(135deg, #0c4566, #1a7299 60%, #3fb6dd);
+  color: #fff;
+}
+.curso-admin__miniatura svg {
+  width: 30px;
+  height: 30px;
+}
+.curso-admin__clase > div {
+  min-width: 0;
+}
+.curso-admin__clase strong {
+  display: block;
+  font-size: 15px;
+}
+.curso-admin__clase small {
+  display: block;
+  overflow: hidden;
+  color: var(--texto-suave);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.curso-admin__videos {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  color: var(--texto-suave);
+  font-size: 12px;
+}
+.curso-admin__videos svg {
+  width: 15px;
+  height: 15px;
+}
+.curso-admin__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.curso-admin__icono {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #9fd6ee;
+  border-radius: var(--radio);
+  background: #fff;
+  color: var(--acento);
+  cursor: pointer;
+}
+.curso-admin__icono svg {
+  width: 18px;
+  height: 18px;
+}
+.curso-admin__icono:hover:not(:disabled) {
+  background: var(--acento-suave);
+}
+.curso-admin__icono--peligro {
+  border-color: #f5b5ae;
+  color: #d92d20;
+}
+.curso-admin__icono--peligro:hover:not(:disabled) {
+  background: #fef3f2;
+}
+.curso-admin__icono:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+.curso-admin a:focus-visible,
+.curso-admin button:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+
+.curso-admin__confirmar,
+.clase-modal {
+  width: min(92%, 400px);
+  margin: auto;
+  padding: 26px;
+  border-radius: var(--radio-grande);
+  background: #fff;
+  color: var(--texto);
+  box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
+}
+.clase-modal {
+  width: min(92%, 500px);
+}
+.curso-admin__confirmar::backdrop,
+.clase-modal::backdrop {
+  background: rgb(3 35 55 / 45%);
+}
+.curso-admin__confirmar h2,
+.clase-modal h2 {
+  margin-bottom: 6px;
+  font-size: 19px;
+  font-weight: 700;
+}
+.curso-admin__confirmar p {
+  margin-bottom: 22px;
+  color: var(--texto-suave);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.curso-admin__confirmar-acciones,
+.clase-modal__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.curso-admin__confirmar-acciones button,
+.clase-modal__acciones button {
+  padding: 10px 18px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: #fff;
+  color: var(--texto);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.curso-admin__confirmar-acciones button:hover,
+.clase-modal__acciones button:hover:not(:disabled) {
+  background: var(--acento-suave);
+}
+.curso-admin__confirmar-acciones .curso-admin__confirmar-eliminar {
+  border-color: #d92d20;
+  background: #d92d20;
+  color: #fff;
+}
+.curso-admin__confirmar-acciones .curso-admin__confirmar-eliminar:hover {
+  background: #b42318;
+}
+.clase-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+}
+.clase-modal label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 650;
+}
+.clase-modal input:not([type="checkbox"]),
+.clase-modal textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #cfdbe7;
+  border-radius: var(--radio);
+  background: #fff;
+  color: var(--texto);
+  font-size: 14px;
+  font-weight: 400;
+}
+.clase-modal textarea {
+  min-height: 90px;
+}
+.clase-modal .clase-modal__check {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+.clase-modal__check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--acento);
+}
+.clase-modal__error {
+  color: #b42318;
+  font-size: 13px;
+}
+.clase-modal__acciones .clase-modal__guardar {
+  border-color: var(--acento);
+  background: var(--acento);
+  color: #fff;
+}
+.clase-modal__acciones .clase-modal__guardar:hover:not(:disabled) {
+  background: var(--acento-oscuro);
+}
+.clase-modal__acciones button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+.curso-admin__confirmar button:focus-visible,
+.clase-modal :focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .curso-admin__heading {
+    flex-wrap: wrap;
+  }
+  .curso-admin__portada {
+    width: 80px;
+  }
+  .curso-admin__heading > .curso-admin__estado-badge {
+    margin-left: 0;
+  }
+  .curso-admin__panel {
+    padding: 14px;
+  }
+  .curso-admin__panel-heading {
+    flex-direction: column;
+  }
+  .curso-admin__miniatura {
+    width: 72px;
+  }
+}

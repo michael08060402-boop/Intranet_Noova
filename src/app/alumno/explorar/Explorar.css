@@ -6,23 +6,24 @@
 .student-explore__heading {
   position: relative;
   isolation: isolate;
-  padding: 12px 14px 32px;
+  padding: 12px 0 48px;
+  text-align: center;
 }
+/* Mismo tratamiento que Inicio y Mis cursos, con la foto propia de Explorar. */
 .student-explore__heading::before {
   content: "";
   position: absolute;
   z-index: -1;
   top: -26px;
   bottom: 0;
-  right: calc((100% - 100vw) / 2);
-  width: 90%;
+  left: calc((100% - 100vw) / 2);
+  width: 100vw;
   background:
-    linear-gradient(90deg, #f3f6f9 0%, rgb(243 246 249 / 75%) 25%, transparent 60%),
-    linear-gradient(0deg, #f3f6f9, transparent 60%),
+    linear-gradient(0deg, #f3f6f9 0%, #f3f6f9 22%, rgb(243 246 249 / 70%) 55%, rgb(243 246 249 / 55%) 100%),
     linear-gradient(#1a7299, #1a7299),
     url("../../../assets/fondos/fondo-explorar.webp") center 25% / cover;
-  background-blend-mode: normal, normal, color, normal;
-  opacity: 0.85;
+  background-blend-mode: normal, color, normal;
+  opacity: 0.8;
   pointer-events: none;
 }
 .student-explore__layout {
@@ -143,15 +144,20 @@
   flex: 1;
   min-width: 0;
   padding: 0 16px;
-  border: 5px solid white;
+  border: 1px solid var(--borde);
   border-radius: var(--radio);
-  background: #edf2f8;
+  background: #fff;
   color: var(--texto);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.student-explore__search:focus-within {
+  border-color: var(--acento);
+  box-shadow: 0 0 0 3px rgb(0 152 219 / 15%);
 }
 .student-explore__search input {
   width: 100%;
   min-width: 0;
-  height: 34px;
+  height: 42px;
   border: 0;
   outline: none;
   background: transparent;
@@ -164,8 +170,7 @@
 }
 .student-explore__sidebar button:focus-visible,
 .student-explore summary:focus-visible,
-.student-explore input:focus-visible,
-.student-explore__search:focus-within {
+.student-explore__types input:focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 3px;
 }
@@ -245,4 +250,299 @@
 .student-explore__vacio {
   flex: 1;
   min-height: clamp(330px, 54svh, 630px);
+}
+
+.student-explore__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+.student-explore__card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .18s ease, transform .18s ease;
+}
+.student-explore__card:hover {
+  border-color: var(--acento);
+  transform: translateY(-2px);
+}
+.student-explore__cover {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, #0c4566, #1a7299 60%, #3fb6dd);
+  color: rgb(255 255 255 / 85%);
+}
+.student-explore .student-explore__cover > svg {
+  width: 44px;
+  height: 44px;
+}
+.student-explore__card.is-bloqueado .student-explore__cover {
+  filter: grayscale(.45) brightness(.85);
+}
+.student-explore__candado {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgb(3 35 55 / 75%);
+  color: #ffd95a;
+  font-size: 12px;
+  font-weight: 700;
+}
+.student-explore .student-explore__candado svg {
+  width: 14px;
+  height: 14px;
+}
+.student-explore__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px 16px;
+}
+.student-explore__info small {
+  color: var(--acento-oscuro);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.student-explore__info strong {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.student-explore__descripcion {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--texto-suave);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.student-explore__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.student-explore__badge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 650;
+}
+.student-explore__badge--gratis {
+  background: #e6f6ee;
+  color: #1a7f4b;
+}
+.student-explore__badge--premium {
+  background: #fff4d1;
+  color: #8a6400;
+}
+.student-explore__card:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+
+.student-explore__volver {
+  margin-bottom: 18px;
+  color: var(--acento-oscuro);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.student-explore__volver:hover {
+  text-decoration: underline;
+}
+.student-curso {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+.student-curso__cover {
+  display: grid;
+  place-items: center;
+  width: 220px;
+  flex-shrink: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radio-grande);
+  background: linear-gradient(135deg, #0c4566, #1a7299 60%, #3fb6dd);
+  color: rgb(255 255 255 / 85%);
+}
+.student-explore .student-curso__cover svg {
+  width: 52px;
+  height: 52px;
+}
+.student-curso__categoria {
+  color: var(--acento-oscuro);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.student-curso h1 {
+  margin: 4px 0 8px;
+}
+.student-curso p {
+  max-width: 680px;
+  margin-bottom: 10px;
+  color: #3d5872;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.student-curso__premium {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding: 16px 20px;
+  border: 1px solid #f3dc8b;
+  border-radius: var(--radio-grande);
+  background: #fffaeb;
+}
+.student-curso__premium > span {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--radio);
+  background: #fff1c2;
+  color: #a37200;
+}
+.student-curso__premium > div {
+  flex: 1;
+}
+.student-curso__premium strong {
+  font-size: 15px;
+}
+.student-curso__premium p {
+  margin-top: 2px;
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+.student-curso__premium a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 10px 18px;
+  border: 1px solid #ffe78a;
+  border-radius: 30px;
+  background: linear-gradient(#fff095, #ffda5b);
+  color: #17202c;
+  font-size: 14px;
+  font-weight: 650;
+}
+.student-curso__premium a:hover {
+  background: #fff095;
+}
+.student-explore .student-curso__premium a svg {
+  width: 18px;
+  height: 18px;
+}
+.student-curso__clases {
+  padding: 22px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  background: #fff;
+}
+.student-curso__clases h2 {
+  margin-bottom: 14px;
+  font-size: 19px;
+  font-weight: 700;
+}
+.student-curso__clases ol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+.student-curso__clases li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+.student-curso__clases li > div {
+  flex: 1;
+  min-width: 0;
+}
+.student-curso__clases li strong {
+  display: block;
+  font-size: 15px;
+}
+.student-curso__clases li small {
+  display: block;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.student-curso__clases li > svg {
+  color: var(--texto-suave);
+}
+.student-curso__clases.is-bloqueado li {
+  background: #f8fafc;
+}
+.student-curso__clases.is-bloqueado li strong,
+.student-curso__clases.is-bloqueado li small {
+  opacity: .7;
+}
+.student-curso__numero {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--radio);
+  background: var(--acento-suave);
+  color: var(--acento-oscuro);
+  font-size: 14px;
+  font-weight: 700;
+}
+.student-curso__aviso {
+  padding: 16px 0;
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+.student-curso__nota {
+  margin-top: 14px;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+@media (max-width: 760px) {
+  .student-curso {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .student-curso__cover {
+    width: 100%;
+    max-width: 320px;
+  }
+  .student-curso__premium {
+    flex-wrap: wrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .student-explore__card {
+    transition: none;
+  }
 }

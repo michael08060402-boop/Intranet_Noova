@@ -1,145 +1,122 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { Image as IconoImagen, Plus, X } from "lucide-react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Image as IconoImagen, X } from "lucide-react";
+import { useSesion } from "@/components/acceso/SesionProvider";
+import { actualizarCurso, crearCurso, nombresNivel, type Acceso, type Categoria, type Curso, type Nivel } from "@/firebase/cursos";
 import "./NuevoCurso.css";
 
-const tiposDePortada = ["image/png", "image/jpeg", "image/webp"];
-const pesoMaximoPortada = 5 * 1024 * 1024;
-
-export default function NuevoCurso() {
+export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Curso | null; categorias: Categoria[]; alCerrar: () => void }) {
   const dialogo = useRef<HTMLDialogElement>(null);
-  const formulario = useRef<HTMLFormElement>(null);
-  const [descripcion, setDescripcion] = useState("");
-  const [portada, setPortada] = useState<File | null>(null);
-  const [preview, setPreview] = useState("");
+  const { usuario } = useSesion();
+  const activas = categorias.filter((categoria) => categoria.activa);
+  const [nombre, setNombre] = useState(curso?.nombre ?? "");
+  const [descripcion, setDescripcion] = useState(curso?.descripcion ?? "");
+  const [categoriaId, setCategoriaId] = useState(curso?.categoriaId ?? "");
+  // Las categorías pueden llegar después de abrir el formulario; mientras no se elija una, se usa la primera activa.
+  const categoriaElegida = categoriaId || activas[0]?.id || "";
+  const [nivel, setNivel] = useState<Nivel>(curso?.nivel ?? "basico");
+  const [acceso, setAcceso] = useState<Acceso>(curso?.acceso ?? "gratis");
+  const [publicado, setPublicado] = useState(curso?.publicado ?? false);
+  const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    return () => {
-      if (preview) URL.revokeObjectURL(preview);
-    };
-  }, [preview]);
+  useEffect(() => { dialogo.current?.showModal(); }, []);
 
-  function abrir() {
-    formulario.current?.reset();
-    setDescripcion("");
-    setPortada(null);
-    setPreview("");
+  async function guardar(evento: FormEvent<HTMLFormElement>) {
+    evento.preventDefault();
+    if (!usuario) return;
+    if (nombre.trim().length < 2) return setError("El nombre debe tener al menos 2 caracteres.");
+    // Al editar se permite conservar una categoría ya desactivada; las reglas solo exigen una activa al cambiarla.
+    const valida = activas.some((categoria) => categoria.id === categoriaElegida) || categoriaElegida === curso?.categoriaId;
+    if (!valida) return setError("Selecciona una categoría activa.");
+
+    setGuardando(true);
     setError("");
-    dialogo.current?.showModal();
+    const datos = { nombre: nombre.trim(), descripcion: descripcion.trim(), categoriaId: categoriaElegida, nivel, acceso, publicado };
+    try {
+      if (curso) await actualizarCurso(curso.id, datos);
+      else await crearCurso(datos, usuario.uid);
+      dialogo.current?.close();
+    } catch {
+      setError("No se pudo guardar el curso. Revisa tu conexión y que tu cuenta sea administradora.");
+      setGuardando(false);
+    }
   }
 
   return (
-    <>
-      <button className="nuevo-curso__abrir" type="button" onClick={abrir}>
-        <Plus />
-        Nuevo curso
-      </button>
-      <dialog
-        ref={dialogo}
-        className="nuevo-curso"
-        aria-labelledby="nuevo-curso-titulo"
-        onClick={(evento) => {
-          if (evento.target !== evento.currentTarget) return;
-          const rect = evento.currentTarget.getBoundingClientRect();
-          const fuera =
-            evento.clientX < rect.left ||
-            evento.clientX > rect.right ||
-            evento.clientY < rect.top ||
-            evento.clientY > rect.bottom;
-          if (fuera) dialogo.current?.close();
-        }}
-      >
-        <header className="nuevo-curso__heading">
-          <h2 id="nuevo-curso-titulo">Crear nuevo curso</h2>
-          <button type="button" aria-label="Cerrar modal" onClick={() => dialogo.current?.close()}>
-            <X />
-          </button>
-        </header>
-        <form ref={formulario} onSubmit={(evento) => evento.preventDefault()}>
+    <dialog ref={dialogo} className="nuevo-curso" aria-labelledby="nuevo-curso-titulo" onClose={alCerrar} onClick={(evento) => {
+      if (evento.target !== evento.currentTarget) return;
+      const rect = evento.currentTarget.getBoundingClientRect();
+      const fuera = evento.clientX < rect.left || evento.clientX > rect.right || evento.clientY < rect.top || evento.clientY > rect.bottom;
+      if (fuera) dialogo.current?.close();
+    }}>
+      <header className="nuevo-curso__heading">
+        <h2 id="nuevo-curso-titulo">{curso ? "Editar curso" : "Crear nuevo curso"}</h2>
+        <button type="button" aria-label="Cerrar modal" onClick={() => dialogo.current?.close()}>
+          <X />
+        </button>
+      </header>
+      <form onSubmit={guardar}>
+        <label className="nuevo-curso__field">
+          <span>Nombre del curso</span>
+          <input value={nombre} onChange={(evento) => setNombre(evento.target.value)} placeholder="Ej. VentSim" required minLength={2} maxLength={120} autoFocus />
+        </label>
+        <label className="nuevo-curso__field">
+          <span>Descripción</span>
+          <textarea value={descripcion} onChange={(evento) => setDescripcion(evento.target.value)} placeholder="Describe brevemente el contenido del curso..." maxLength={500} aria-describedby="curso-contador" />
+          <small id="curso-contador" className="nuevo-curso__counter">{descripcion.length}/500</small>
+        </label>
+        {activas.length > 0 || curso ? (
           <label className="nuevo-curso__field">
-            <span>Nombre del curso</span>
-            <input name="nombre" placeholder="Ej. VentSim" required maxLength={120} autoFocus />
-          </label>
-          <label className="nuevo-curso__field">
-            <span>Descripción</span>
-            <textarea
-              name="descripcion"
-              placeholder="Describe brevemente el contenido del curso..."
-              maxLength={300}
-              value={descripcion}
-              onChange={(evento) => setDescripcion(evento.target.value)}
-              aria-describedby="curso-contador"
-            />
-            <small id="curso-contador" className="nuevo-curso__counter">
-              {descripcion.length}/300
-            </small>
-          </label>
-          <div className="nuevo-curso__field">
-            <span id="curso-portada-label">Portada del curso</span>
-            <label className="nuevo-curso__upload">
-              <input
-                type="file"
-                name="portada"
-                accept={tiposDePortada.join(",")}
-                aria-labelledby="curso-portada-label"
-                aria-describedby={error ? "curso-portada-error" : "curso-portada-ayuda"}
-                onChange={(evento) => {
-                  const archivo = evento.target.files?.[0];
-                  if (!archivo) return;
-                  if (!tiposDePortada.includes(archivo.type) || archivo.size > pesoMaximoPortada) {
-                    setError("Selecciona una imagen PNG, JPG o WEBP de hasta 5 MB.");
-                    evento.target.value = "";
-                    setPortada(null);
-                    setPreview("");
-                    return;
-                  }
-                  setError("");
-                  setPortada(archivo);
-                  setPreview(URL.createObjectURL(archivo));
-                }}
-              />
-              {portada && preview ? (
-                <Image src={preview} alt="Vista previa de la portada" width={160} height={80} unoptimized />
-              ) : (
-                <IconoImagen />
+            <span>Categoría</span>
+            <select value={categoriaElegida} onChange={(evento) => setCategoriaId(evento.target.value)} required>
+              {curso && !activas.some((categoria) => categoria.id === curso.categoriaId) && (
+                <option value={curso.categoriaId}>{categorias.find((categoria) => categoria.id === curso.categoriaId)?.nombre ?? "Categoría actual"} (inactiva)</option>
               )}
-              <span>{portada ? portada.name : "Haz clic para subir una imagen"}</span>
-              <small id="curso-portada-ayuda">PNG, JPG o WEBP (máx. 5 MB)</small>
-            </label>
-            {error && (
-              <p id="curso-portada-error" className="nuevo-curso__error" role="alert">
-                {error}
-              </p>
-            )}
+              {activas.map((categoria) => <option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>)}
+            </select>
+          </label>
+        ) : (
+          <div className="nuevo-curso__field">
+            <span>Categoría</span>
+            <p className="nuevo-curso__notice">No hay categorías activas. Créalas en Firestore, en la colección <strong>categorias</strong>.</p>
           </div>
-          <fieldset className="nuevo-curso__states">
-            <legend>Estado</legend>
-            <label>
-              <input type="radio" name="estado" value="borrador" defaultChecked />
-              <span>
-                Borrador<small>El curso no será visible para los alumnos.</small>
-              </span>
-            </label>
-            <label>
-              <input type="radio" name="estado" value="publicado" />
-              <span>
-                Publicado<small>El curso estará disponible para los alumnos.</small>
-              </span>
-            </label>
-          </fieldset>
-          <footer className="nuevo-curso__footer">
-            <button type="button" onClick={() => dialogo.current?.close()}>
-              Cancelar
-            </button>
-            <button type="submit" className="nuevo-curso__submit">
-              Crear curso
-            </button>
-          </footer>
-        </form>
-      </dialog>
-    </>
+        )}
+        <div className="nuevo-curso__row">
+          <label className="nuevo-curso__field">
+            <span>Nivel</span>
+            <select value={nivel} onChange={(evento) => setNivel(evento.target.value as Nivel)}>
+              {Object.entries(nombresNivel).map(([valor, etiqueta]) => <option key={valor} value={valor}>{etiqueta}</option>)}
+            </select>
+          </label>
+          <label className="nuevo-curso__field">
+            <span>Acceso</span>
+            <select value={acceso} onChange={(evento) => setAcceso(evento.target.value as Acceso)}>
+              <option value="gratis">Gratis</option>
+              <option value="premium">Premium</option>
+            </select>
+          </label>
+        </div>
+        <div className="nuevo-curso__field">
+          <span>Portada del curso</span>
+          <div className="nuevo-curso__upload" aria-disabled="true">
+            <IconoImagen />
+            <span>Disponible próximamente</span>
+            <small>Podrás añadir la portada al editar el curso.</small>
+          </div>
+        </div>
+        <fieldset className="nuevo-curso__states">
+          <legend>Estado</legend>
+          <label><input type="radio" name="estado" checked={!publicado} onChange={() => setPublicado(false)} /><span>Borrador<small>El curso no será visible para los alumnos.</small></span></label>
+          <label><input type="radio" name="estado" checked={publicado} onChange={() => setPublicado(true)} /><span>Publicado<small>El curso estará disponible para los alumnos.</small></span></label>
+        </fieldset>
+        {error && <p className="nuevo-curso__error" role="alert">{error}</p>}
+        <footer className="nuevo-curso__footer">
+          <button type="button" onClick={() => dialogo.current?.close()}>Cancelar</button>
+          <button type="submit" className="nuevo-curso__submit" disabled={guardando || !categoriaElegida}>{guardando ? "Guardando…" : curso ? "Guardar cambios" : "Crear curso"}</button>
+        </footer>
+      </form>
+    </dialog>
   );
 }

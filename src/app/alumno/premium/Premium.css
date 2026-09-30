@@ -1,0 +1,311 @@
+.premium-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(160deg, #f6fafd 0%, #e6f1f9 100%);
+}
+.premium-page::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 900' preserveAspectRatio='none'%3E%3Cpath d='M-60 30C120 10 230 190 430 150S730 40 900 90' fill='none' stroke='%23cfe5f5' stroke-width='60' stroke-linecap='round' opacity='.75'/%3E%3Cpath d='M-60 170C140 120 280 330 500 270S780 160 900 210' fill='none' stroke='%23ffffff' stroke-width='44' stroke-linecap='round' opacity='.85'/%3E%3Cpath d='M-60 320C170 260 320 470 550 400S810 290 900 330' fill='none' stroke='%23d4e8f6' stroke-width='54' stroke-linecap='round' opacity='.6'/%3E%3Cpath d='M-60 470C190 400 350 600 590 520' fill='none' stroke='%23ffffff' stroke-width='26' stroke-linecap='round' opacity='.7'/%3E%3C/svg%3E") left top / 100% 100% no-repeat,
+    radial-gradient(circle at 6% 8%, rgb(160 208 238 / 55%) 0%, rgb(160 208 238 / 20%) 22%, transparent 45%);
+  pointer-events: none;
+}
+.premium-page__imagen {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 0 auto;
+  width: 42%;
+  background:
+    linear-gradient(0deg, #e6f1f9 0%, transparent 22%),
+    linear-gradient(200deg, rgb(238 245 251 / 85%) 0%, rgb(238 245 251 / 30%) 22%, transparent 42%),
+    linear-gradient(#1a7299, #1a7299),
+    url("../../../assets/fondos/fondo-premium.webp") 45% center / cover;
+  background-blend-mode: normal, normal, color, normal;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 38%);
+  opacity: 0.7;
+}
+.premium-page__montanas {
+  position: absolute;
+  z-index: -1;
+  bottom: 0;
+  left: 0;
+  width: 48%;
+  height: 48%;
+  background:
+    linear-gradient(#1a7299, #1a7299),
+    url("../../../assets/fondos/paisaje-mina.webp") 30% bottom / cover;
+  background-blend-mode: color, normal;
+  mask-image: linear-gradient(28deg, #000 18%, rgb(0 0 0 / 55%) 38%, transparent 62%);
+  opacity: 0.9;
+}
+.premium-page__contenido {
+  width: min(90%, 1100px);
+  margin: 0 auto;
+  padding: 48px 0 56px;
+}
+.premium-page__heading {
+  text-align: center;
+}
+.premium-page__eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+}
+.premium-page .premium-page__heading h1 {
+  margin: 0 0 12px;
+  font-size: clamp(32px, 3.6vw, 52px);
+  font-weight: 800;
+  letter-spacing: -1.6px;
+  line-height: 1.08;
+}
+.premium-page__heading h1 span {
+  color: var(--acento);
+}
+.premium-page__heading p {
+  color: var(--texto-suave);
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.45;
+}
+.premium-page__planes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 390px));
+  justify-content: center;
+  gap: 24px;
+  margin-top: 32px;
+}
+.premium-page__plan {
+  display: flex;
+  flex-direction: column;
+  padding: 30px 32px;
+  border: 1px solid var(--borde);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 20px 44px rgb(8 39 71 / 10%);
+}
+.premium-page__plan--premium {
+  border: 2px solid var(--acento);
+  background: rgb(255 255 255 / 94%);
+}
+.premium-page__popular {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 5px 12px;
+  border-radius: var(--radio);
+  background: #ffe38a;
+  color: #3b2d00;
+  font-size: 13px;
+  font-weight: 700;
+}
+.premium-page .premium-page__popular svg {
+  width: 16px;
+  height: 16px;
+}
+.premium-page__plan h2 {
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -0.6px;
+}
+.premium-page__descripcion {
+  margin: 4px 0 18px;
+  color: var(--texto-suave);
+  font-size: 15px;
+}
+.premium-page__precio {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+.premium-page__periodo {
+  margin: 4px 0 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--borde);
+  color: var(--texto-suave);
+  font-size: 15px;
+}
+.premium-page__plan ul {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.premium-page__plan li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 15px;
+}
+.premium-page__plan li.is-excluido {
+  color: var(--texto-suave);
+}
+.premium-page__marca {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #c3ccd6;
+  color: #fff;
+}
+.premium-page__marca.is-incluido {
+  background: var(--acento);
+}
+.premium-page .premium-page__marca svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 3;
+}
+.premium-page__secundario,
+.premium-page__principal {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.premium-page__secundario {
+  border: 1.5px solid var(--acento);
+  background: #fff;
+  color: var(--acento-oscuro);
+}
+.premium-page__secundario:hover {
+  background: var(--acento-suave);
+}
+.premium-page__principal {
+  background: var(--acento);
+  color: #fff;
+  font-size: 18px;
+}
+.premium-page__principal:hover:not(:disabled) {
+  background: var(--acento-oscuro);
+}
+.premium-page__principal:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.premium-page .premium-page__principal svg {
+  width: 24px;
+  height: 24px;
+}
+.premium-page a:focus-visible,
+.premium-page button:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+@media (min-width: 761px) {
+  /* La pantalla ocupa exactamente el alto que deja el navbar, sin depender de su medida. */
+  .student-shell:has(.premium-page) {
+    display: flex;
+    flex-direction: column;
+    height: 100svh;
+    min-height: 0;
+  }
+  .premium-page {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden auto;
+  }
+  .premium-page__contenido {
+    margin-block: auto;
+    padding: clamp(12px, 3svh, 40px) 0;
+  }
+  .premium-page__eyebrow {
+    margin-bottom: clamp(2px, 0.8svh, 10px);
+    font-size: clamp(11px, 1.5svh, 13px);
+  }
+  .premium-page .premium-page__heading h1 {
+    margin-bottom: clamp(4px, 1svh, 12px);
+    font-size: clamp(26px, 4.8svh, 52px);
+  }
+  .premium-page__heading p {
+    font-size: clamp(14px, 1.9svh, 20px);
+    line-height: 1.35;
+  }
+  .premium-page__planes {
+    margin-top: clamp(12px, 2.6svh, 32px);
+  }
+  .premium-page__plan {
+    padding: clamp(14px, 2.4svh, 30px) 30px;
+  }
+  .premium-page__popular {
+    margin-bottom: clamp(4px, 1.2svh, 14px);
+    padding-block: 3px;
+  }
+  .premium-page__plan h2 {
+    font-size: clamp(19px, 2.6svh, 24px);
+  }
+  .premium-page__descripcion {
+    margin: 2px 0 clamp(6px, 1.4svh, 18px);
+    font-size: clamp(13px, 1.7svh, 15px);
+  }
+  .premium-page__precio {
+    font-size: clamp(24px, 3.8svh, 36px);
+  }
+  .premium-page__periodo {
+    margin: 2px 0 clamp(8px, 1.6svh, 20px);
+    padding-bottom: clamp(8px, 1.6svh, 20px);
+    font-size: clamp(13px, 1.7svh, 15px);
+  }
+  .premium-page__plan ul {
+    gap: clamp(4px, 1.1svh, 14px);
+    margin-bottom: clamp(10px, 2.2svh, 28px);
+  }
+  .premium-page__plan li {
+    font-size: clamp(13px, 1.7svh, 15px);
+  }
+  .premium-page__marca {
+    width: clamp(18px, 2.6svh, 24px);
+    height: clamp(18px, 2.6svh, 24px);
+  }
+  .premium-page__secundario,
+  .premium-page__principal {
+    padding-block: clamp(8px, 1.4svh, 14px);
+  }
+}
+@media (max-width: 1100px) {
+  .premium-page__imagen {
+    width: 50%;
+    opacity: 0.6;
+  }
+}
+@media (max-width: 760px) {
+  .premium-page__imagen,
+  .premium-page__montanas,
+  .premium-page::before {
+    display: none;
+  }
+  .premium-page__contenido {
+    padding: 28px 0 40px;
+  }
+  .premium-page__salto {
+    display: none;
+  }
+  .premium-page__planes {
+    grid-template-columns: 1fr;
+  }
+  .premium-page__plan {
+    padding: 24px 22px;
+  }
+}

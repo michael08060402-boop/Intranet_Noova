@@ -11,7 +11,7 @@ import {
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
-import { Eye, Lock, Mail, User, UserPlus } from "lucide-react";
+import { Eye } from "lucide-react";
 import iconoGoogle from "@/assets/marca/google.svg";
 import { auth } from "@/firebase/config";
 import { mensajeDeError } from "@/firebase/errores";
@@ -23,12 +23,6 @@ const titulos = {
   entrar: "Bienvenido de nuevo",
   registrar: "Crea tu cuenta",
   recuperar: "Restablece tu contraseña",
-};
-
-const bajadas = {
-  entrar: "Ingresa a tu cuenta para continuar aprendiendo.",
-  registrar: "Regístrate para comenzar tu recorrido de aprendizaje.",
-  recuperar: "Te enviaremos un enlace para que recuperes el acceso.",
 };
 
 const textosBoton = {
@@ -94,32 +88,7 @@ export default function FormularioAcceso() {
   return (
     <div className="auth-card">
       <h1>{titulos[modo]}</h1>
-      <p className="auth-card__lead">{bajadas[modo]}</p>
-
-      {modo !== "recuperar" && (
-        <div className="auth-tabs" role="tablist" aria-label="Tipo de acceso">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={modo === "entrar"}
-            className={modo === "entrar" ? "is-active" : ""}
-            onClick={() => cambiarModo("entrar")}
-          >
-            <User className="auth-icon" />
-            Iniciar sesión
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={modo === "registrar"}
-            className={modo === "registrar" ? "is-active" : ""}
-            onClick={() => cambiarModo("registrar")}
-          >
-            <UserPlus className="auth-icon" />
-            Crear cuenta
-          </button>
-        </div>
-      )}
+      {modo === "recuperar" && <p className="auth-card__lead">Te enviaremos un enlace para que recuperes el acceso.</p>}
 
       <form className="auth-form" onSubmit={enviarFormulario}>
         {modo === "registrar" && (
@@ -136,23 +105,19 @@ export default function FormularioAcceso() {
         )}
         <label className="auth-field">
           <span>Correo electrónico</span>
-          <span className="auth-input">
-            <Mail className="auth-icon" />
-            <input
-              type="email"
-              autoComplete="email"
-              value={correo}
-              onChange={(evento) => setCorreo(evento.target.value)}
-              placeholder="nombre@empresa.com"
-              required
-            />
-          </span>
+          <input
+            type="email"
+            autoComplete="email"
+            value={correo}
+            onChange={(evento) => setCorreo(evento.target.value)}
+            placeholder="nombre@empresa.com"
+            required
+          />
         </label>
         {modo !== "recuperar" && (
           <label className="auth-field">
             <span>Contraseña</span>
-            <span className="auth-input auth-password">
-              <Lock className="auth-icon" />
+            <span className="auth-password">
               <input
                 type={mostrarClave ? "text" : "password"}
                 autoComplete={modo === "registrar" ? "new-password" : "current-password"}
@@ -197,14 +162,13 @@ export default function FormularioAcceso() {
         )}
         <button className="auth-submit" type="submit" disabled={enviando}>
           {enviando ? "Un momento…" : textosBoton[modo]}
-          {!enviando && <span aria-hidden="true">→</span>}
         </button>
       </form>
 
       {modo !== "recuperar" && (
         <>
           <div className="auth-divider">
-            <span>o continúa con</span>
+            <span>o</span>
           </div>
           <button className="auth-google" type="button" onClick={entrarConGoogle} disabled={enviando}>
             <Image src={iconoGoogle} alt="" width={16} height={16} />

@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "firebase/auth";
-import { BookOpen, Calculator, ChevronDown, Compass, Crown, House, LogOut } from "lucide-react";
-import isotipo from "@/assets/marca/isotipo-noova.webp";
+import { BookOpen, Calculator, ChevronDown, Compass, House, LogOut } from "lucide-react";
+import logoNoova from "@/assets/marca/noova.webp";
 import AccesoPorRol from "@/components/acceso/AccesoPorRol";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { auth } from "@/firebase/config";
@@ -30,11 +30,7 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
       <div className="student-shell">
         <header className="student-header">
           <Link href="/alumno" className="student-brand" aria-label="Noova Learn Mining, inicio">
-            <Image src={isotipo} alt="" preload />
-            <span className="student-brand__texto">
-              <span className="student-brand__nombre">NOOVA</span>
-              <small>LEARN MINING</small>
-            </span>
+            <Image src={logoNoova} alt="" preload />
           </Link>
           <nav className="student-nav" aria-label="Navegación del alumno">
             {enlaces.map(({ href, etiqueta, Icono }) => {
@@ -59,17 +55,6 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
             </button>
           </nav>
           <div className="student-account">
-            {perfil?.plan === "gratis" && (
-              <button
-                type="button"
-                className="student-premium"
-                aria-label="Hazte Premium"
-                title="Hazte Premium"
-              >
-                <Crown />
-                <span>Hazte Premium</span>
-              </button>
-            )}
             <span className="student-avatar">{nombre.charAt(0).toUpperCase()}</span>
             <span className="student-account__name">
               {nombre}
