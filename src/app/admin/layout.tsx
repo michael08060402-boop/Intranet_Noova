@@ -3,20 +3,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { signOut } from "firebase/auth";
-import { BookOpen, LayoutDashboard, LogOut, Users } from "lucide-react";
+import { Bell, BookOpen, ChartColumn, ClipboardCheck, LayoutDashboard, LogOut, Users } from "lucide-react";
 import logoNoova from "@/assets/marca/noova.webp";
 import AccesoPorRol from "@/components/acceso/AccesoPorRol";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { auth } from "@/firebase/config";
+import { escucharIntentos } from "@/firebase/evaluaciones";
 import { capitalizarNombre } from "@/firebase/perfiles";
 import "./AdminLayout.css";
 
 const enlaces = [
   { href: "/admin", etiqueta: "Dashboard", Icono: LayoutDashboard },
   { href: "/admin/cursos", etiqueta: "Cursos", Icono: BookOpen },
+  { href: "/admin/evaluaciones", etiqueta: "Evaluaciones", Icono: ClipboardCheck },
   { href: "/admin/alumnos", etiqueta: "Alumnos", Icono: Users },
+  { href: "/admin/reportes", etiqueta: "Reportes", Icono: ChartColumn },
 ];
 
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
@@ -24,6 +27,10 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   const { perfil } = useSesion();
   const confirmarSalida = useRef<HTMLDialogElement>(null);
   const nombre = capitalizarNombre(perfil?.nombre.split(" ")[0] || "Administrador");
+  // Entregas de exámenes que esperan nota: es el aviso del administrador.
+  const [porCalificar, setPorCalificar] = useState(0);
+
+  useEffect(() => escucharIntentos("entregado", (intentos) => setPorCalificar(intentos.length), () => setPorCalificar(0)), []);
 
   return (
     <AccesoPorRol rol="admin">
@@ -54,6 +61,15 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
             })}
           </nav>
           <div className="admin-header__actions">
+            <Link
+              href="/admin/evaluaciones"
+              className="admin-header__campana"
+              aria-label={porCalificar > 0 ? `${porCalificar} entregas por calificar` : "Notificaciones: no hay entregas por calificar"}
+              title={porCalificar > 0 ? `${porCalificar} entregas por calificar` : "No hay entregas por calificar"}
+            >
+              <Bell />
+              {porCalificar > 0 && <span>{porCalificar > 99 ? "99+" : porCalificar}</span>}
+            </Link>
             <span className="admin-header__avatar">{nombre.charAt(0).toUpperCase()}</span>
             <span className="admin-header__identity">
               {nombre}

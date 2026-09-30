@@ -546,3 +546,25 @@
     transition: none;
   }
 }
+
+.student-curso__examenes {
+  margin-top: 18px;
+}
+.student-curso__examenes .student-curso__numero svg {
+  width: 18px;
+  height: 18px;
+}
+.student-curso__rendir {
+  flex-shrink: 0;
+  padding: 9px 16px;
+  border: 1px solid var(--acento);
+  border-radius: var(--radio);
+  background: var(--acento-suave);
+  color: var(--acento-oscuro);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.student-curso__rendir:hover {
+  background: #d9f0fb;
+}

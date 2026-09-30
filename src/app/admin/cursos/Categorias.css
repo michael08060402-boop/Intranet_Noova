@@ -1,0 +1,130 @@
+.categorias__formulario {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.categorias__formulario .nuevo-curso__field {
+  flex: 1;
+  margin-bottom: 0;
+}
+.categorias__formulario button {
+  height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: #fff;
+  color: var(--texto);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.categorias__formulario button:hover {
+  background: var(--acento-suave);
+}
+.categorias__formulario .nuevo-curso__submit {
+  border-color: var(--acento);
+  background: var(--acento);
+  color: #fff;
+}
+.categorias__formulario .nuevo-curso__submit:hover {
+  background: var(--acento-oscuro);
+}
+.categorias__formulario .nuevo-curso__submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.categorias__lista {
+  margin: 16px 0 0;
+  padding: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  list-style: none;
+}
+.categorias__lista li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+}
+.categorias__lista li + li {
+  border-top: 1px solid var(--borde);
+}
+.categorias__lista li.is-inactiva strong {
+  color: var(--texto-suave);
+}
+.categorias__lista strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+.categorias__lista small {
+  color: var(--texto-suave);
+  font-size: 12px;
+}
+.categorias__acciones,
+.categorias__confirmar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.categorias__acciones button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: var(--radio);
+  background: transparent;
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+.categorias__acciones button:hover:not(:disabled) {
+  background: var(--acento-suave);
+  color: var(--acento-oscuro);
+}
+.categorias__acciones button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.categorias__acciones svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.8;
+}
+.categorias__confirmar span {
+  font-size: 13px;
+  font-weight: 600;
+}
+.categorias__confirmar button {
+  padding: 7px 12px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: #fff;
+  color: var(--texto);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.categorias__confirmar .categorias__eliminar {
+  border-color: #d92d20;
+  background: #d92d20;
+  color: #fff;
+}
+.categorias__confirmar .categorias__eliminar:hover {
+  background: #b42318;
+}
+@media (max-width: 480px) {
+  .categorias__formulario {
+    flex-wrap: wrap;
+  }
+  .categorias__lista li {
+    flex-wrap: wrap;
+  }
+}

@@ -97,6 +97,84 @@
 .student-account button svg {
   width: 19px;
 }
+.student-campana {
+  position: relative;
+}
+.student-campana svg {
+  width: 21px;
+}
+.student-account .student-campana span {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 18px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--premium);
+  color: var(--texto);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+.student-avisos {
+  inset: 72px 3% auto auto;
+  width: min(92%, 360px);
+  max-height: min(70svh, 460px);
+  margin: 0;
+  padding: 16px;
+  overflow-y: auto;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  background: #fff;
+  color: var(--texto);
+  box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
+}
+.student-avisos h2 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.student-avisos__vacio {
+  padding: 14px 0 6px;
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+.student-avisos ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  list-style: none;
+}
+.student-avisos li a {
+  display: block;
+  padding: 10px 12px;
+  border-left: 3px solid transparent;
+  border-radius: var(--radio);
+  font-size: 14px;
+}
+.student-avisos li a:hover {
+  background: var(--acento-suave);
+}
+.student-avisos li.is-nueva a {
+  border-left: 3px solid var(--acento);
+  background: #f3faff;
+}
+.student-avisos li strong {
+  display: block;
+  font-weight: 650;
+}
+.student-avisos li span {
+  display: block;
+  margin-top: 2px;
+  color: var(--texto-suave);
+}
+.student-avisos li small {
+  display: block;
+  margin-top: 4px;
+  color: var(--texto-suave);
+  font-size: 12px;
+}
 .student-logout {
   width: min(92%, 380px);
   margin: auto;

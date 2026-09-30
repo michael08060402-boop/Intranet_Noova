@@ -78,6 +78,35 @@
   font-size: 11px;
   font-weight: 400;
 }
+.admin-header__campana {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border-radius: var(--radio);
+  color: #fff;
+}
+.admin-header__campana:hover {
+  background: rgb(255 255 255 / 12%);
+}
+.admin-header__campana svg {
+  width: 21px;
+  height: 21px;
+}
+.admin-header__campana span {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 18px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: #ffd100;
+  color: #082747;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
 .admin-header__logout {
   display: grid;
   place-items: center;
@@ -94,7 +123,7 @@
 .admin-header__logout svg {
   width: 19px;
 }
-.admin-header a:focus-visible, .admin-header__logout:focus-visible {
+.admin-header a:focus-visible, .admin-header__logout:focus-visible, .admin-header__campana:focus-visible {
   outline: 2px solid var(--acento-claro);
   outline-offset: 4px;
 }

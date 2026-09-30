@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { BookOpen, ChevronsUpDown, Image as IconoImagen, Pencil, Plus, Search, Settings, Trash2 } from "lucide-react";
+import { BookOpen, ChevronsUpDown, Image as IconoImagen, Layers, Pencil, Plus, Search, Settings, Trash2 } from "lucide-react";
 import { contarDocumentos, eliminarCurso, escucharCategorias, escucharCursos, nombresNivel, type Categoria, type Curso } from "@/firebase/cursos";
+import Categorias from "./Categorias";
 import NuevoCurso from "./NuevoCurso";
 import "./CursosPage.css";
 
@@ -31,8 +32,10 @@ export default function CursosPage() {
 
 function Cursos() {
   const router = useRouter();
-  // El acceso rápido "Crear curso" del panel llega con ?nuevo para abrir el formulario al entrar.
-  const nuevo = useSearchParams().has("nuevo");
+  // Los accesos del panel llegan con ?nuevo (crear curso) o ?categorias para abrir el modal al entrar.
+  const parametros = useSearchParams();
+  const nuevo = parametros.has("nuevo");
+  const conParametro = nuevo || parametros.has("categorias");
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [clases, setClases] = useState<Record<string, number>>({});
@@ -43,6 +46,7 @@ function Cursos() {
   const [orden, setOrden] = useState<{ columna: Columna; ascendente: boolean }>({ columna: "nombre", ascendente: true });
   // undefined: modal cerrado; null: crear; Curso: editar.
   const [editando, setEditando] = useState<Curso | null | undefined>(nuevo ? null : undefined);
+  const [gestionandoCategorias, setGestionandoCategorias] = useState(parametros.has("categorias"));
   const [eliminando, setEliminando] = useState<Curso | null>(null);
   const confirmar = useRef<HTMLDialogElement>(null);
 
@@ -103,7 +107,10 @@ function Cursos() {
           <h1>Cursos</h1>
           <p>Administra tus cursos y sus clases.</p>
         </div>
-        <button className="cursos-create" type="button" onClick={() => setEditando(null)}><Plus />Nuevo curso</button>
+        <div className="cursos-heading__acciones">
+          <button className="cursos-secundario" type="button" onClick={() => setGestionandoCategorias(true)}><Layers />Categorías</button>
+          <button className="cursos-create" type="button" onClick={() => setEditando(null)}><Plus />Nuevo curso</button>
+        </div>
       </header>
 
       <section className="cursos-panel" aria-label="Listado de cursos">
@@ -199,6 +206,10 @@ function Cursos() {
       {editando !== undefined && <NuevoCurso curso={editando} categorias={categorias} alCerrar={() => {
         setEditando(undefined);
         if (nuevo) router.replace("/admin/cursos");
+      }} />}
+      {gestionandoCategorias && <Categorias categorias={categorias} cursos={cursos} alCerrar={() => {
+        setGestionandoCategorias(false);
+        if (conParametro) router.replace("/admin/cursos");
       }} />}
     </main>
   );

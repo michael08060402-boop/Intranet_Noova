@@ -80,7 +80,7 @@ export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Cur
         ) : (
           <div className="nuevo-curso__field">
             <span>Categoría</span>
-            <p className="nuevo-curso__notice">No hay categorías activas. Créalas en Firestore, en la colección <strong>categorias</strong>.</p>
+            <p className="nuevo-curso__notice">No hay categorías activas. Créalas con el botón <strong>Categorías</strong> de la lista de cursos.</p>
           </div>
         )}
         <div className="nuevo-curso__row">

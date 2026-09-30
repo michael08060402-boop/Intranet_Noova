@@ -38,14 +38,20 @@
   font-size: clamp(14px, 1.2vw, 17px);
   font-weight: 500;
 }
-.cursos-create {
+.cursos-heading__acciones {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+}
+.cursos-create,
+.cursos-secundario {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   gap: 10px;
   padding: 13px 26px;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: var(--radio);
   background: var(--acento);
   color: #fff;
@@ -53,14 +59,24 @@
   font-weight: 600;
   cursor: pointer;
 }
-.cursos-create svg {
+.cursos-secundario {
+  border: 1px solid var(--borde);
+  background: #fff;
+  color: var(--texto);
+}
+.cursos-secundario:hover {
+  background: var(--acento-suave);
+}
+.cursos-create svg,
+.cursos-secundario svg {
   width: 20px;
   height: 20px;
 }
 .cursos-create:hover {
   background: var(--acento-oscuro);
 }
-.cursos-create:active {
+.cursos-create:active,
+.cursos-secundario:active {
   transform: translateY(1px);
 }
 
@@ -327,6 +343,7 @@
   cursor: not-allowed;
 }
 .cursos-create:focus-visible,
+.cursos-secundario:focus-visible,
 .cursos-search:focus-within,
 .cursos-category:focus-visible,
 .cursos-ordenar:focus-visible,
@@ -483,12 +500,18 @@
   .cursos-heading p {
     max-width: 190px;
   }
-  .cursos-create {
+  .cursos-heading__acciones {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cursos-create,
+  .cursos-secundario {
     gap: 6px;
     padding: 12px;
     font-size: 13px;
   }
-  .cursos-create svg {
+  .cursos-create svg,
+  .cursos-secundario svg {
     width: 18px;
     height: 18px;
   }

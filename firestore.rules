@@ -170,6 +170,92 @@ service cloud.firestore {
         && datos.actualizadoEn == request.time;
     }
 
+    function rutaExamen(examenId) {
+      return /databases/$(database)/documents/examenes/$(examenId);
+    }
+
+    // Las notas van de 0 a 20. Las preguntas no se validan una a una: solo las escribe un administrador.
+    function examenValido(datos) {
+      return datos.keys().hasAll([
+          'cursoId', 'nombre', 'descripcion', 'modo', 'duracionMin', 'notaMinima',
+          'publicado', 'preguntas', 'creadoEn', 'actualizadoEn', 'creadoPor'
+        ])
+        && datos.keys().hasOnly([
+          'cursoId', 'nombre', 'descripcion', 'modo', 'duracionMin', 'notaMinima',
+          'publicado', 'preguntas', 'creadoEn', 'actualizadoEn', 'creadoPor'
+        ])
+        && idValido(datos.cursoId)
+        && textoValido(datos.nombre, 2, 120)
+        && textoValido(datos.descripcion, 0, 2000)
+        && datos.modo in ['manual', 'archivo']
+        && datos.duracionMin is int
+        && datos.duracionMin >= 0
+        && datos.duracionMin <= 480
+        && datos.notaMinima is number
+        && datos.notaMinima >= 0
+        && datos.notaMinima <= 20
+        && datos.publicado is bool
+        && datos.preguntas is list
+        && datos.preguntas.size() <= 100
+        && (datos.modo == 'archivo' || datos.preguntas.size() >= 1)
+        && datos.creadoEn is timestamp
+        && datos.actualizadoEn == request.time
+        && textoValido(datos.creadoPor, 1, 128);
+    }
+
+    // Un examen se puede rendir si está publicado, su curso también y el alumno tiene acceso al curso.
+    function examenDisponible(examenId, cursoId) {
+      return exists(rutaExamen(examenId))
+        && exists(rutaCurso(cursoId))
+        && get(rutaExamen(examenId)).data.publicado == true
+        && get(rutaExamen(examenId)).data.modo == 'manual'
+        && get(rutaExamen(examenId)).data.cursoId == cursoId
+        && get(rutaCurso(cursoId)).data.publicado == true
+        && (get(rutaCurso(cursoId)).data.acceso == 'gratis' || tienePlanPremium());
+    }
+
+    function intentoInicialValido(datos, intentoId) {
+      return datos.keys().hasAll([
+          'examenId', 'cursoId', 'uid', 'nombre', 'correo', 'inicio', 'fin',
+          'estado', 'respuestas', 'nota', 'actualizadoEn'
+        ])
+        && datos.keys().hasOnly([
+          'examenId', 'cursoId', 'uid', 'nombre', 'correo', 'inicio', 'fin',
+          'estado', 'respuestas', 'nota', 'actualizadoEn'
+        ])
+        && idValido(datos.examenId)
+        && idValido(datos.cursoId)
+        && intentoId == datos.examenId + '_' + request.auth.uid
+        && datos.uid == request.auth.uid
+        && datos.correo == request.auth.token.email
+        && datos.nombre == perfilActual().nombre
+        && datos.inicio == request.time
+        && datos.fin == null
+        && datos.estado == 'en_curso'
+        && datos.respuestas is map
+        && datos.respuestas.size() == 0
+        && datos.nota == null
+        && datos.actualizadoEn == request.time
+        && examenDisponible(datos.examenId, datos.cursoId);
+    }
+
+    // Margen de un minuto sobre el tiempo del examen para absorber la latencia de red.
+    function dentroDelTiempo(intento) {
+      return get(rutaExamen(intento.examenId)).data.duracionMin == 0
+        || request.time <= intento.inicio
+          + duration.value(get(rutaExamen(intento.examenId)).data.duracionMin + 1, 'm');
+    }
+
+    function notificacionValida(datos) {
+      return datos.keys().hasAll(['titulo', 'texto', 'enlace', 'leida', 'creadoEn'])
+        && datos.keys().hasOnly(['titulo', 'texto', 'enlace', 'leida', 'creadoEn'])
+        && textoValido(datos.titulo, 1, 120)
+        && textoValido(datos.texto, 0, 300)
+        && textoValido(datos.enlace, 0, 200)
+        && datos.leida == false
+        && datos.creadoEn == request.time;
+    }
+
     function progresoValido(datos, progresoId) {
       return datos.keys().hasAll([
           'cursoId', 'claseId', 'completado', 'completadoEn', 'actualizadoEn'
@@ -232,6 +318,20 @@ service cloud.firestore {
           && request.resource.data.claseId == resource.data.claseId
           && request.resource.data.diff(resource.data).affectedKeys()
             .hasOnly(['completado', 'completadoEn', 'actualizadoEn']);
+
+        allow delete: if false;
+      }
+
+      // Las crea el administrador (por ejemplo, al publicar una nota); el alumno solo las marca como leídas.
+      match /notificaciones/{notificacionId} {
+        allow get, list: if esPropietario(uid) && esAlumnoVerificado();
+
+        allow create: if esAdministrador() && notificacionValida(request.resource.data);
+
+        allow update: if esPropietario(uid)
+          && esAlumnoVerificado()
+          && request.resource.data.leida is bool
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['leida']);
 
         allow delete: if false;
       }
@@ -323,6 +423,76 @@ service cloud.firestore {
           allow delete: if esAdministrador();
         }
       }
+    }
+
+    match /examenes/{examenId} {
+      // La lista muestra cursos premium; rendir el examen exige acceso al curso (ver intentos).
+      allow get, list: if esAdministrador()
+        || (esAlumnoVerificado() && resource.data.publicado == true);
+
+      allow create: if esAdministrador()
+        && idValido(examenId)
+        && examenValido(request.resource.data)
+        && exists(rutaCurso(request.resource.data.cursoId))
+        && request.resource.data.creadoPor == request.auth.uid
+        && request.resource.data.creadoEn == request.time;
+
+      allow update: if esAdministrador()
+        && examenValido(request.resource.data)
+        && request.resource.data.cursoId == resource.data.cursoId
+        && request.resource.data.creadoEn == resource.data.creadoEn
+        && request.resource.data.creadoPor == resource.data.creadoPor;
+
+      allow delete: if esAdministrador();
+
+      // Respuestas correctas: nunca se leen desde el navegador del alumno.
+      match /claves/{claveId} {
+        allow read, delete: if esAdministrador();
+
+        allow create, update: if esAdministrador()
+          && claveId == 'clave'
+          && request.resource.data.keys().hasOnly(['respuestas', 'actualizadoEn'])
+          && request.resource.data.respuestas is map
+          && request.resource.data.actualizadoEn == request.time;
+      }
+    }
+
+    match /intentos/{intentoId} {
+      allow get, list: if esAdministrador()
+        || (esAlumnoVerificado() && resource.data.uid == request.auth.uid);
+
+      // Un intento por examen: el ID es examenId_uid y empieza al abrir el examen.
+      allow create: if esAlumnoVerificado()
+        && intentoInicialValido(request.resource.data, intentoId);
+
+      // El alumno guarda respuestas y entrega mientras corre el tiempo.
+      allow update: if esAlumnoVerificado()
+        && resource.data.uid == request.auth.uid
+        && resource.data.estado == 'en_curso'
+        && request.resource.data.estado in ['en_curso', 'entregado']
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['respuestas', 'estado', 'fin', 'actualizadoEn'])
+        && request.resource.data.respuestas is map
+        && request.resource.data.respuestas.size() <= 100
+        && request.resource.data.actualizadoEn == request.time
+        && ((request.resource.data.estado == 'en_curso' && request.resource.data.fin == null)
+          || (request.resource.data.estado == 'entregado' && request.resource.data.fin == request.time))
+        && dentroDelTiempo(resource.data);
+
+      // El administrador califica (o recalifica) y puede borrar un intento para que el alumno rinda de nuevo.
+      allow update: if esAdministrador()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['nota', 'puntajes', 'comentario', 'estado', 'calificadoEn', 'actualizadoEn'])
+        && request.resource.data.estado == 'calificado'
+        && request.resource.data.nota is number
+        && request.resource.data.nota >= 0
+        && request.resource.data.nota <= 20
+        && request.resource.data.puntajes is map
+        && textoValido(request.resource.data.comentario, 0, 1000)
+        && request.resource.data.calificadoEn == request.time
+        && request.resource.data.actualizadoEn == request.time;
+
+      allow delete: if esAdministrador();
     }
 
     match /{documento=**} {

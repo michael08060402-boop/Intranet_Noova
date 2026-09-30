@@ -16,7 +16,7 @@ import { db } from "./config";
 export type Nivel = "basico" | "intermedio" | "avanzado";
 export type Acceso = "gratis" | "premium";
 
-export type Categoria = { id: string; nombre: string; activa: boolean };
+export type Categoria = { id: string; nombre: string; descripcion: string; activa: boolean };
 
 export type Curso = {
   id: string;
@@ -31,6 +31,7 @@ export type Curso = {
 
 export type Clase = { id: string; nombre: string; descripcion: string; orden: number; publicado: boolean };
 
+export type DatosCategoria = Omit<Categoria, "id">;
 export type DatosCurso = Omit<Curso, "id" | "creadoEn">;
 export type DatosClase = Omit<Clase, "id">;
 
@@ -55,9 +56,26 @@ export function escucharCategorias(soloActivas: boolean, alCambiar: (categorias:
   const referencia = collection(db, "categorias");
   const consulta = soloActivas ? query(referencia, where("activa", "==", true)) : referencia;
   return onSnapshot(consulta, (resultado) => {
-    const categorias = resultado.docs.map((documento) => ({ id: documento.id, nombre: documento.data().nombre, activa: documento.data().activa }));
+    const categorias = resultado.docs.map((documento) => {
+      const datos = documento.data();
+      return { id: documento.id, nombre: datos.nombre, descripcion: datos.descripcion ?? "", activa: datos.activa };
+    });
     alCambiar(categorias.sort((a, b) => a.nombre.localeCompare(b.nombre)));
   }, alFallar);
+}
+
+export function crearCategoria(datos: DatosCategoria) {
+  return addDoc(collection(db, "categorias"), { ...datos, creadoEn: serverTimestamp(), actualizadoEn: serverTimestamp() });
+}
+
+// Las reglas exigen el documento completo: se reenvían siempre nombre, descripción y estado.
+export function actualizarCategoria(id: string, datos: DatosCategoria) {
+  return updateDoc(doc(db, "categorias", id), { ...datos, actualizadoEn: serverTimestamp() });
+}
+
+// Un curso guarda solo el ID de su categoría: eliminarla dejaría ese curso sin categoría.
+export function eliminarCategoria(id: string) {
+  return deleteDoc(doc(db, "categorias", id));
 }
 
 export function escucharCursos(soloPublicados: boolean, alCambiar: (cursos: Curso[]) => void, alFallar: () => void) {

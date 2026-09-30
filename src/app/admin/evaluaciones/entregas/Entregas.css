@@ -1,0 +1,108 @@
+.entregas__aviso {
+  margin-bottom: 14px;
+}
+.entregas__nota {
+  font-weight: 700;
+}
+.entregas__nota.is-aprobado {
+  color: #1a7f4b;
+}
+.entregas__nota.is-desaprobado {
+  color: #b42318;
+}
+.revision {
+  width: min(720px, calc(100% - 32px));
+}
+.revision__correo {
+  margin: 2px 0 0;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.revision__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.revision__lista > li {
+  padding: 14px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+.revision__enunciado {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 650;
+}
+.revision__opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+.revision__opciones li {
+  padding: 8px 12px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  font-size: 14px;
+}
+.revision__opciones li small {
+  display: block;
+  margin-top: 2px;
+  color: var(--texto-suave);
+  font-size: 12px;
+}
+.revision__opciones .is-correcta {
+  border-color: #6cc497;
+  background: #e6f6ee;
+}
+.revision__opciones .is-elegida:not(.is-correcta) {
+  border-color: #f0a19a;
+  background: #fdecea;
+}
+.revision__sin-respuesta {
+  color: var(--texto-suave);
+  font-style: italic;
+}
+.revision__abierta {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--radio);
+  background: #f3f6f9;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.revision__puntos {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 600;
+}
+.revision__puntos input {
+  width: 76px;
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid #cfdbe7;
+  border-radius: var(--radio);
+  font-size: 14px;
+  text-align: center;
+}
+.revision__pie {
+  align-items: center;
+}
+.revision__pie strong {
+  margin-right: auto;
+  font-size: 18px;
+}
+@media (max-width: 600px) {
+  .revision__pie {
+    flex-wrap: wrap;
+  }
+}

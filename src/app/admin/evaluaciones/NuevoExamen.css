@@ -1,0 +1,212 @@
+.nuevo-examen {
+  width: min(760px, calc(100% - 32px));
+}
+.nuevo-examen__modos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.nuevo-examen__modos label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: default;
+}
+.nuevo-examen__modos label.is-activo {
+  border-color: var(--acento);
+  background: var(--acento-suave);
+}
+.nuevo-examen__modos label.is-deshabilitado {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.nuevo-examen__modos input {
+  margin-top: 3px;
+  accent-color: var(--acento);
+}
+.nuevo-examen__modos span {
+  display: block;
+}
+.nuevo-examen__modos svg {
+  display: inline;
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  vertical-align: -3px;
+}
+.nuevo-examen__modos small {
+  display: block;
+  margin-top: 2px;
+  color: var(--texto-suave);
+  font-size: 12px;
+  font-weight: 400;
+}
+.nuevo-examen__preguntas {
+  margin: 4px 0 18px;
+}
+.nuevo-examen__resumen {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.nuevo-examen__resumen h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.nuevo-examen__resumen span {
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.nuevo-examen__pregunta {
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: #fafcfe;
+}
+.nuevo-examen__encabezado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.nuevo-examen__encabezado select {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #cfdbe7;
+  border-radius: var(--radio);
+  background: #fff;
+  font-size: 14px;
+}
+.nuevo-examen__puntos {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.nuevo-examen__puntos input {
+  width: 64px;
+  height: 38px;
+  padding: 0 8px;
+  border: 1px solid #cfdbe7;
+  border-radius: var(--radio);
+  background: #fff;
+  font-size: 14px;
+  text-align: center;
+}
+.nuevo-examen__encabezado > button,
+.nuevo-examen__opcion button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: var(--radio);
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+.nuevo-examen__encabezado > button:hover {
+  background: #fef3f2;
+  color: #d92d20;
+}
+.nuevo-examen__opcion button:hover:not(:disabled) {
+  background: var(--acento-suave);
+}
+.nuevo-examen__opcion button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.nuevo-examen__encabezado svg,
+.nuevo-examen__opcion svg {
+  width: 18px;
+  height: 18px;
+}
+.nuevo-examen__pregunta > textarea {
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 12px;
+  border: 1px solid #cfdbe7;
+  border-radius: var(--radio);
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+.nuevo-examen__opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+.nuevo-examen__opcion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nuevo-examen__opcion input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin: 0;
+  accent-color: var(--acento);
+  cursor: pointer;
+}
+.nuevo-examen__opcion input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #cfdbe7;
+  border-radius: var(--radio);
+  background: #fff;
+  font-size: 14px;
+}
+.nuevo-examen__agregar-opcion,
+.nuevo-examen__nuevas button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 8px 14px;
+  border: 1px dashed var(--acento);
+  border-radius: var(--radio);
+  background: #fff;
+  color: var(--acento-oscuro);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.nuevo-examen__agregar-opcion:hover,
+.nuevo-examen__nuevas button:hover {
+  background: var(--acento-suave);
+}
+.nuevo-examen__agregar-opcion svg,
+.nuevo-examen__nuevas svg {
+  width: 16px;
+  height: 16px;
+}
+.nuevo-examen__nuevas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+@media (max-width: 600px) {
+  .nuevo-examen__modos {
+    grid-template-columns: 1fr;
+  }
+  .nuevo-examen__encabezado {
+    flex-wrap: wrap;
+  }
+}

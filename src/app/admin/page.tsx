@@ -9,7 +9,7 @@ import "./PanelAdmin.css";
 
 const metricas = [
   { clave: "cursos", etiqueta: "Cursos", Icono: BookOpen, href: "/admin/cursos" },
-  { clave: "categorias", etiqueta: "Categorías", Icono: Layers, href: "/admin/cursos" },
+  { clave: "categorias", etiqueta: "Categorías", Icono: Layers, href: "/admin/cursos?categorias" },
   { clave: "alumnos", etiqueta: "Alumnos", Icono: Users, href: "/admin/alumnos" },
 ];
 
