@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowRight, BookOpen, ChartNoAxesColumn, Crown } from "lucide-react";
+import { ArrowRight, BookOpen, Crown } from "lucide-react";
 import heroAlumno from "@/assets/fondos/hero-alumno.webp";
 import { useSesion } from "@/components/acceso/SesionProvider";
-import { contarClasesPublicadas, escucharCursos, nombresNivel, type Curso } from "@/firebase/cursos";
+import TarjetaCurso from "@/components/alumno/TarjetaCurso";
+import { contarClasesPublicadas, escucharCategorias, escucharCursos, escucharInscripciones, escucharProgreso, type Categoria, type Curso, type Progreso } from "@/firebase/cursos";
 import { capitalizarNombre } from "@/firebase/perfiles";
 import "./InicioAlumno.css";
 
@@ -15,17 +16,42 @@ export default function InicioAlumno() {
   const nombre = capitalizarNombre(perfil?.nombre.split(" ")[0] || "estudiante");
   // Firebase solo actualiza lastSignInTime al iniciar sesión, así que el saludo inicial se mantiene durante toda la primera sesión.
   const primeraVez = usuario?.metadata.creationTime === usuario?.metadata.lastSignInTime;
-  const [destacados, setDestacados] = useState<Curso[]>([]);
+  const [cursos, setCursos] = useState<Curso[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [inscritos, setInscritos] = useState<string[]>([]);
+  const [progreso, setProgreso] = useState<Progreso[]>([]);
   const [clases, setClases] = useState<Record<string, number>>({});
   const [cargando, setCargando] = useState(true);
 
-  useEffect(() => escucharCursos(true, (lista) => { setDestacados(lista.slice(0, 4)); setCargando(false); }, () => setCargando(false)), []);
+  useEffect(() => escucharCursos(true, (lista) => { setCursos(lista); setCargando(false); }, () => setCargando(false)), []);
+  useEffect(() => escucharCategorias(true, setCategorias, () => setCategorias([])), []);
 
   useEffect(() => {
-    Promise.all(destacados.map(async (curso) => [curso.id, await contarClasesPublicadas(curso.id)] as const))
+    if (!usuario) return;
+    const dejarInscripciones = escucharInscripciones(usuario.uid, setInscritos, () => setInscritos([]));
+    const dejarProgreso = escucharProgreso(usuario.uid, (lista) => setProgreso(lista.filter((item) => item.completado)), () => setProgreso([]));
+    return () => { dejarInscripciones(); dejarProgreso(); };
+  }, [usuario]);
+
+  const destacados = cursos.slice(0, 4);
+  const misCursos = cursos.filter((curso) => inscritos.includes(curso.id));
+  const idsContar = [...new Set([...destacados, ...misCursos].map((curso) => curso.id))].join(",");
+
+  useEffect(() => {
+    if (!idsContar) return;
+    Promise.all(idsContar.split(",").map(async (id) => [id, await contarClasesPublicadas(id)] as const))
       .then((conteos) => setClases(Object.fromEntries(conteos)))
       .catch(() => setClases({}));
-  }, [destacados]);
+  }, [idsContar]);
+
+  function porcentaje(curso: Curso) {
+    const total = clases[curso.id] ?? 0;
+    const completadas = progreso.filter((item) => item.cursoId === curso.id).length;
+    return total ? Math.min(100, Math.round((completadas / total) * 100)) : 0;
+  }
+
+  // Los cursos terminados no se repiten aquí; primero los más avanzados.
+  const enCurso = misCursos.filter((curso) => porcentaje(curso) < 100).sort((a, b) => porcentaje(b) - porcentaje(a)).slice(0, 3);
 
   return (
     <main className="student-main">
@@ -57,19 +83,14 @@ export default function InicioAlumno() {
         {destacados.length > 0 ? (
           <div className="student-destacados">
             {destacados.map((curso) => (
-              <article key={curso.id} className="student-destacado">
-                <div className="student-destacado__portada">
-                  {curso.acceso === "premium" && <span className="student-destacado__premium">Premium</span>}
-                </div>
-                <div className="student-destacado__cuerpo">
-                  <h3>{curso.nombre}</h3>
-                  <p className="student-destacado__meta">
-                    <span>{clases[curso.id] ?? "…"} {clases[curso.id] === 1 ? "clase" : "clases"}</span>
-                    <span><ChartNoAxesColumn />{nombresNivel[curso.nivel]}</span>
-                  </p>
-                  <Link href={`/alumno/explorar?curso=${curso.id}`} className={curso.acceso === "premium" ? "is-borde" : ""}>Ver curso</Link>
-                </div>
-              </article>
+              <TarjetaCurso
+                key={curso.id}
+                curso={curso}
+                categoria={categorias.find((categoria) => categoria.id === curso.categoriaId)?.nombre}
+                clases={clases[curso.id]}
+                inscrito={inscritos.includes(curso.id)}
+                bloqueado={curso.acceso === "premium" && perfil?.plan !== "premium"}
+              />
             ))}
           </div>
         ) : (
@@ -83,18 +104,36 @@ export default function InicioAlumno() {
         )}
       </section>
 
-      {/* El progreso se registrará cuando existan los videos; mientras tanto esta sección muestra el estado vacío. */}
       <section className="student-courses" aria-labelledby="student-learning-title">
         <div className="student-section-heading">
           <h2 id="student-learning-title">Continúa aprendiendo</h2>
           <Link href="/alumno/cursos">Ver mis cursos<ArrowRight /></Link>
         </div>
-        <div className="student-empty student-empty--centrado">
-          <div>
-            <h3>Aún no tienes cursos en progreso</h3>
-            <p>Cuando comiences un curso, podrás retomarlo desde aquí.</p>
+        {enCurso.length > 0 ? (
+          <div className="student-continuar">
+            {enCurso.map((curso) => {
+              const valor = porcentaje(curso);
+              return (
+                <article key={curso.id} className="student-continuar__curso">
+                  <div className="student-continuar__portada" />
+                  <div className="student-continuar__cuerpo">
+                    <h3>{curso.nombre}</h3>
+                    <small>{valor}% completado</small>
+                    <span className="student-continuar__barra"><span style={{ width: `${valor}%` }} /></span>
+                    <Link href={`/alumno/curso?id=${curso.id}`}>{valor === 0 ? "Comenzar" : "Continuar"}<ArrowRight /></Link>
+                  </div>
+                </article>
+              );
+            })}
           </div>
-        </div>
+        ) : (
+          <div className="student-empty student-empty--centrado">
+            <div>
+              <h3>Aún no tienes cursos en progreso</h3>
+              <p>Cuando te inscribas en un curso, podrás retomarlo desde aquí.</p>
+            </div>
+          </div>
+        )}
       </section>
     </main>
   );

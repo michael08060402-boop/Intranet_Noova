@@ -199,6 +199,13 @@ export function reiniciarIntento(intentoId: string) {
   return deleteDoc(doc(db, "intentos", intentoId));
 }
 
+export function estadoExamen(examen: Examen, intento: Intento | undefined) {
+  if (!intento) return { texto: "Sin rendir", accion: "Rendir examen" };
+  if (intento.estado === "en_curso") return { texto: "En curso", accion: "Continuar" };
+  if (intento.estado === "entregado") return { texto: "Entregado · pendiente de nota", accion: "Ver" };
+  return { texto: `Nota ${intento.nota} de ${NOTA_MAXIMA} · ${(intento.nota ?? 0) >= examen.notaMinima ? "Aprobado" : "Desaprobado"}`, accion: "Ver resultado" };
+}
+
 // Momento en que vence el tiempo del intento; null si el examen no tiene límite.
 export const vencimientoIntento = (examen: Examen, intento: Intento) =>
   examen.duracionMin > 0 ? intento.inicio + examen.duracionMin * 60000 : null;

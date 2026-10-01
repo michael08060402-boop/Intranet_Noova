@@ -57,13 +57,14 @@ export default function MisCursos() {
     .sort((a, b) => orden === "nombre" ? a.nombre.localeCompare(b.nombre) : orden === "antiguos" ? a.creadoEn - b.creadoEn : b.creadoEn - a.creadoEn);
 
   return (
-    <main className="my-courses">
+    <main className="my-courses student-fondo">
       <TituloPagina className="my-courses__heading" titulo="Mis cursos" descripcion="Continúa tu formación donde la dejaste." />
       <div className="my-courses__toolbar">
         <div className="my-courses__filters" aria-label="Filtrar cursos por progreso">
           {filtros.map((nombre) => (
             <button key={nombre} type="button" aria-pressed={filtro === nombre} className={filtro === nombre ? "is-active" : ""} onClick={() => setFiltro(nombre)}>
-              {nombre} · {nombre === "Todos" ? misCursos.length : misCursos.filter((curso) => estado(curso) === nombre).length}
+              {nombre}
+              <span>{nombre === "Todos" ? misCursos.length : misCursos.filter((curso) => estado(curso) === nombre).length}</span>
             </button>
           ))}
         </div>

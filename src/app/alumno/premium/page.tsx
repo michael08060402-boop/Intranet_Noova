@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Check, Crown, X } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
+import { ahorroPeriodo, beneficiosPremium, buscarPeriodo, mesesRecomendados, nombrePeriodo, periodos, porMes } from "./planPremium";
 import "./Premium.css";
 
 const beneficios = [
@@ -15,8 +17,6 @@ const beneficios = [
   { texto: "Certificados de finalización", gratis: false },
 ];
 
-const beneficiosPremium = ["Todos los cursos y clases", "Contenido especializado", "Nuevos cursos cada mes", "Herramientas adicionales", "Certificados de finalización"];
-
 function Marca({ incluido }: { incluido: boolean }) {
   return (
     <span className={`premium-page__marca ${incluido ? "is-incluido" : ""}`} aria-label={incluido ? "Incluido" : "No incluido"}>
@@ -28,6 +28,7 @@ function Marca({ incluido }: { incluido: boolean }) {
 export default function Premium() {
   const { perfil } = useSesion();
   const esPremium = perfil?.plan === "premium";
+  const [meses, setMeses] = useState(mesesRecomendados);
 
   return (
     <main className="premium-page">
@@ -55,18 +56,28 @@ export default function Premium() {
           </section>
 
           <section className="premium-page__plan premium-page__plan--premium" aria-labelledby="plan-premium">
-            <span className="premium-page__popular"><Crown />Más popular</span>
+            <span className="premium-page__popular"><Crown />Recomendado</span>
             <h2 id="plan-premium">Plan Premium</h2>
             <p className="premium-page__descripcion">Accede a todo el contenido de la plataforma.</p>
-            <strong className="premium-page__precio">S/ 29.90</strong>
-            <p className="premium-page__periodo">por mes</p>
+            <div className="premium-page__periodos" role="radiogroup" aria-label="Periodo del plan">
+              {periodos.map((periodo) => (
+                <button key={periodo.meses} type="button" role="radio" aria-checked={meses === periodo.meses} className={meses === periodo.meses ? "is-activo" : ""} onClick={() => setMeses(periodo.meses)}>
+                  {nombrePeriodo(periodo.meses)}
+                </button>
+              ))}
+            </div>
+            <strong className="premium-page__precio">S/ {buscarPeriodo(meses).precio}</strong>
+            <p className="premium-page__periodo">
+              {meses === 1 ? "por 1 mes de acceso" : <>S/ {porMes(meses)} al mes · <b>Ahorras {ahorroPeriodo(meses)}%</b></>}
+            </p>
             <ul>
               {beneficiosPremium.map((beneficio) => <li key={beneficio}><Marca incluido />{beneficio}</li>)}
             </ul>
-            {/* El cobro depende de la integración con Culqi y un backend que actualice el plan. */}
-            <button type="button" className="premium-page__principal" disabled={esPremium}>
-              <Crown />{esPremium ? "Ya tienes Premium" : "Hazte Premium"}
-            </button>
+            {esPremium ? (
+              <button type="button" className="premium-page__principal student-dorado" disabled><Crown />Ya tienes Premium</button>
+            ) : (
+              <Link href={`/alumno/premium/pago?periodo=${meses}`} className="premium-page__principal student-dorado"><Crown />Hazte Premium</Link>
+            )}
           </section>
         </div>
       </div>

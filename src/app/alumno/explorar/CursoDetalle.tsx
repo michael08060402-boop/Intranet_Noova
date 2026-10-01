@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, CircleCheck, CirclePlay, ClipboardCheck, Crown, Lock, Play, PlusCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, ChartNoAxesColumn, CircleCheck, CirclePlay, ClipboardCheck, Crown, Lock, Play, PlusCircle, Tag } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { escucharClases, escucharInscripciones, escucharProgreso, inscribirse, nombresNivel, type Clase, type Curso, type Progreso } from "@/firebase/cursos";
-import { escucharExamenesDeCurso, escucharIntentosAlumno, NOTA_MAXIMA, type Examen, type Intento } from "@/firebase/evaluaciones";
+import { escucharExamenesDeCurso, escucharIntentosAlumno, estadoExamen, type Examen, type Intento } from "@/firebase/evaluaciones";
 
 export default function CursoDetalle({ curso, categoria, bloqueado, alVolver }: { curso: Curso; categoria: string; bloqueado: boolean; alVolver: () => void }) {
   const { usuario } = useSesion();
@@ -28,14 +28,6 @@ export default function CursoDetalle({ curso, categoria, bloqueado, alVolver }: 
   useEffect(() => escucharExamenesDeCurso(curso.id, setExamenes, () => setExamenes([])), [curso.id]);
   useEffect(() => (uid ? escucharIntentosAlumno(uid, setIntentos, () => setIntentos([])) : undefined), [uid]);
 
-  function estadoExamen(examen: Examen) {
-    const intento = intentos.find((actual) => actual.examenId === examen.id);
-    if (!intento) return { texto: "Sin rendir", accion: "Rendir examen" };
-    if (intento.estado === "en_curso") return { texto: "En curso", accion: "Continuar" };
-    if (intento.estado === "entregado") return { texto: "Entregado · pendiente de nota", accion: "Ver" };
-    return { texto: `Nota ${intento.nota} de ${NOTA_MAXIMA} · ${(intento.nota ?? 0) >= examen.notaMinima ? "Aprobado" : "Desaprobado"}`, accion: "Ver resultado" };
-  }
-
   useEffect(() => {
     if (!usuario) return;
     const fallo = () => setError("No se pudo consultar tu inscripción.");
@@ -57,48 +49,58 @@ export default function CursoDetalle({ curso, categoria, bloqueado, alVolver }: 
   const porcentaje = clases.length ? Math.round((completadas.length / clases.length) * 100) : 0;
   const siguiente = clases.find((clase) => !completadas.includes(clase)) ?? clases[0];
   const enlaceClase = (claseId: string) => `/alumno/curso?id=${curso.id}&clase=${claseId}`;
+  // Solo los exámenes en línea se rinden desde la plataforma.
+  const evaluaciones = examenes.filter((examen) => examen.modo === "manual");
 
   return (
     <main className="student-explore">
       <button type="button" className="student-explore__volver" onClick={alVolver}><ArrowLeft />Volver al catálogo</button>
       <section className="student-curso" aria-labelledby="student-curso-titulo">
-        <span className="student-curso__cover"><CirclePlay /></span>
+        <div className="student-curso__cover" />
         <div className="student-curso__info">
           <small className="student-curso__categoria">{categoria}</small>
           <h1 id="student-curso-titulo">{curso.nombre}</h1>
           {curso.descripcion && <p>{curso.descripcion}</p>}
-          <div className="student-explore__meta">
-            <span>{nombresNivel[curso.nivel]}</span>
-            <span className={`student-explore__badge student-explore__badge--${curso.acceso}`}>{curso.acceso === "premium" ? "Premium" : "Gratis"}</span>
-            <span>{clases.length} {clases.length === 1 ? "clase" : "clases"}</span>
+          <div className="student-curso__datos">
+            <span><ChartNoAxesColumn />{nombresNivel[curso.nivel]}</span>
+            <span><BookOpen />{clases.length} {clases.length === 1 ? "clase" : "clases"}</span>
+            <span>{curso.acceso === "premium" ? <><Crown />Premium</> : <><Tag />Gratuito</>}</span>
+            {evaluaciones.length > 0 && <span><ClipboardCheck />{evaluaciones.length} {evaluaciones.length === 1 ? "evaluación" : "evaluaciones"}</span>}
           </div>
-          <div className="student-curso__acciones">
-            {inscrito ? (
-              <>
-                {siguiente && <Link href={enlaceClase(siguiente.id)} className="student-curso__principal"><Play />{completadas.length > 0 ? "Continuar curso" : "Comenzar curso"}</Link>}
-                <span className="student-curso__inscrito"><Check />Inscrito</span>
-              </>
-            ) : bloqueado ? (
-              <Link href="/alumno/premium" className="student-curso__premium-boton"><Crown />Hazte Premium para inscribirte</Link>
-            ) : (
+          {inscrito ? (
+            <div className="student-curso__accion">
+              <div>
+                <strong>Tu avance: {porcentaje}%</strong>
+                <span className="student-curso__barra"><span style={{ width: `${porcentaje}%` }} /></span>
+                <small>{completadas.length} de {clases.length} {clases.length === 1 ? "clase" : "clases"}</small>
+              </div>
+              {siguiente && <Link href={enlaceClase(siguiente.id)} className="student-curso__principal">{completadas.length > 0 ? "Continuar curso" : "Comenzar curso"}<ArrowRight /></Link>}
+            </div>
+          ) : bloqueado ? (
+            <div className="student-curso__accion">
+              <Link href="/alumno/premium" className="student-curso__planes student-dorado">Ver planes<ArrowRight /></Link>
+            </div>
+          ) : (
+            <div className="student-curso__accion">
               <button type="button" className="student-curso__principal" onClick={inscribir} disabled={inscribiendo || cargando}>
                 <PlusCircle />{inscribiendo ? "Inscribiendo…" : curso.acceso === "gratis" ? "Inscribirse gratis" : "Inscribirse"}
               </button>
-            )}
-          </div>
+            </div>
+          )}
           {error && <p className="student-curso__error" role="alert">{error}</p>}
         </div>
       </section>
 
       <section className="student-curso__clases" aria-labelledby="student-curso-clases">
         <div className="student-curso__clases-titulo">
-          <h2 id="student-curso-clases">{inscrito ? "Contenido del curso" : "Vista previa del contenido"}</h2>
-          {inscrito && clases.length > 0 && (
-            <div className="student-curso__avance">
-              <span>{porcentaje}% completado</span>
-              <span className="student-curso__barra"><span style={{ width: `${porcentaje}%` }} /></span>
-            </div>
-          )}
+          <div>
+            <h2 id="student-curso-clases">Contenido del curso</h2>
+            {clases.length > 0 && (
+              <small>
+                {clases.length} {clases.length === 1 ? "clase" : "clases"} · {inscrito ? `${completadas.length} completadas` : bloqueado ? "Contenido bloqueado" : "Inscríbete para acceder"}
+              </small>
+            )}
+          </div>
         </div>
         {cargando ? <p className="student-curso__aviso">Cargando clases…</p>
           : clases.length === 0 ? <p className="student-curso__aviso">Este curso aún no tiene clases publicadas.</p>
@@ -124,14 +126,13 @@ export default function CursoDetalle({ curso, categoria, bloqueado, alVolver }: 
               })}
             </ol>
           )}
-        {!inscrito && clases.length > 0 && <p className="student-curso__nota">{bloqueado ? "Este curso es Premium. Hazte Premium para inscribirte y acceder a sus clases." : "Inscríbete para acceder a las clases del curso."}</p>}
       </section>
-      {examenes.some((examen) => examen.modo === "manual") && (
+      {evaluaciones.length > 0 && (
         <section className={`student-curso__clases student-curso__examenes ${bloqueado ? "is-bloqueado" : ""}`} aria-labelledby="student-curso-examenes">
           <h2 id="student-curso-examenes">Evaluaciones</h2>
           <ol>
-            {examenes.filter((examen) => examen.modo === "manual").map((examen) => {
-              const { texto, accion } = estadoExamen(examen);
+            {evaluaciones.map((examen) => {
+              const { texto, accion } = estadoExamen(examen, intentos.find((intento) => intento.examenId === examen.id));
               return (
                 <li key={examen.id}>
                   <span className="student-curso__numero"><ClipboardCheck /></span>

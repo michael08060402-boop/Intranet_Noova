@@ -1,0 +1,291 @@
+/* Perfil a la izquierda y Seguridad + Mi plan apiladas a la derecha, para que todo quepa sin desplazarse. */
+.perfil-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+  width: min(92%, 1200px);
+  margin: 0 auto;
+  padding: 24px 0 28px;
+}
+.perfil-page__heading {
+  grid-column: 1 / -1;
+  margin-bottom: 4px;
+  text-align: center;
+}
+/* Se estira hasta el alto de la columna derecha; el botón de guardar baja al fondo. */
+.perfil-page__tarjeta--datos {
+  grid-row: span 2;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+}
+.perfil-page__tarjeta--datos .perfil-page__formulario {
+  flex: 1;
+  grid-template-rows: auto auto 1fr;
+}
+.perfil-page__tarjeta {
+  padding: 20px 24px;
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 16px 32px rgb(8 39 71 / 8%);
+}
+.perfil-page__tarjeta h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-size: 18px;
+  font-weight: 700;
+}
+.perfil-page .perfil-page__tarjeta h2 svg {
+  width: 20px;
+  height: 20px;
+  color: var(--acento);
+}
+
+.perfil-page__foto {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.perfil-page__avatar {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--acento);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+}
+.perfil-page__foto div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.perfil-page__foto button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 600;
+}
+.perfil-page__foto button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.perfil-page small {
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.perfil-page .perfil-page__foto svg {
+  width: 16px;
+  height: 16px;
+}
+
+.perfil-page__formulario {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.perfil-page__formulario label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.perfil-page__completo {
+  grid-column: 1 / -1;
+}
+.perfil-page__formulario input {
+  padding: 10px 13px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  color: var(--texto);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 400;
+}
+.perfil-page__formulario input:focus {
+  border-color: var(--acento);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(0 119 182 / 15%);
+}
+.perfil-page__formulario input:read-only {
+  background: #f3f6f9;
+  color: var(--texto-suave);
+}
+.perfil-page__formulario label small {
+  font-weight: 400;
+}
+.perfil-page__acciones {
+  grid-column: 1 / -1;
+  align-self: end;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+}
+.perfil-page__acciones button {
+  padding: 12px 22px;
+  border-radius: 10px;
+  background: var(--acento);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.perfil-page__acciones button:hover:not(:disabled) {
+  background: var(--acento-oscuro);
+}
+.perfil-page__acciones button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.perfil-page__mensaje,
+.perfil-page__error {
+  color: #1a7f4b;
+  font-size: 13px;
+}
+.perfil-page__error {
+  color: #b42318;
+}
+.perfil-page__tarjeta > .perfil-page__mensaje {
+  margin-top: 10px;
+}
+
+.perfil-page__fila,
+.perfil-page__premium {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--borde);
+}
+.perfil-page__fila:first-of-type {
+  padding-top: 0;
+  border-top: 0;
+}
+.perfil-page__fila strong,
+.perfil-page__premium strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 14px;
+}
+.perfil-page__etiquetas {
+  display: flex;
+  gap: 6px;
+}
+.perfil-page__secundario {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid var(--acento);
+  border-radius: 10px;
+  color: var(--acento-oscuro);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.perfil-page__secundario:hover:not(:disabled) {
+  background: var(--acento-suave);
+}
+.perfil-page__secundario:disabled {
+  border-color: var(--borde);
+  color: var(--texto-suave);
+  cursor: not-allowed;
+}
+.perfil-page .perfil-page__secundario svg {
+  width: 16px;
+  height: 16px;
+}
+.perfil-page__estado,
+.perfil-page__plan {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.perfil-page__estado--ok {
+  background: #e6f6ee;
+  color: #1a7f4b;
+}
+.perfil-page__plan--gratis {
+  background: var(--acento-suave);
+  color: var(--acento-oscuro);
+}
+.perfil-page__plan--premium {
+  background: #fff1cc;
+  color: #8a6400;
+}
+.perfil-page .perfil-page__estado svg,
+.perfil-page .perfil-page__plan svg {
+  width: 14px;
+  height: 14px;
+}
+.perfil-page__premium {
+  margin-top: 4px;
+  padding: 16px 18px;
+  border: 1px solid #ffe08a;
+  border-radius: 12px;
+  background: #fffaeb;
+}
+.perfil-page__premium a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.perfil-page .perfil-page__premium svg {
+  width: 17px;
+  height: 17px;
+}
+.perfil-page a:focus-visible,
+.perfil-page button:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+@media (max-width: 960px) {
+  .perfil-page {
+    grid-template-columns: 1fr;
+    width: min(92%, 720px);
+  }
+  .perfil-page__tarjeta--datos {
+    grid-row: auto;
+  }
+  .perfil-page__tarjeta--datos .perfil-page__formulario {
+    grid-template-rows: none;
+  }
+}
+@media (max-width: 560px) {
+  .perfil-page__tarjeta {
+    padding: 18px;
+  }
+  .perfil-page__formulario {
+    grid-template-columns: 1fr;
+  }
+  .perfil-page__acciones {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}

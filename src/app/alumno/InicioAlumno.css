@@ -1,26 +1,7 @@
 .student-main {
-  position: relative;
-  isolation: isolate;
   width: min(92%, 1200px);
   margin: 0 auto;
   padding: 36px 0 48px;
-}
-/* Paisaje en duotono detrás del saludo, a todo el ancho de la ventana. */
-.student-main::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  left: calc((100% - 100vw) / 2);
-  width: 100vw;
-  height: 420px;
-  background:
-    linear-gradient(0deg, #f3f6f9 0%, rgb(243 246 249 / 70%) 45%, rgb(243 246 249 / 55%) 100%),
-    linear-gradient(#1a7299, #1a7299),
-    url("../../assets/fondos/paisaje-mina.webp") center top / cover;
-  background-blend-mode: normal, color, normal;
-  opacity: 0.8;
-  pointer-events: none;
 }
 
 .student-welcome {
@@ -31,7 +12,7 @@
   margin-bottom: 6px;
 }
 .student-welcome__nombre {
-  color: var(--acento);
+  color: var(--celeste);
 }
 .student-welcome p {
   color: var(--texto-suave);
@@ -184,85 +165,81 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
 }
-.student-destacado {
+
+.student-continuar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.student-continuar__curso {
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  gap: 14px;
+  padding: 14px;
   border: 1px solid var(--borde);
   border-radius: 16px;
   background: #fff;
-  box-shadow: 0 16px 32px rgb(8 39 71 / 10%);
+  box-shadow: 0 10px 28px rgb(8 39 71 / 6%);
 }
-.student-destacado__portada {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, #0c4566, #1a7299 60%, #3fb6dd);
+.student-continuar__portada {
+  width: 96px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  /* TEMPORAL: imagen de prueba; quitarla cuando haya portadas en R2. */
+  background: url("../../assets/fondos/paisaje-mina.webp") center / cover;
 }
-.student-destacado__premium {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: #fff1cc;
-  color: #8a6400;
-  font-size: 12px;
-  font-weight: 700;
-}
-.student-destacado__cuerpo {
+.student-continuar__cuerpo {
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 16px;
+  gap: 6px;
+  min-width: 0;
 }
-.student-destacado h3 {
-  font-size: 16px;
+.student-continuar h3 {
+  overflow: hidden;
+  font-size: 15px;
   font-weight: 700;
-  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.student-destacado__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin: 8px 0 16px;
+.student-continuar small {
   color: var(--texto-suave);
-  font-size: 13px;
+  font-size: 12px;
 }
-.student-destacado__meta span {
+.student-continuar__barra {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e6edf3;
+}
+.student-continuar__barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--celeste);
+}
+.student-continuar__cuerpo a {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-}
-.student-main .student-destacado__meta svg {
-  width: 15px;
-  height: 15px;
-}
-.student-destacado__cuerpo a {
-  display: grid;
-  place-items: center;
-  margin-top: auto;
-  min-height: 40px;
-  border: 1px solid var(--acento);
-  border-radius: 8px;
-  background: var(--acento);
-  color: #fff;
+  gap: 6px;
+  margin-top: 4px;
+  color: var(--acento-oscuro);
   font-size: 14px;
   font-weight: 700;
 }
-.student-destacado__cuerpo a:hover {
-  background: var(--acento-oscuro);
+.student-continuar__cuerpo a:hover {
+  text-decoration: underline;
 }
-.student-destacado__cuerpo a.is-borde {
-  background: #fff;
-  color: var(--acento-oscuro);
-}
-.student-destacado__cuerpo a.is-borde:hover {
-  background: var(--acento-suave);
+.student-main .student-continuar svg {
+  width: 16px;
+  height: 16px;
 }
 
 @media (max-width: 1000px) {
   .student-destacados {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .student-continuar {
+    grid-template-columns: 1fr;
   }
 }
 @media (max-width: 760px) {

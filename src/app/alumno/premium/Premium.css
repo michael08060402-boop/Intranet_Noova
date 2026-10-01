@@ -15,6 +15,8 @@
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 900' preserveAspectRatio='none'%3E%3Cpath d='M-60 30C120 10 230 190 430 150S730 40 900 90' fill='none' stroke='%23cfe5f5' stroke-width='60' stroke-linecap='round' opacity='.75'/%3E%3Cpath d='M-60 170C140 120 280 330 500 270S780 160 900 210' fill='none' stroke='%23ffffff' stroke-width='44' stroke-linecap='round' opacity='.85'/%3E%3Cpath d='M-60 320C170 260 320 470 550 400S810 290 900 330' fill='none' stroke='%23d4e8f6' stroke-width='54' stroke-linecap='round' opacity='.6'/%3E%3Cpath d='M-60 470C190 400 350 600 590 520' fill='none' stroke='%23ffffff' stroke-width='26' stroke-linecap='round' opacity='.7'/%3E%3C/svg%3E") left top / 100% 100% no-repeat,
     radial-gradient(circle at 6% 8%, rgb(160 208 238 / 55%) 0%, rgb(160 208 238 / 20%) 22%, transparent 45%);
+  /* Las ondas terminan en el 60% del ancho: se desvanecen para no dejar un corte vertical. */
+  mask-image: linear-gradient(90deg, #000 55%, transparent 100%);
   pointer-events: none;
 }
 .premium-page__imagen {
@@ -28,7 +30,9 @@
     linear-gradient(#1a7299, #1a7299),
     url("../../../assets/fondos/fondo-premium.webp") 45% center / cover;
   background-blend-mode: normal, normal, color, normal;
-  mask-image: linear-gradient(90deg, transparent 0%, #000 38%);
+  /* Desvanecido horizontal amplio y vertical en los extremos, para que no se vea ningún borde recto. */
+  mask-image: linear-gradient(90deg, transparent 0%, #000 60%), linear-gradient(180deg, transparent 0%, #000 12%, #000 80%, transparent 100%);
+  mask-composite: intersect;
   opacity: 0.7;
 }
 .premium-page__montanas {
@@ -42,7 +46,9 @@
     linear-gradient(#1a7299, #1a7299),
     url("../../../assets/fondos/paisaje-mina.webp") 30% bottom / cover;
   background-blend-mode: color, normal;
-  mask-image: linear-gradient(28deg, #000 18%, rgb(0 0 0 / 55%) 38%, transparent 62%);
+  /* La diagonal se combina con un desvanecido hacia arriba para que el borde superior no quede recto. */
+  mask-image: linear-gradient(28deg, #000 18%, rgb(0 0 0 / 55%) 38%, transparent 62%), linear-gradient(0deg, #000 45%, transparent 100%), linear-gradient(90deg, #000 60%, transparent 100%);
+  mask-composite: intersect;
   opacity: 0.9;
 }
 .premium-page__contenido {
@@ -105,8 +111,8 @@
   margin-bottom: 14px;
   padding: 5px 12px;
   border-radius: var(--radio);
-  background: #ffe38a;
-  color: #3b2d00;
+  background: var(--acento);
+  color: #fff;
   font-size: 13px;
   font-weight: 700;
 }
@@ -123,6 +129,34 @@
   margin: 4px 0 18px;
   color: var(--texto-suave);
   font-size: 15px;
+}
+.premium-page__periodos {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  padding: 4px;
+  border-radius: 10px;
+  background: #eef4f9;
+}
+.premium-page__periodos button {
+  flex: 1;
+  padding: 8px 6px;
+  border-radius: 8px;
+  color: var(--texto-suave);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.premium-page__periodos button:hover {
+  color: var(--texto);
+}
+.premium-page__periodos .is-activo {
+  background: #fff;
+  color: var(--acento);
+  box-shadow: 0 2px 6px rgb(8 39 71 / 12%);
+}
+.premium-page__periodo b {
+  color: var(--acento);
 }
 .premium-page__precio {
   font-size: 36px;
@@ -192,12 +226,7 @@
   background: var(--acento-suave);
 }
 .premium-page__principal {
-  background: var(--acento);
-  color: #fff;
   font-size: 18px;
-}
-.premium-page__principal:hover:not(:disabled) {
-  background: var(--acento-oscuro);
 }
 .premium-page__principal:disabled {
   opacity: 0.6;

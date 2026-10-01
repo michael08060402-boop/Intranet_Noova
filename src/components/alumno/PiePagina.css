@@ -1,0 +1,103 @@
+.pie-pagina {
+  position: relative;
+  isolation: isolate;
+  margin-top: auto;
+  padding: 14px 0;
+  overflow: hidden;
+  background: var(--fondo-barra);
+  color: rgb(196 220 234 / 85%);
+}
+.student-shell .pie-pagina__ondas {
+  position: absolute;
+  z-index: -1;
+  inset: auto 0 0;
+  width: 100%;
+  height: 100%;
+}
+/* Mismo ancho que el contenido de las páginas; el texto ocupa el espacio entre los divisores y queda centrado entre ellos. */
+.pie-pagina__contenido {
+  display: flex;
+  align-items: center;
+  width: min(92%, 1200px);
+  margin: 0 auto;
+}
+.pie-pagina__marca {
+  padding-right: 28px;
+  border-right: 1px solid rgb(255 255 255 / 22%);
+}
+.pie-pagina__logo {
+  display: block;
+  width: auto;
+  height: 46px;
+}
+.pie-pagina p {
+  flex: 1;
+  padding: 0 28px;
+  font-size: 13px;
+  text-align: center;
+}
+.pie-pagina__acciones {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding-left: 28px;
+  border-left: 1px solid rgb(255 255 255 / 22%);
+}
+.pie-pagina__soporte {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border: 1px solid rgb(63 208 245 / 55%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 4%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pie-pagina__soporte:hover {
+  border-color: var(--acento-claro);
+  background: rgb(255 255 255 / 12%);
+}
+.pie-pagina__web {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pie-pagina__web:hover {
+  text-decoration: underline;
+}
+.student-shell .pie-pagina__acciones svg {
+  width: 18px;
+  height: 18px;
+}
+@media (max-width: 1000px) {
+  .pie-pagina__contenido {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .pie-pagina__marca,
+  .pie-pagina__acciones {
+    padding: 0;
+    border: 0;
+  }
+  .pie-pagina p {
+    flex: none;
+    order: 3;
+    padding: 14px 0 0;
+    border-top: 1px solid rgb(255 255 255 / 15%);
+    font-size: 12px;
+  }
+}
+@media (max-width: 440px) {
+  .pie-pagina__acciones {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

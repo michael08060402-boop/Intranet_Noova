@@ -1,26 +1,8 @@
 .clase-page {
-  position: relative;
-  isolation: isolate;
+  --alto-fondo: 340px;
   width: min(92%, 1240px);
   margin: 0 auto;
   padding: 18px 0 48px;
-}
-/* Paisaje en duotono detrás del encabezado, igual que en las demás páginas del alumno. */
-.clase-page::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  left: calc((100% - 100vw) / 2);
-  width: 100vw;
-  height: 340px;
-  background:
-    linear-gradient(0deg, #f3f6f9 0%, rgb(243 246 249 / 70%) 45%, rgb(243 246 249 / 55%) 100%),
-    linear-gradient(#1a7299, #1a7299),
-    url("../../../assets/fondos/paisaje-mina.webp") center top / cover;
-  background-blend-mode: normal, color, normal;
-  opacity: 0.8;
-  pointer-events: none;
 }
 .clase-page__estado {
   margin-bottom: 14px;
@@ -205,7 +187,10 @@
   flex-shrink: 0;
   aspect-ratio: 16 / 10;
   border-radius: var(--radio);
-  background: #11161c;
+  /* TEMPORAL: imagen de prueba con un velo oscuro para que se vea el check; quitarla cuando haya miniaturas reales. */
+  background:
+    linear-gradient(rgb(4 43 78 / 45%), rgb(4 43 78 / 45%)),
+    url("../../../assets/fondos/paisaje-mina.webp") center / cover;
   color: #4ade80;
 }
 .clase-page .clase-page__miniatura svg {

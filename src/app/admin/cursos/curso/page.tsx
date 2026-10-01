@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowLeft, CirclePlay, Image as IconoImagen, Pencil, Plus, Trash2, Video } from "lucide-react";
+import { ArrowLeft, CirclePlay, Image as IconoImagen, Pencil, Plus, Trash2, Users, Video } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import {
   actualizarClase,
   contarDocumentos,
+  contarInscritos,
   crearClase,
   eliminarClase,
   escucharClases,
@@ -34,6 +35,8 @@ function CursoAdmin() {
   const [curso, setCurso] = useState<Curso | null | undefined>(undefined);
   const [clases, setClases] = useState<Clase[]>([]);
   const [videos, setVideos] = useState<Record<string, number>>({});
+  // undefined: cargando; null: no se pudo contar.
+  const [inscritos, setInscritos] = useState<number | null | undefined>(undefined);
   const [error, setError] = useState("");
   // undefined: modal cerrado; null: nueva clase; Clase: editar.
   const [editando, setEditando] = useState<Clase | null | undefined>(undefined);
@@ -46,6 +49,10 @@ function CursoAdmin() {
     const dejarCurso = escucharCurso(id, setCurso, fallo);
     const dejarClases = escucharClases(id, false, setClases, fallo);
     return () => { dejarCurso(); dejarClases(); };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) contarInscritos(id).then(setInscritos).catch(() => setInscritos(null));
   }, [id]);
 
   useEffect(() => {
@@ -103,6 +110,10 @@ function CursoAdmin() {
             {curso.descripcion && <p>{curso.descripcion}</p>}
           </div>
           <span className={`curso-admin__estado-badge ${curso.publicado ? "is-publicado" : "is-borrador"}`}>{curso.publicado ? "Publicado" : "Borrador"}</span>
+          <span className="curso-admin__inscritos" title="Alumnos inscritos en este curso">
+            <Users />
+            {inscritos === undefined ? "…" : inscritos === null ? "—" : `${inscritos} ${inscritos === 1 ? "inscrito" : "inscritos"}`}
+          </span>
         </header>
         {error && <p className="curso-admin__error" role="alert">{error}</p>}
 

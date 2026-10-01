@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BookOpen, ChevronRight, Clock, FileText, Layers, Plus, Users, Zap } from "lucide-react";
+import { BookOpen, ChartColumn, ChevronRight, ClipboardCheck, Clock, FileText, Layers, Plus, Trash2, Users, Zap } from "lucide-react";
 import { escucharCategorias, escucharCursos, type Categoria, type Curso } from "@/firebase/cursos";
 import { escucharAlumnos, type Alumno } from "@/firebase/perfiles";
 import "./PanelAdmin.css";
@@ -16,10 +16,20 @@ const metricas = [
 const accesos = [
   { clave: "cursos", etiqueta: "Crear curso", Icono: Plus, href: "/admin/cursos?nuevo" },
   { clave: "categorias", etiqueta: "Gestionar cursos", Icono: BookOpen, href: "/admin/cursos" },
+  { clave: "evaluaciones", etiqueta: "Crear evaluación", Icono: ClipboardCheck, href: "/admin/evaluaciones?nuevo" },
   { clave: "alumnos", etiqueta: "Ver alumnos", Icono: Users, href: "/admin/alumnos" },
+  { clave: "reportes", etiqueta: "Ver reportes", Icono: ChartColumn, href: "/admin/reportes" },
 ];
 
 const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+
+// La actividad se arma con cursos y alumnos existentes, así que limpiarla solo oculta lo anterior a esa fecha en este navegador.
+const claveLimpieza = "admin-actividad-limpiada";
+
+function leerLimpieza() {
+  try { return Number(localStorage.getItem(claveLimpieza)) || 0; }
+  catch { return 0; }
+}
 
 export default function PanelAdmin() {
   // null: cargando.
@@ -27,6 +37,7 @@ export default function PanelAdmin() {
   const [categorias, setCategorias] = useState<Categoria[] | null>(null);
   const [alumnos, setAlumnos] = useState<Alumno[] | null>(null);
   const [fallos, setFallos] = useState<string[]>([]);
+  const [limpiadoHasta, setLimpiadoHasta] = useState(leerLimpieza);
 
   useEffect(() => {
     // Cada consulta falla por separado (por ejemplo, alumnos sin permisos) sin ocultar las demás.
@@ -43,7 +54,13 @@ export default function PanelAdmin() {
   const actividad = [
     ...(cursos ?? []).map((curso) => ({ id: `curso-${curso.id}`, tipo: "cursos" as const, texto: `Curso creado: ${curso.nombre}`, fecha: curso.creadoEn })),
     ...(alumnos ?? []).map((alumno) => ({ id: `alumno-${alumno.id}`, tipo: "alumnos" as const, texto: `Nuevo alumno: ${alumno.nombre}`, fecha: alumno.creadoEn })),
-  ].filter((evento) => evento.fecha > 0).sort((a, b) => b.fecha - a.fecha).slice(0, 6);
+  ].filter((evento) => evento.fecha > limpiadoHasta).sort((a, b) => b.fecha - a.fecha).slice(0, 6);
+
+  function limpiarActividad() {
+    const ahora = Date.now();
+    setLimpiadoHasta(ahora);
+    try { localStorage.setItem(claveLimpieza, String(ahora)); } catch {}
+  }
 
   return (
     <main className="admin-dashboard">
@@ -70,10 +87,18 @@ export default function PanelAdmin() {
       </section>
       <div className="admin-panels">
         <section className="admin-card" aria-labelledby="actividad-titulo">
-          <h2 id="actividad-titulo">
-            <Clock />
-            Actividad reciente
-          </h2>
+          <div className="admin-card__titulo">
+            <h2 id="actividad-titulo">
+              <Clock />
+              Actividad reciente
+            </h2>
+            {actividad.length > 0 && (
+              <button type="button" className="admin-limpiar" onClick={limpiarActividad}>
+                <Trash2 />
+                Limpiar
+              </button>
+            )}
+          </div>
           {actividad.length > 0 ? (
             <ul className="admin-actividad">
               {actividad.map((evento) => (
@@ -89,7 +114,7 @@ export default function PanelAdmin() {
               <span className="admin-empty__document">
                 <FileText />
               </span>
-              <p>Aún no hay actividad registrada.</p>
+              <p>No hay actividad reciente.</p>
               <span>Los cursos creados y los alumnos registrados se mostrarán aquí.</span>
             </div>
           )}

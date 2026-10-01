@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  collectionGroup,
   deleteDoc,
   doc,
   getCountFromServer,
@@ -165,6 +166,12 @@ export function marcarClase(uid: string, cursoId: string, claseId: string, compl
 
 export async function contarDocumentos(ruta: string) {
   const resultado = await getCountFromServer(collection(db, ruta));
+  return resultado.data().count;
+}
+
+// Las inscripciones viven dentro de cada alumno: se cuentan con una consulta de grupo, que usa el índice de firestore.indexes.json.
+export async function contarInscritos(cursoId: string) {
+  const resultado = await getCountFromServer(query(collectionGroup(db, "inscripciones"), where("cursoId", "==", cursoId)));
   return resultado.data().count;
 }
 

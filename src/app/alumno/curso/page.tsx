@@ -10,7 +10,7 @@ import "./Clase.css";
 
 export default function ClasePage() {
   return (
-    <Suspense fallback={<main className="clase-page"><p className="clase-page__estado">Cargando clase…</p></main>}>
+    <Suspense fallback={<main className="clase-page student-fondo"><p className="clase-page__estado">Cargando clase…</p></main>}>
       <ClaseCurso />
     </Suspense>
   );
@@ -48,7 +48,7 @@ function ClaseCurso() {
 
   if (!cursoId || curso === null) {
     return (
-      <main className="clase-page">
+      <main className="clase-page student-fondo">
         <p className="clase-page__estado">Este curso no existe o ya no está disponible.</p>
         <Link href="/alumno/explorar" className="clase-page__enlace">Volver a Explorar</Link>
       </main>
@@ -56,12 +56,12 @@ function ClaseCurso() {
   }
 
   if (curso === undefined || inscrito === undefined) {
-    return <main className="clase-page"><p className="clase-page__estado">Cargando clase…</p></main>;
+    return <main className="clase-page student-fondo"><p className="clase-page__estado">Cargando clase…</p></main>;
   }
 
   if (!inscrito) {
     return (
-      <main className="clase-page">
+      <main className="clase-page student-fondo">
         <p className="clase-page__estado">Inscríbete en <strong>{curso.nombre}</strong> para acceder a sus clases.</p>
         <Link href={`/alumno/explorar?curso=${curso.id}`} className="clase-page__enlace">Ir al curso</Link>
       </main>
@@ -84,7 +84,7 @@ function ClaseCurso() {
   }
 
   return (
-    <main className="clase-page">
+    <main className="clase-page student-fondo">
       <nav className="clase-page__ruta" aria-label="Ruta">
         <Link href="/alumno/cursos">Mis cursos</Link>
         <ChevronRight />

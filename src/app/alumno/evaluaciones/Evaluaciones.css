@@ -1,0 +1,162 @@
+.mis-evaluaciones {
+  width: min(92%, 1200px);
+  margin: 0 auto;
+  padding: 36px 0 48px;
+}
+.mis-evaluaciones__heading {
+  margin-bottom: 32px;
+}
+/* Filtros como pestañas, igual que en Mis cursos. */
+.mis-evaluaciones__filtros {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 26px;
+  margin-bottom: 24px;
+}
+.mis-evaluaciones__filtros button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 2px 12px;
+  border-bottom: 2px solid transparent;
+  color: var(--texto-suave);
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mis-evaluaciones__filtros button:hover {
+  color: var(--texto);
+}
+.mis-evaluaciones__filtros .is-active {
+  border-bottom-color: var(--acento);
+  color: var(--acento);
+}
+.mis-evaluaciones__filtros button span {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #e6edf3;
+  color: var(--texto-suave);
+  font-size: 12px;
+  text-align: center;
+}
+.mis-evaluaciones__filtros .is-active span {
+  background: var(--acento);
+  color: #fff;
+}
+.mis-evaluaciones__estado,
+.mis-evaluaciones__error {
+  margin-bottom: 16px;
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+.mis-evaluaciones__error {
+  color: #b42318;
+}
+.mis-evaluaciones__vacio {
+  min-height: clamp(240px, 38svh, 400px);
+  border-radius: 16px;
+  box-shadow: 0 16px 32px rgb(8 39 71 / 8%);
+}
+.mis-evaluaciones__enlace {
+  margin-top: 20px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  background: var(--acento);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+.mis-evaluaciones__enlace:hover {
+  background: var(--acento-oscuro);
+}
+.mis-evaluaciones__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.mis-evaluaciones__examen {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 26px rgb(8 39 71 / 7%);
+}
+.mis-evaluaciones__icono {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--acento-suave);
+  color: var(--acento);
+}
+.mis-evaluaciones__info {
+  flex: 1;
+  min-width: 0;
+}
+.mis-evaluaciones__info strong {
+  display: block;
+  font-size: 16px;
+}
+.mis-evaluaciones__info small {
+  display: block;
+  margin-top: 2px;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.mis-evaluaciones__resultado {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #fff1db;
+  color: #b25e00;
+  font-size: 12px;
+  font-weight: 650;
+}
+.mis-evaluaciones__resultado--entregadas {
+  background: var(--acento-suave);
+  color: var(--acento-oscuro);
+}
+.mis-evaluaciones__resultado--calificadas {
+  background: #e6f6ee;
+  color: #1a7f4b;
+}
+.mis-evaluaciones__accion {
+  flex-shrink: 0;
+  padding: 9px 16px;
+  border: 1px solid var(--acento);
+  border-radius: var(--radio);
+  color: var(--acento-oscuro);
+  font-size: 13px;
+  font-weight: 700;
+}
+.mis-evaluaciones__accion:hover {
+  background: var(--acento-suave);
+}
+.mis-evaluaciones .mis-evaluaciones__candado {
+  width: 20px;
+  height: 20px;
+  color: var(--texto-suave);
+}
+.mis-evaluaciones__filtros button:focus-visible,
+.mis-evaluaciones a:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .mis-evaluaciones {
+    padding-top: 24px;
+  }
+  .mis-evaluaciones__examen {
+    flex-wrap: wrap;
+  }
+  .mis-evaluaciones__info {
+    flex-basis: calc(100% - 60px);
+  }
+}

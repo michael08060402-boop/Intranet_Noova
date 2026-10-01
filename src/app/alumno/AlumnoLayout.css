@@ -1,13 +1,23 @@
 .student-header {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 12px clamp(18px, 2.4vw, 38px);
-  min-height: 76px;
-  padding: 14px 3%;
+  min-height: 66px;
+  padding: 9px 3%;
   border-bottom: 1px solid rgb(63 208 245 / 25%);
-  background: linear-gradient(100deg, #0c4566 0%, #115a7f 45%, #1a7299 100%);
+  background: var(--fondo-barra);
   color: #fff;
+}
+.student-shell .student-header__ondas {
+  position: absolute;
+  z-index: -1;
+  inset: auto 0 0;
+  width: 100%;
+  height: 100%;
 }
 .student-brand {
   justify-self: start;
@@ -16,7 +26,7 @@
 }
 .student-brand img {
   width: auto;
-  height: 50px;
+  height: 44px;
 }
 .student-nav {
   display: flex;
@@ -28,7 +38,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 16px;
+  padding: 10px 16px;
   border: 0;
   border-radius: var(--radio);
   background: transparent;
@@ -51,6 +61,19 @@
 .student-nav button:hover {
   background: rgb(255 255 255 / 9%);
 }
+.student-menu-boton {
+  display: none;
+  place-items: center;
+  padding: 6px;
+  border: 0;
+  border-radius: var(--radio);
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.student-menu-boton:hover {
+  background: rgb(255 255 255 / 12%);
+}
 .student-account button {
   display: grid;
   place-items: center;
@@ -72,18 +95,46 @@
   font-size: 14px;
   font-weight: 600;
 }
+.student-account .student-cuenta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 6px 6px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 10%);
+  backdrop-filter: blur(10px);
+  font: inherit;
+  text-align: left;
+}
+.student-account .student-cuenta:hover {
+  border-color: rgb(255 255 255 / 40%);
+  background: rgb(255 255 255 / 16%);
+}
+/* El ícono de la flecha trae aire propio a los lados: se acerca al texto para que el contenido quede centrado. */
+.student-account .student-cuenta > svg {
+  width: 16px;
+  margin-left: -4px;
+}
 .student-account__name {
   max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .student-account__plan {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   margin-top: 2px;
   color: #c4dcea;
   font-size: 11px;
   font-weight: 400;
   white-space: nowrap;
+}
+.student-account .student-account__plan svg {
+  width: 13px;
+  height: 13px;
+  color: var(--premium);
 }
 .student-avatar {
   display: grid;
@@ -118,7 +169,7 @@
   text-align: center;
 }
 .student-avisos {
-  inset: 72px 3% auto auto;
+  inset: 62px 3% auto auto;
   width: min(92%, 360px);
   max-height: min(70svh, 460px);
   margin: 0;
@@ -174,6 +225,101 @@
   margin-top: 4px;
   color: var(--texto-suave);
   font-size: 12px;
+}
+.student-menu-cuenta {
+  inset: 62px 3% auto auto;
+  width: min(92%, 260px);
+  margin: 0;
+  padding: 8px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  background: #fff;
+  color: var(--texto);
+  box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
+}
+.student-menu-cuenta__datos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 6px;
+  padding: 10px 12px 12px;
+  border-bottom: 1px solid var(--borde);
+}
+.student-menu-cuenta__datos strong {
+  font-size: 15px;
+  font-weight: 700;
+}
+.student-menu-cuenta__datos span {
+  overflow: hidden;
+  color: var(--texto-suave);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.student-menu-cuenta__premium {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 5px;
+  margin-top: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #fff1cc;
+  color: #8a6400;
+  font-size: 12px;
+  font-weight: 700;
+}
+.student-shell .student-menu-cuenta .student-menu-cuenta__premium svg {
+  width: 13px;
+  height: 13px;
+  color: #d4a900;
+}
+.student-menu-cuenta a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radio);
+  font-size: 14px;
+  font-weight: 600;
+}
+.student-menu-cuenta a:hover {
+  background: var(--acento-suave);
+  color: var(--acento-oscuro);
+}
+.student-menu-cuenta__salir {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px;
+  border-top: 1px solid var(--borde);
+  border-radius: 0 0 var(--radio) var(--radio);
+  color: #b42318;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.student-menu-cuenta__salir:hover {
+  background: #fdf0f0;
+}
+.student-shell .student-menu-cuenta .student-menu-cuenta__salir svg {
+  color: #b42318;
+}
+.student-shell .student-menu-cuenta__salir:focus-visible {
+  outline-color: #b42318;
+  outline-offset: -2px;
+}
+.student-shell .student-menu-cuenta svg {
+  width: 18px;
+  height: 18px;
+  color: var(--acento);
+}
+.student-shell .student-menu-cuenta a:focus-visible {
+  outline-color: var(--acento);
+  outline-offset: -2px;
 }
 .student-logout {
   width: min(92%, 380px);
@@ -249,61 +395,72 @@
     justify-self: center;
   }
   .student-brand img {
-    height: 44px;
+    height: 40px;
   }
   .student-account__name {
     display: none;
   }
 }
 @media (max-width: 900px) {
-  .student-nav svg {
-    display: none;
-  }
-}
-@media (max-width: 760px) {
   .student-header {
-    grid-template-columns: 1fr auto;
-    row-gap: 10px;
-    padding: 12px 4% 6px;
+    grid-template-columns: 1fr auto auto;
+    row-gap: 0;
   }
-  .student-brand img {
-    height: 40px;
+  .student-menu-boton {
+    display: grid;
   }
   .student-nav {
     grid-column: 1 / -1;
     order: 4;
-    justify-self: stretch;
-    justify-content: space-around;
-    overflow-x: auto;
-  }
-  .student-nav svg {
-    display: block;
-    width: 21px;
-    height: 21px;
-  }
-  .student-nav button > svg:last-child:not(:first-child) {
     display: none;
+    flex-direction: column;
+    align-items: stretch;
+    justify-self: stretch;
+    gap: 4px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgb(255 255 255 / 15%);
+  }
+  .student-nav.is-abierto {
+    display: flex;
   }
   .student-nav a,
   .student-nav button {
-    flex-direction: column;
-    gap: 4px;
-    padding: 8px 10px;
-    font-size: 12px;
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+  .student-nav button > svg:last-child:not(:first-child) {
+    margin-left: auto;
+  }
+}
+@media (max-width: 760px) {
+  .student-header {
+    padding: 9px 4%;
+  }
+  .student-brand img {
+    height: 36px;
   }
 }
 
 .student-shell {
-  --acento: #0098db;
-  --acento-oscuro: #00678e;
+  /* Azul de botones y enlaces: más profundo que el celeste para que el texto blanco se lea bien y combine con el navbar. */
+  --acento: #0077b6;
+  --acento-oscuro: #005f92;
+  /* Celeste brillante solo para detalles que deben destacar, como las barras de progreso. */
+  --celeste: #0098db;
   --acento-claro: #3fd0f5;
   --acento-suave: #e8f6fd;
   --texto: #082747;
   --texto-suave: #536d88;
   --borde: #e2ebf4;
   --premium: #ffd100;
+  /* Azul marino del navbar y del pie de página. */
+  --fondo-barra: linear-gradient(100deg, #042b4e 0%, #063a66 55%, #0a568a 100%);
   --radio: 8px;
   --radio-grande: 14px;
+  /* Columna para que el pie quede abajo aunque la página tenga poco contenido. */
+  display: flex;
+  flex-direction: column;
   min-height: 100svh;
   overflow-x: clip;
   background: #f3f6f9;
@@ -319,6 +476,54 @@
 .student-shell button:focus-visible {
   outline: 2px solid var(--acento-claro);
   outline-offset: 4px;
+}
+
+/* Botones para mejorar el plan (Planes, detalle del curso y perfil): dorado con bordes ámbar y franjas diagonales
+   claras solo en los extremos, sin pasar por el texto. Los bordes no bajan de #b98a2c para que el texto azul marino se lea bien. */
+.student-dorado {
+  background:
+    linear-gradient(115deg,
+      transparent 0 4%, rgb(255 255 255 / 26%) 4% 10%,
+      transparent 10% 13%, rgb(255 255 255 / 15%) 13% 15%,
+      transparent 15% 85%, rgb(255 255 255 / 15%) 85% 87%,
+      transparent 87% 90%, rgb(255 255 255 / 26%) 90% 96%,
+      transparent 96%),
+    linear-gradient(115deg, #b98a2c 0%, #d9ac45 28%, #f4d98f 50%, #d9ac45 72%, #b98a2c 100%);
+  color: #042b4e;
+  transition: filter .2s ease, box-shadow .2s ease;
+}
+.student-dorado:hover:not(:disabled) {
+  filter: brightness(1.08);
+  box-shadow: 0 6px 18px rgb(185 138 44 / 35%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .student-dorado {
+    transition: none;
+  }
+}
+
+/* Paisaje en duotono detrás del encabezado de las páginas del alumno, a todo el ancho; cada página puede ajustar --alto-fondo. */
+.student-fondo {
+  position: relative;
+  isolation: isolate;
+}
+.student-fondo::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: calc((100% - 100vw) / 2);
+  width: 100vw;
+  height: var(--alto-fondo, 380px);
+  /* Claro a la izquierda (detrás del título) y abajo (donde empieza el contenido); a la derecha la foto se ve
+     con sus colores apenas teñidos de azul, para que ese lado no quede vacío. */
+  background:
+    linear-gradient(0deg, #f3f6f9 0%, rgb(243 246 249 / 0%) 55%),
+    linear-gradient(90deg, #f3f6f9 0%, rgb(243 246 249 / 85%) 30%, rgb(243 246 249 / 20%) 70%, rgb(243 246 249 / 0%) 100%),
+    linear-gradient(rgb(26 114 153 / 35%), rgb(26 114 153 / 35%)),
+    url("../../assets/fondos/paisaje-mina.webp") center top / cover;
+  background-blend-mode: normal, normal, color, normal;
+  pointer-events: none;
 }
 
 .student-shell h1 {

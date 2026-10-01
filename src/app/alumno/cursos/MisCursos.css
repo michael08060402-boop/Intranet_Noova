@@ -1,66 +1,63 @@
 .my-courses {
-  position: relative;
-  isolation: isolate;
   width: min(92%, 1200px);
   margin: 0 auto;
   padding: 36px 0 48px;
 }
-/* Paisaje en duotono detrás del título, igual que en Inicio. */
-.my-courses::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  left: calc((100% - 100vw) / 2);
-  width: 100vw;
-  height: 380px;
-  background:
-    linear-gradient(0deg, #f3f6f9 0%, rgb(243 246 249 / 70%) 45%, rgb(243 246 249 / 55%) 100%),
-    linear-gradient(#1a7299, #1a7299),
-    url("../../../assets/fondos/paisaje-mina.webp") center top / cover;
-  background-blend-mode: normal, color, normal;
-  opacity: 0.8;
-  pointer-events: none;
-}
 .my-courses__heading {
   margin-bottom: 32px;
-  text-align: center;
 }
+/* Filtros como pestañas: solo la activa lleva una línea azul debajo. */
 .my-courses__toolbar {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px 16px;
   margin-bottom: 24px;
 }
 .my-courses__filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  column-gap: 26px;
 }
 .my-courses__filters button {
-  padding: 10px 18px;
-  border: 1px solid var(--borde);
-  border-radius: 30px;
-  background: #fff;
-  color: var(--texto);
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 2px 12px;
+  border-bottom: 2px solid transparent;
+  color: var(--texto-suave);
+  font-size: 15px;
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgb(8 39 71 / 6%);
 }
 .my-courses__filters button:hover {
-  border-color: var(--acento);
+  color: var(--texto);
 }
 .my-courses__filters .is-active {
-  border-color: var(--acento);
+  border-bottom-color: var(--acento);
+  color: var(--acento);
+}
+.my-courses__filters button span {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #e6edf3;
+  color: var(--texto-suave);
+  font-size: 12px;
+  text-align: center;
+}
+.my-courses__filters .is-active span {
   background: var(--acento);
   color: #fff;
 }
 .my-courses__filters button:focus-visible {
   outline: 2px solid var(--acento);
-  outline-offset: 3px;
+  outline-offset: 2px;
+}
+.my-courses__toolbar .student-orden {
+  margin-bottom: 8px;
 }
 .my-courses__vacio {
   min-height: clamp(260px, 42svh, 440px);
@@ -108,7 +105,8 @@
   flex-shrink: 0;
   aspect-ratio: 16 / 9;
   border-radius: 10px;
-  background: linear-gradient(135deg, #0c4566, #1a7299 60%, #3fb6dd);
+  /* TEMPORAL: imagen de prueba; quitarla cuando haya portadas en R2. */
+  background: url("../../../assets/fondos/paisaje-mina.webp") center / cover;
 }
 .my-courses__info {
   flex: 1;
@@ -152,7 +150,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: var(--acento);
+  background: var(--celeste);
 }
 .my-courses__continuar {
   display: inline-flex;
@@ -193,11 +191,11 @@
 }
 @media (max-width: 600px) {
   .my-courses__filters {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
     width: 100%;
+    column-gap: 20px;
   }
   .my-courses__toolbar .student-orden {
+    order: -1;
     width: 100%;
   }
 }

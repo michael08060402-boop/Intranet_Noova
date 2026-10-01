@@ -1,0 +1,381 @@
+/* Espacios compactos para que la compra completa quepa en una pantalla de laptop sin desplazarse. */
+.pago-page {
+  width: min(92%, 1100px);
+  margin: 0 auto;
+  padding: 16px 0 24px;
+}
+.pago-page__volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--acento-oscuro);
+  font-size: 14px;
+  font-weight: 600;
+}
+.pago-page__volver:hover {
+  text-decoration: underline;
+}
+.pago-page .pago-page__volver svg {
+  width: 16px;
+  height: 16px;
+}
+.pago-page__encabezado {
+  margin: 10px 0 16px;
+}
+.pago-page .pago-page__encabezado h1 {
+  font-size: clamp(24px, 2.2vw, 30px);
+}
+.pago-page__encabezado p {
+  color: var(--texto-suave);
+  font-size: 15px;
+}
+.pago-page__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+}
+.pago-page__panel,
+.pago-page__resultado {
+  padding: 20px 24px;
+  border: 1px solid var(--borde);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 32px rgb(8 39 71 / 8%);
+}
+.pago-page__panel h2 {
+  margin-bottom: 14px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.pago-page__metodos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.pago-page__metodos button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--borde);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--texto);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pago-page__metodos button:hover {
+  border-color: #b9d3e6;
+}
+.pago-page__metodos .is-activo {
+  border-color: var(--acento);
+  background: var(--acento-suave);
+  color: var(--acento-oscuro);
+}
+.pago-page__metodo-icono {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  color: var(--acento);
+}
+/* El ícono de tarjeta es una silueta usada como máscara: toma el color del texto. */
+.pago-page__logo {
+  width: 28px;
+  height: 28px;
+  background: currentColor;
+  mask: url("../../../../assets/pagos/tarjeta.webp") center / contain no-repeat;
+}
+.pago-page__yape {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 10px;
+}
+.pago-page__radio {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-left: auto;
+  border: 1.5px solid #b7c6d4;
+  border-radius: 50%;
+}
+.is-activo .pago-page__radio {
+  border-color: var(--acento);
+  background: var(--acento);
+  color: #fff;
+}
+.pago-page .pago-page__radio svg {
+  width: 22px;
+  height: 22px;
+}
+
+.pago-page__prueba {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 14px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #fff4e5;
+  color: #8a4b00;
+  font-size: 13px;
+}
+.pago-page .pago-page__prueba svg {
+  width: 16px;
+  height: 16px;
+  color: #d98a00;
+}
+.pago-page__formulario {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 14px;
+}
+.pago-page__formulario label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.pago-page__completo,
+.pago-page__error,
+.pago-page__pagar {
+  grid-column: 1 / -1;
+}
+.pago-page__formulario input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  color: var(--texto);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 400;
+}
+.pago-page__formulario input:focus {
+  border-color: var(--acento);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(0 119 182 / 15%);
+}
+/* Campo con ícono a la izquierda (y, en el CVV, una ayuda a la derecha) dentro del mismo borde. */
+.pago-page__campo {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.pago-page .pago-page__campo > svg {
+  position: absolute;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  color: var(--texto-suave);
+  pointer-events: none;
+}
+.pago-page__campo input {
+  padding-left: 40px;
+}
+.pago-page .pago-page__campo .pago-page__ayuda {
+  right: 12px;
+  left: auto;
+}
+.pago-page__formulario label small {
+  color: var(--texto-suave);
+  font-size: 12px;
+  font-weight: 400;
+}
+.pago-page__error {
+  color: #b42318;
+  font-size: 13px;
+}
+.pago-page__pagar {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  padding: 13px 20px;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.pago-page__pagar:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+.pago-page .pago-page__pagar svg {
+  width: 20px;
+  height: 20px;
+}
+
+.pago-page__plan {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #f2f8fd;
+}
+.pago-page__corona {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #fdeecb;
+  color: #c48a17;
+}
+.pago-page .pago-page__corona svg {
+  width: 22px;
+  height: 22px;
+}
+.pago-page__plan strong {
+  display: block;
+  font-size: 17px;
+}
+.pago-page__plan small {
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.pago-page__detalle {
+  margin: 12px 0;
+}
+.pago-page__detalle > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 4px;
+  color: var(--texto-suave);
+  font-size: 15px;
+}
+.pago-page__detalle dd {
+  color: var(--texto);
+  font-weight: 600;
+}
+.pago-page__detalle select {
+  border: 0;
+  background: transparent;
+  color: var(--texto);
+  font: inherit;
+  font-weight: 700;
+  text-align: right;
+  cursor: pointer;
+}
+.pago-page__detalle s {
+  color: var(--texto-suave);
+  font-weight: 400;
+}
+.pago-page__detalle .pago-page__descuento,
+.pago-page__detalle .pago-page__descuento dd {
+  color: #12805c;
+}
+.pago-page__detalle .pago-page__total {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--borde);
+  color: var(--texto);
+  font-size: 19px;
+  font-weight: 700;
+}
+.pago-page__detalle .pago-page__total dd {
+  font-size: 28px;
+  font-weight: 800;
+}
+.pago-page__nota {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #f2f8fd;
+}
+.pago-page .pago-page__nota > svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--acento);
+}
+.pago-page__nota small {
+  display: block;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.pago-page__nota strong {
+  font-size: 15px;
+}
+.pago-page__unico {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.pago-page .pago-page__unico svg {
+  width: 17px;
+  height: 17px;
+  color: var(--acento);
+}
+
+.pago-page__resultado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 520px;
+  margin: 40px auto 0;
+  text-align: center;
+}
+.pago-page .pago-page__resultado > svg {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 10px;
+  color: #1a7f4b;
+}
+.pago-page__resultado h1 {
+  font-size: 24px;
+}
+.pago-page__resultado p {
+  margin: 8px 0 20px;
+  color: var(--texto-suave);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.pago-page__boton {
+  padding: 12px 22px;
+  border-radius: 10px;
+  background: var(--acento);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+.pago-page__boton:hover {
+  background: var(--acento-oscuro);
+}
+.pago-page a:focus-visible,
+.pago-page button:focus-visible,
+.pago-page select:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+@media (max-width: 860px) {
+  .pago-page__layout {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .pago-page__panel,
+  .pago-page__resultado {
+    padding: 18px;
+  }
+  .pago-page__metodos {
+    grid-template-columns: 1fr;
+  }
+}

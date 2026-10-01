@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { ClipboardList, ListChecks, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { escucharCursos, type Curso } from "@/firebase/cursos";
 import { eliminarExamen, escucharExamenes, escucharIntentos, type Examen, type Intento } from "@/firebase/evaluaciones";
@@ -9,6 +10,17 @@ import NuevoExamen from "./NuevoExamen";
 import "../AdminPagina.css";
 
 export default function EvaluacionesPage() {
+  return (
+    <Suspense fallback={<main className="admin-pagina" />}>
+      <Evaluaciones />
+    </Suspense>
+  );
+}
+
+function Evaluaciones() {
+  const router = useRouter();
+  // El acceso del panel llega con ?nuevo: el modal se abre cuando ya hay cursos a los que asignar el examen.
+  const [pedidoNuevo, setPedidoNuevo] = useState(useSearchParams().has("nuevo"));
   const [examenes, setExamenes] = useState<Examen[]>([]);
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [intentos, setIntentos] = useState<Intento[]>([]);
@@ -138,7 +150,10 @@ export default function EvaluacionesPage() {
           <button type="button" className="admin-confirmar__peligro" onClick={eliminar}>Eliminar</button>
         </div>
       </dialog>
-      {editando !== undefined && <NuevoExamen examen={editando} cursos={cursos} alCerrar={() => setEditando(undefined)} />}
+      {(editando !== undefined || (pedidoNuevo && cursos.length > 0)) && <NuevoExamen examen={editando ?? null} cursos={cursos} alCerrar={() => {
+        setEditando(undefined);
+        if (pedidoNuevo) { setPedidoNuevo(false); router.replace("/admin/evaluaciones"); }
+      }} />}
     </main>
   );
 }

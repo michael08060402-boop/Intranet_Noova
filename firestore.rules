@@ -356,6 +356,11 @@ service cloud.firestore {
       }
     }
 
+    // Consulta de grupo del administrador para contar los inscritos de cada curso.
+    match /{ruta=**}/inscripciones/{cursoId} {
+      allow list: if esAdministrador();
+    }
+
     match /categorias/{categoriaId} {
       allow get, list: if esAdministrador()
         || (esAlumnoVerificado() && resource.data.activa == true);

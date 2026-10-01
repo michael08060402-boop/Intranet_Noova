@@ -2,10 +2,11 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { BookOpen, ChevronDown, Layers, LayoutGrid, Lock, Search } from "lucide-react";
+import { BookOpen, ChevronDown, Layers, LayoutGrid, Search } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { EstadoVacio, SelectorOrden, TituloPagina, type Orden } from "@/components/alumno/PiezasCatalogo";
-import { escucharCategorias, escucharCursos, nombresNivel, type Acceso, type Categoria, type Curso } from "@/firebase/cursos";
+import TarjetaCurso from "@/components/alumno/TarjetaCurso";
+import { escucharCategorias, escucharCursos, escucharInscripciones, type Acceso, type Categoria, type Curso } from "@/firebase/cursos";
 import CursoDetalle from "./CursoDetalle";
 import "./Explorar.css";
 
@@ -19,10 +20,11 @@ export default function ExplorarPage() {
 
 function Explorar() {
   const router = useRouter();
-  // "Ver curso" desde Inicio llega con ?curso para abrir su detalle directamente.
-  const [abiertoId, setAbiertoId] = useState(useSearchParams().get("curso"));
-  const { perfil } = useSesion();
+  // Las tarjetas (aquí y en Inicio) abren el detalle con ?curso=id.
+  const abiertoId = useSearchParams().get("curso");
+  const { perfil, usuario } = useSesion();
   const [cursos, setCursos] = useState<Curso[]>([]);
+  const [inscritos, setInscritos] = useState<string[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
@@ -38,23 +40,21 @@ function Explorar() {
     return () => { dejarCursos(); dejarCategorias(); };
   }, []);
 
+  useEffect(() => (usuario ? escucharInscripciones(usuario.uid, setInscritos, () => setInscritos([])) : undefined), [usuario]);
+
   // Bloqueo visual; el contenido premium también lo protegen las reglas de Firestore.
   const bloqueado = (curso: Curso) => curso.acceso === "premium" && perfil?.plan !== "premium";
   const nombreCategoria = (id: string) => categorias.find((item) => item.id === id)?.nombre ?? "General";
 
   const abierto = cursos.find((curso) => curso.id === abiertoId);
   if (abierto) {
-    return <CursoDetalle curso={abierto} categoria={nombreCategoria(abierto.categoriaId)} bloqueado={bloqueado(abierto)} alVolver={() => {
-      setAbiertoId(null);
-      router.replace("/alumno/explorar");
-    }} />;
+    return <CursoDetalle curso={abierto} categoria={nombreCategoria(abierto.categoriaId)} bloqueado={bloqueado(abierto)} alVolver={() => router.push("/alumno/explorar")} />;
   }
 
   function cambiarTipo(tipo: Acceso) {
     setTipos((actuales) => actuales.includes(tipo) ? actuales.filter((actual) => actual !== tipo) : [...actuales, tipo]);
   }
 
-  const conCursos = categorias.filter((item) => cursos.some((curso) => curso.categoriaId === item.id));
   const texto = busqueda.trim().toLowerCase();
   const visibles = cursos
     .filter((curso) => (categoria === "todas" || curso.categoriaId === categoria)
@@ -83,7 +83,7 @@ function Explorar() {
                 <span>Todos</span>
                 <small>{cursos.length}</small>
               </button>
-              {conCursos.map((item) => (
+              {categorias.map((item) => (
                 <button type="button" key={item.id} className={categoria === item.id ? "is-active" : ""} aria-pressed={categoria === item.id} onClick={() => setCategoria(item.id)}>
                   <Layers />
                   <span>{item.nombre}</span>
@@ -124,21 +124,13 @@ function Explorar() {
           {visibles.length > 0 ? (
             <div className="student-explore__grid">
               {visibles.map((curso) => (
-                <button type="button" key={curso.id} className={`student-explore__card ${bloqueado(curso) ? "is-bloqueado" : ""}`} onClick={() => setAbiertoId(curso.id)}>
-                  <span className="student-explore__cover">
-                    <BookOpen />
-                    {bloqueado(curso) && <span className="student-explore__candado"><Lock />Premium</span>}
-                  </span>
-                  <span className="student-explore__info">
-                    <small>{nombreCategoria(curso.categoriaId)}</small>
-                    <strong>{curso.nombre}</strong>
-                    {curso.descripcion && <span className="student-explore__descripcion">{curso.descripcion}</span>}
-                    <span className="student-explore__meta">
-                      <span>{nombresNivel[curso.nivel]}</span>
-                      <span className={`student-explore__badge student-explore__badge--${curso.acceso}`}>{curso.acceso === "premium" ? "Premium" : "Gratis"}</span>
-                    </span>
-                  </span>
-                </button>
+                <TarjetaCurso
+                  key={curso.id}
+                  curso={curso}
+                  categoria={nombreCategoria(curso.categoriaId)}
+                  inscrito={inscritos.includes(curso.id)}
+                  bloqueado={bloqueado(curso)}
+                />
               ))}
             </div>
           ) : (

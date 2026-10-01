@@ -237,7 +237,6 @@
   --texto: #082747;
   --texto-suave: #536d88;
   --borde: #d6e2ed;
-  --sombra: 0 1px 2px rgb(8 39 71 / 20%), 0 8px 24px rgb(8 39 71 / 20%);
   --radio: 8px;
   --radio-grande: 14px;
   display: grid;
