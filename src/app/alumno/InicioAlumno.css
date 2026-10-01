@@ -1,15 +1,15 @@
 .student-main {
   width: min(92%, 1200px);
   margin: 0 auto;
-  padding: 36px 0 48px;
+  padding: 26px 0 40px;
 }
 
 .student-welcome {
-  margin-bottom: 32px;
+  margin-bottom: 22px;
   text-align: center;
 }
 .student-welcome h1 {
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
 .student-welcome__nombre {
   color: var(--celeste);
@@ -94,14 +94,14 @@
 }
 
 .student-courses {
-  margin-top: 48px;
+  margin-top: 34px;
 }
 .student-section-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .student-section-heading h2 {
   font-size: 24px;

@@ -115,23 +115,8 @@
   height: 22px;
 }
 
-.pago-page__prueba {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 12px 0 14px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: #fff4e5;
-  color: #8a4b00;
-  font-size: 13px;
-}
-.pago-page .pago-page__prueba svg {
-  width: 16px;
-  height: 16px;
-  color: #d98a00;
-}
 .pago-page__formulario {
+  margin-top: 18px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px 14px;
@@ -230,8 +215,8 @@
   height: 44px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: #fdeecb;
-  color: #c48a17;
+  background: #dcecf8;
+  color: var(--acento);
 }
 .pago-page .pago-page__corona svg {
   width: 22px;

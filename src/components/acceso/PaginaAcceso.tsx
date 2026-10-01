@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import logoNoova from "@/assets/marca/logo-noova.webp";
 import FormularioAcceso from "./FormularioAcceso";
 import { useSesion } from "./SesionProvider";
@@ -32,7 +33,10 @@ export default function PaginaAcceso() {
   return (
     <main className="auth-shell">
       <section className="auth-panel">
-        <Image className="auth-logo" src={logoNoova} alt="Noova Consulting" sizes="90px" />
+        <div className="auth-barra">
+          <a href="https://www.noovasac.com/" className="auth-web"><ArrowLeft />Ir al sitio de Noova</a>
+          <Image className="auth-logo" src={logoNoova} alt="Noova Consulting" sizes="90px" />
+        </div>
         <FormularioAcceso />
       </section>
       <section className="auth-visual" aria-label="Noova Learn Mining">

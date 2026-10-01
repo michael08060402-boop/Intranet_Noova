@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
-import { ArrowLeft, ArrowRight, CalendarDays, CircleCheck, CircleHelp, CreditCard, Crown, Lock, ShieldCheck, Smartphone, TriangleAlert } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarDays, CircleCheck, CircleHelp, CreditCard, Crown, Lock, ShieldCheck, Smartphone } from "lucide-react";
 import logoYape from "@/assets/pagos/yape.webp";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { ahorroPeriodo, buscarPeriodo, nombrePeriodo, periodos, precioSinDescuento } from "../planPremium";
@@ -136,8 +136,6 @@ function Pago() {
               <span className="pago-page__radio">{metodo === "yape" && <CircleCheck />}</span>
             </button>
           </div>
-          <p className="pago-page__prueba" role="note"><TriangleAlert />Entorno de prueba: no ingreses datos reales. No se realizará ningún cobro.</p>
-
           {/* autoComplete="off" evita que el navegador ofrezca tarjetas guardadas en una pantalla de prueba. */}
           <form className="pago-page__formulario" onSubmit={pagar} autoComplete="off">
             {metodo === "tarjeta" ? (

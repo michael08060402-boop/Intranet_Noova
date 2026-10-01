@@ -120,7 +120,7 @@ export default function Perfil() {
             <strong>Correo verificado</strong>
             <small>{perfil?.correo}</small>
           </div>
-          <span className="perfil-page__estado perfil-page__estado--ok"><CircleCheck />Verificado</span>
+          <span className="perfil-page__estado"><CircleCheck />Verificado</span>
         </div>
       </section>
 
@@ -132,8 +132,8 @@ export default function Perfil() {
             <small>Miembro desde el {registro}</small>
           </div>
           <div className="perfil-page__etiquetas">
-            <span className={`perfil-page__plan perfil-page__plan--${perfil?.plan}`}>{premium && <Crown />}{premium ? "Premium" : "Gratuito"}</span>
-            <span className="perfil-page__estado perfil-page__estado--ok"><CircleCheck />Activo</span>
+            <span className="perfil-page__plan">{premium && <Crown />}{premium ? "Premium" : "Gratuito"}</span>
+            <span className="perfil-page__estado"><CircleCheck />Activo</span>
           </div>
         </div>
         {premium ? (

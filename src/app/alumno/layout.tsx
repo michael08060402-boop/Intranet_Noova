@@ -138,9 +138,7 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
         <div id="student-menu-cuenta" ref={menuCuenta} popover="auto" className="student-menu-cuenta" aria-label="Menú de la cuenta">
           <div className="student-menu-cuenta__datos">
             <strong>{capitalizarNombre(perfil?.nombre ?? nombre)}</strong>
-            <span>{perfil?.correo}</span>
-            {perfil?.plan === "premium" && <small className="student-menu-cuenta__premium"><Crown />Premium</small>}
-          </div>
+            <span>{perfil?.correo}</span>          </div>
           {opcionesCuenta.map(({ href, etiqueta, Icono }) => (
             <Link key={href} href={href} onClick={() => menuCuenta.current?.hidePopover()}>
               <Icono />

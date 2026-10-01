@@ -32,8 +32,31 @@
     #fff;
 }
 
+/* Mismo ancho que la tarjeta para que el enlace y el logo queden alineados con sus bordes. */
+.auth-barra {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: min(100%, 480px);
+  margin: 0 auto;
+}
+.auth-web {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--auth-link);
+  font-size: 14px;
+  font-weight: 600;
+}
+.auth-web:hover {
+  text-decoration: underline;
+}
+.auth-web svg {
+  width: 16px;
+  height: 16px;
+}
 .auth-logo {
-  align-self: flex-end;
   width: clamp(64px, 9dvh, 84px);
   height: auto;
   flex-shrink: 0;
