@@ -79,9 +79,116 @@
 .my-courses__explorar:hover {
   background: var(--acento-oscuro);
 }
+.my-courses__estado,
+.my-courses__error {
+  margin-bottom: 16px;
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+.my-courses__error {
+  color: #b42318;
+}
+.my-courses__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.my-courses__curso {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 16px;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 26px rgb(8 39 71 / 7%);
+}
+.my-courses__portada {
+  width: 200px;
+  flex-shrink: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0c4566, #1a7299 60%, #3fb6dd);
+}
+.my-courses__info {
+  flex: 1;
+  min-width: 0;
+}
+.my-courses__info h2 {
+  margin-bottom: 6px;
+  font-size: 18px;
+  font-weight: 700;
+}
+.my-courses__info p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-bottom: 8px;
+  color: #3d5872;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.my-courses__info small {
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.my-courses__avance {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 220px;
+  flex-shrink: 0;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.my-courses__barra {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e6edf3;
+}
+.my-courses__barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--acento);
+}
+.my-courses__continuar {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--acento);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+.my-courses__continuar:hover {
+  background: var(--acento-oscuro);
+}
+.my-courses .my-courses__continuar svg {
+  width: 16px;
+  height: 16px;
+}
+.my-courses__curso a:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
 @media (max-width: 760px) {
   .my-courses {
     padding-top: 24px;
+  }
+  .my-courses__curso {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .my-courses__portada,
+  .my-courses__avance {
+    width: 100%;
   }
 }
 @media (max-width: 600px) {

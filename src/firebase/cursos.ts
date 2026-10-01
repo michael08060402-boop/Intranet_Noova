@@ -7,6 +7,7 @@ import {
   onSnapshot,
   query,
   serverTimestamp,
+  setDoc,
   updateDoc,
   where,
   type DocumentData,
@@ -128,6 +129,38 @@ export function actualizarClase(cursoId: string, claseId: string, datos: Partial
 // Igual que con los cursos: solo se elimina una clase sin contenidos para no dejarlos huérfanos.
 export function eliminarClase(cursoId: string, claseId: string) {
   return deleteDoc(doc(db, "cursos", cursoId, "clases", claseId));
+}
+
+export function escucharInscripciones(uid: string, alCambiar: (cursoIds: string[]) => void, alFallar: () => void) {
+  return onSnapshot(collection(db, "usuarios", uid, "inscripciones"), (resultado) => {
+    alCambiar(resultado.docs.map((documento) => documento.id));
+  }, alFallar);
+}
+
+export function inscribirse(uid: string, cursoId: string) {
+  return setDoc(doc(db, "usuarios", uid, "inscripciones", cursoId), { cursoId, inscritoEn: serverTimestamp() });
+}
+
+export type Progreso = { cursoId: string; claseId: string; completado: boolean };
+
+export function escucharProgreso(uid: string, alCambiar: (progreso: Progreso[]) => void, alFallar: () => void) {
+  return onSnapshot(collection(db, "usuarios", uid, "progreso"), (resultado) => {
+    alCambiar(resultado.docs.map((documento) => {
+      const datos = documento.data();
+      return { cursoId: datos.cursoId, claseId: datos.claseId, completado: datos.completado };
+    }));
+  }, alFallar);
+}
+
+// El id del documento debe ser cursoId_claseId, como exigen las reglas.
+export function marcarClase(uid: string, cursoId: string, claseId: string, completado: boolean) {
+  return setDoc(doc(db, "usuarios", uid, "progreso", `${cursoId}_${claseId}`), {
+    cursoId,
+    claseId,
+    completado,
+    completadoEn: completado ? serverTimestamp() : null,
+    actualizadoEn: serverTimestamp(),
+  });
 }
 
 export async function contarDocumentos(ruta: string) {

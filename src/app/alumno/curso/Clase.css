@@ -1,0 +1,237 @@
+.clase-page {
+  position: relative;
+  isolation: isolate;
+  width: min(92%, 1240px);
+  margin: 0 auto;
+  padding: 18px 0 48px;
+}
+/* Paisaje en duotono detrás del encabezado, igual que en las demás páginas del alumno. */
+.clase-page::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: calc((100% - 100vw) / 2);
+  width: 100vw;
+  height: 340px;
+  background:
+    linear-gradient(0deg, #f3f6f9 0%, rgb(243 246 249 / 70%) 45%, rgb(243 246 249 / 55%) 100%),
+    linear-gradient(#1a7299, #1a7299),
+    url("../../../assets/fondos/paisaje-mina.webp") center top / cover;
+  background-blend-mode: normal, color, normal;
+  opacity: 0.8;
+  pointer-events: none;
+}
+.clase-page__estado {
+  margin-bottom: 14px;
+  color: var(--texto-suave);
+  font-size: 15px;
+}
+.clase-page__enlace {
+  display: inline-flex;
+  padding: 11px 20px;
+  border-radius: 10px;
+  background: var(--acento);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+.clase-page__ruta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+.clase-page__ruta a:hover {
+  color: var(--acento-oscuro);
+  text-decoration: underline;
+}
+.clase-page__ruta a:last-of-type {
+  color: var(--texto);
+  font-weight: 600;
+}
+.clase-page .clase-page__ruta svg {
+  width: 14px;
+  height: 14px;
+}
+.clase-page__encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.clase-page__encabezado h1 {
+  font-size: clamp(24px, 2.4vw, 32px);
+}
+.clase-page__completar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid var(--acento);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--acento-oscuro);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.clase-page__completar:hover:not(:disabled) {
+  background: var(--acento-suave);
+}
+.clase-page__completar.is-completada {
+  border-color: #1a7f4b;
+  background: #e6f6ee;
+  color: #1a7f4b;
+}
+.clase-page__completar:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.clase-page .clase-page__completar svg {
+  width: 18px;
+  height: 18px;
+}
+.clase-page__error {
+  margin: -12px 0 16px;
+  color: #b42318;
+  font-size: 13px;
+}
+.clase-page__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  align-items: start;
+  gap: 26px;
+}
+
+.clase-page__video {
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  background: #11161c;
+  box-shadow: 0 18px 40px rgb(8 39 71 / 18%);
+}
+.clase-page__detalle {
+  margin-top: 20px;
+  padding: 8px 26px 26px;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: #fff;
+}
+.clase-page__pestanas {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--borde);
+}
+.clase-page__pestanas button {
+  padding: 16px 0 12px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  color: var(--texto-suave);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.clase-page__pestanas button[aria-selected="true"] {
+  border-bottom-color: var(--acento);
+  color: var(--acento-oscuro);
+}
+.clase-page__detalle h2 {
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.clase-page__detalle p {
+  color: #3d5872;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.clase-page__lateral {
+  position: sticky;
+  top: 20px;
+  padding: 20px 18px;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgb(8 39 71 / 8%);
+}
+.clase-page__lateral-titulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0 6px 14px;
+}
+.clase-page__lateral h2 {
+  font-size: 16px;
+  font-weight: 700;
+}
+.clase-page__lateral-titulo small {
+  color: var(--texto-suave);
+  font-size: 12px;
+}
+.clase-page__lateral ol {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.clase-page__lateral li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 10px;
+  color: var(--texto);
+  font-size: 14px;
+  font-weight: 600;
+}
+.clase-page__lateral li a:hover {
+  background: #f3f7fa;
+}
+.clase-page__lateral li a.is-actual {
+  background: var(--acento-suave);
+  color: var(--acento-oscuro);
+}
+.clase-page__miniatura {
+  display: grid;
+  place-items: center;
+  width: 82px;
+  flex-shrink: 0;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radio);
+  background: #11161c;
+  color: #4ade80;
+}
+.clase-page .clase-page__miniatura svg {
+  width: 20px;
+  height: 20px;
+}
+.clase-page__numero {
+  color: var(--texto-suave);
+  font-weight: 500;
+}
+.clase-page a:focus-visible,
+.clase-page button:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+}
+
+@media (max-width: 960px) {
+  .clase-page__layout {
+    grid-template-columns: 1fr;
+  }
+  .clase-page__lateral {
+    position: static;
+  }
+}
+@media (max-width: 600px) {
+  .clase-page__detalle {
+    padding: 4px 18px 20px;
+  }
+}

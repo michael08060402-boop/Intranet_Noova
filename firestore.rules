@@ -307,9 +307,11 @@ service cloud.firestore {
       match /progreso/{progresoId} {
         allow get, list: if (esPropietario(uid) && esAlumnoVerificado()) || esAdministrador();
 
+        // Solo registra avance quien está inscrito en el curso.
         allow create: if esPropietario(uid)
           && esAlumnoVerificado()
-          && progresoValido(request.resource.data, progresoId);
+          && progresoValido(request.resource.data, progresoId)
+          && exists(/databases/$(database)/documents/usuarios/$(uid)/inscripciones/$(request.resource.data.cursoId));
 
         allow update: if esPropietario(uid)
           && esAlumnoVerificado()
@@ -334,6 +336,23 @@ service cloud.firestore {
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['leida']);
 
         allow delete: if false;
+      }
+
+      // Inscripción en un curso publicado; un curso premium exige el plan premium.
+      match /inscripciones/{cursoId} {
+        allow get, list: if (esPropietario(uid) && esAlumnoVerificado()) || esAdministrador();
+
+        allow create: if esPropietario(uid)
+          && esAlumnoVerificado()
+          && idValido(cursoId)
+          && request.resource.data.keys().hasAll(['cursoId', 'inscritoEn'])
+          && request.resource.data.keys().hasOnly(['cursoId', 'inscritoEn'])
+          && request.resource.data.cursoId == cursoId
+          && request.resource.data.inscritoEn == request.time
+          && cursoPublicado(cursoId)
+          && (get(rutaCurso(cursoId)).data.acceso == 'gratis' || tienePlanPremium());
+
+        allow update, delete: if false;
       }
     }
 
