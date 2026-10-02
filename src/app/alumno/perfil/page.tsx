@@ -1,16 +1,38 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { Camera, CircleCheck, Crown, KeyRound, ShieldCheck, UserRound } from "lucide-react";
+import { Camera, CircleCheck, Crown, KeyRound, ShieldCheck, Trash2, UserRound } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { TituloPagina } from "@/components/alumno/PiezasCatalogo";
 import { auth } from "@/firebase/config";
-import { actualizarNombre, capitalizarNombre } from "@/firebase/perfiles";
+import { actualizarFoto, actualizarNombre, capitalizarNombre } from "@/firebase/perfiles";
 import "./Perfil.css";
 
 const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "long", year: "numeric" });
+
+function reducirFoto(archivo: File) {
+  return new Promise<string>((resolver, rechazar) => {
+    const direccion = URL.createObjectURL(archivo);
+    const imagen = document.createElement("img");
+    imagen.onload = () => {
+      const lado = Math.min(imagen.width, imagen.height);
+      const lienzo = document.createElement("canvas");
+      lienzo.width = 192;
+      lienzo.height = 192;
+      lienzo.getContext("2d")?.drawImage(imagen, (imagen.width - lado) / 2, (imagen.height - lado) / 2, lado, lado, 0, 0, 192, 192);
+      URL.revokeObjectURL(direccion);
+      resolver(lienzo.toDataURL("image/jpeg", 0.82));
+    };
+    imagen.onerror = () => {
+      URL.revokeObjectURL(direccion);
+      rechazar(new Error("imagen"));
+    };
+    imagen.src = direccion;
+  });
+}
 
 export default function Perfil() {
   const { usuario, perfil } = useSesion();
@@ -24,6 +46,9 @@ export default function Perfil() {
   const [error, setError] = useState("");
   const [enviandoClave, setEnviandoClave] = useState(false);
   const [mensajeClave, setMensajeClave] = useState("");
+  const [errorFoto, setErrorFoto] = useState("");
+  const [guardandoFoto, setGuardandoFoto] = useState(false);
+  const selectorFoto = useRef<HTMLInputElement>(null);
 
   const valorNombre = nombre ?? nombreGuardado;
   const valorApellidos = apellidos ?? apellidosGuardados;
@@ -50,6 +75,33 @@ export default function Perfil() {
     setGuardando(false);
   }
 
+  async function cambiarFoto(evento: ChangeEvent<HTMLInputElement>) {
+    const archivo = evento.target.files?.[0];
+    evento.target.value = "";
+    if (!archivo || !usuario) return;
+    if (!archivo.type.startsWith("image/")) return setErrorFoto("Elige un archivo de imagen.");
+    setGuardandoFoto(true);
+    setErrorFoto("");
+    try {
+      await actualizarFoto(usuario.uid, await reducirFoto(archivo));
+    } catch {
+      setErrorFoto("No se pudo guardar la foto. Prueba con otra imagen.");
+    }
+    setGuardandoFoto(false);
+  }
+
+  async function quitarFoto() {
+    if (!usuario) return;
+    setGuardandoFoto(true);
+    setErrorFoto("");
+    try {
+      await actualizarFoto(usuario.uid, null);
+    } catch {
+      setErrorFoto("No se pudo quitar la foto. Inténtalo nuevamente.");
+    }
+    setGuardandoFoto(false);
+  }
+
   async function cambiarContrasena() {
     if (!usuario?.email) return;
     setEnviandoClave(true);
@@ -64,15 +116,21 @@ export default function Perfil() {
 
   return (
     <main className="perfil-page alumno-fondo">
-      <TituloPagina className="perfil-page__heading" titulo="Mi perfil" descripcion="Administra tus datos, la seguridad de tu cuenta y tu plan." />
+      <TituloPagina className="perfil-page__heading" titulo="Mi perfil" />
 
       <section className="perfil-page__tarjeta perfil-page__tarjeta--datos" aria-labelledby="perfil-datos">
         <h2 id="perfil-datos"><UserRound />Perfil</h2>
         <div className="perfil-page__foto">
-          <span className="perfil-page__avatar">{nombreGuardado.charAt(0) || "?"}</span>
+          <span className="perfil-page__avatar">
+            {perfil?.foto ? <Image src={perfil.foto} alt="" width={60} height={60} unoptimized /> : nombreGuardado.charAt(0) || "?"}
+          </span>
           <div>
-            <button type="button" disabled title="Disponible próximamente"><Camera />Cambiar foto</button>
-            <small>La foto de perfil estará disponible próximamente.</small>
+            <input ref={selectorFoto} type="file" accept="image/*" hidden onChange={cambiarFoto} />
+            <div className="perfil-page__botones-foto">
+              <button type="button" onClick={() => selectorFoto.current?.click()} disabled={guardandoFoto}><Camera />{guardandoFoto ? "Guardando…" : "Cambiar foto"}</button>
+              {perfil?.foto && <button type="button" onClick={quitarFoto} disabled={guardandoFoto}><Trash2 />Quitar</button>}
+            </div>
+            {errorFoto && <p className="perfil-page__error" role="alert">{errorFoto}</p>}
           </div>
         </div>
 
@@ -88,7 +146,6 @@ export default function Perfil() {
           <label className="perfil-page__completo">
             <span>Correo electrónico</span>
             <input value={perfil?.correo ?? ""} readOnly />
-            <small>El correo está vinculado a tu acceso y no se puede cambiar.</small>
           </label>
           <div className="perfil-page__acciones">
             {mensaje && <p className="perfil-page__mensaje" role="status">{mensaje}</p>}
@@ -103,7 +160,7 @@ export default function Perfil() {
         <div className="perfil-page__fila">
           <div>
             <strong>Contraseña</strong>
-            <small>{usaContrasena ? "Te enviaremos un enlace a tu correo." : "Tu cuenta usa Google: se gestiona desde Google."}</small>
+            {!usaContrasena && <small>Tu cuenta usa Google: se gestiona desde Google.</small>}
           </div>
           {usaContrasena && (
             <button type="button" className="perfil-page__secundario" onClick={cambiarContrasena} disabled={enviandoClave}>
@@ -133,21 +190,14 @@ export default function Perfil() {
             <span className="perfil-page__estado"><CircleCheck />Activo</span>
           </div>
         </div>
-        {premium ? (
-          <div className="perfil-page__fila">
-            <div>
-              <strong>Suscripción</strong>
-              <small>Disponible al habilitar el pago en línea.</small>
-            </div>
-            <button type="button" className="perfil-page__secundario" disabled title="Disponible próximamente">Administrar plan</button>
-          </div>
-        ) : (
+        {!premium && (
           <div className="perfil-page__premium">
+            <span className="perfil-page__corona"><Crown /></span>
             <div>
-              <strong>Hazte Premium</strong>
-              <small>Todos los cursos, contenido especializado y certificados.</small>
+              <strong>Pasa a Premium</strong>
+              <small>Todos los cursos, certificados y herramientas adicionales</small>
             </div>
-            <Link href="/alumno/premium" className="alumno-dorado"><Crown />Hazte Premium</Link>
+            <Link href="/alumno/premium" className="perfil-page__premium-boton alumno-dorado">Hazte Premium</Link>
           </div>
         )}
       </section>

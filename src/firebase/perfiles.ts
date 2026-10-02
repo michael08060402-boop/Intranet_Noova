@@ -1,5 +1,5 @@
 import type { User } from "firebase/auth";
-import { collection, doc, onSnapshot, query, runTransaction, serverTimestamp, updateDoc, where } from "firebase/firestore";
+import { collection, deleteField, doc, onSnapshot, query, runTransaction, serverTimestamp, updateDoc, where } from "firebase/firestore";
 import { db } from "./config";
 
 export type Perfil = {
@@ -7,6 +7,7 @@ export type Perfil = {
   correo: string;
   rol: "alumno" | "admin";
   plan: "gratis" | "premium";
+  foto?: string;
 };
 
 export type Alumno = { id: string; nombre: string; correo: string; plan: Perfil["plan"]; creadoEn: number };
@@ -34,7 +35,8 @@ export function leerPerfil(datos: Record<string, unknown> | undefined): Perfil |
   if (typeof datos.correo !== "string") return null;
   if (datos.rol !== "alumno" && datos.rol !== "admin") return null;
   if (datos.plan !== "gratis" && datos.plan !== "premium") return null;
-  return { nombre: datos.nombre, correo: datos.correo, rol: datos.rol, plan: datos.plan };
+  const foto = typeof datos.foto === "string" ? datos.foto : undefined;
+  return { nombre: datos.nombre, correo: datos.correo, rol: datos.rol, plan: datos.plan, foto };
 }
 
 export async function asegurarPerfil(usuario: User) {
@@ -58,6 +60,10 @@ export async function asegurarPerfil(usuario: User) {
 
 export function actualizarNombre(uid: string, nombre: string) {
   return updateDoc(doc(db, "usuarios", uid), { nombre: capitalizarNombre(nombre).slice(0, 120) });
+}
+
+export function actualizarFoto(uid: string, foto: string | null) {
+  return updateDoc(doc(db, "usuarios", uid), { foto: foto ?? deleteField() });
 }
 
 export async function guardarNombreRegistro(usuario: User, nombre: string) {
