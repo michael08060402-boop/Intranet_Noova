@@ -1,9 +1,6 @@
 import { useId } from "react";
 
-// Ondas decorativas del navbar y del pie de página: fuertes a los lados y casi transparentes al centro para no tapar el contenido.
 export default function Ondas({ className }: { className: string }) {
-  // El navbar y el pie usan el componente a la vez: cada uno necesita ids de degradado propios. Se quitan los
-  // caracteres especiales que React pone en useId porque rompen la referencia url(#id).
   const id = `ondas${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
 
   return (

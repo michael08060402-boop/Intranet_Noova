@@ -67,9 +67,9 @@
   background: var(--acento-suave);
 }
 .clase-page__completar.is-completada {
-  border-color: #1a7f4b;
+  border-color: #176f42;
   background: #e6f6ee;
-  color: #1a7f4b;
+  color: #176f42;
 }
 .clase-page__completar:disabled {
   opacity: 0.6;
@@ -92,10 +92,37 @@
 }
 
 .clase-page__video {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
   aspect-ratio: 16 / 9;
   border-radius: 14px;
   background: #11161c;
   box-shadow: 0 18px 40px rgb(8 39 71 / 18%);
+  color: #fff;
+  font-size: 15px;
+}
+.clase-page__video video {
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+.clase-page__video-aviso {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: 20px;
+  text-align: center;
+}
+.clase-page__video-aviso button {
+  padding: 11px 20px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--acento);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
 }
 .clase-page__detalle {
   margin-top: 20px;
@@ -187,7 +214,6 @@
   flex-shrink: 0;
   aspect-ratio: 16 / 10;
   border-radius: var(--radio);
-  /* TEMPORAL: imagen de prueba con un velo oscuro para que se vea el check; quitarla cuando haya miniaturas reales. */
   background:
     linear-gradient(rgb(4 43 78 / 45%), rgb(4 43 78 / 45%)),
     url("../../../assets/fondos/paisaje-mina.webp") center / cover;

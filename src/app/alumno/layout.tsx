@@ -21,6 +21,7 @@ const enlaces = [
   { href: "/alumno/cursos", etiqueta: "Mis cursos", Icono: BookOpen },
   { href: "/alumno/evaluaciones", etiqueta: "Evaluaciones", Icono: ClipboardCheck },
   { href: "/alumno/explorar", etiqueta: "Explorar", Icono: Compass },
+  { href: "/alumno/herramientas", etiqueta: "Herramientas", Icono: Calculator },
 ];
 
 const opcionesCuenta = [
@@ -47,21 +48,21 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
 
   return (
     <AccesoPorRol rol="alumno">
-      <div className="student-shell">
-        <header className="student-header">
-          <Ondas className="student-header__ondas" />
-          <Link href="/alumno" className="student-brand" aria-label="Noova Learn Mining, inicio">
+      <div className="alumno-estructura">
+        <header className="alumno-header">
+          <Ondas className="alumno-header__ondas" />
+          <Link href="/alumno" className="alumno-brand" aria-label="Noova Learn Mining, inicio">
             <Image src={logoNoova} alt="" preload />
           </Link>
-          <nav id="student-nav" className={`student-nav ${menuAbierto ? "is-abierto" : ""}`} aria-label="Navegación del alumno">
+          <nav id="alumno-nav" className={`alumno-nav ${menuAbierto ? "is-abierto" : ""}`} aria-label="Navegación del alumno">
             {enlaces.map(({ href, etiqueta, Icono }) => {
-              const activo = ruta === href;
+              const activo = href === "/alumno" ? ruta === href : ruta.startsWith(href);
 
               return (
                 <Link
                   key={href}
                   href={href}
-                  className={activo ? "is-active" : ""}
+                  className={activo ? "is-activo" : ""}
                   aria-current={activo ? "page" : undefined}
                   onClick={() => setMenuAbierto(false)}
                 >
@@ -70,28 +71,23 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
                 </Link>
               );
             })}
-            <button type="button">
-              <Calculator />
-              Herramientas
-              <ChevronDown />
-            </button>
           </nav>
-          <div className="student-account">
+          <div className="alumno-account">
             <button
               type="button"
-              className="student-campana"
-              popoverTarget="student-avisos"
+              className="alumno-campana"
+              popoverTarget="alumno-avisos"
               aria-label={sinLeer.length > 0 ? `Notificaciones: ${sinLeer.length} sin leer` : "Notificaciones"}
               title="Notificaciones"
             >
               <Bell />
               {sinLeer.length > 0 && <span>{sinLeer.length > 9 ? "9+" : sinLeer.length}</span>}
             </button>
-            <button type="button" className="student-cuenta" popoverTarget="student-menu-cuenta" aria-label="Abrir menú de la cuenta">
-              <span className="student-avatar">{nombre.charAt(0).toUpperCase()}</span>
-              <span className="student-account__name">
+            <button type="button" className="alumno-cuenta" popoverTarget="alumno-menu-cuenta" aria-label="Abrir menú de la cuenta">
+              <span className="alumno-avatar">{nombre.charAt(0).toUpperCase()}</span>
+              <span className="alumno-account__name">
                 {nombre}
-                <small className="student-account__plan">
+                <small className="alumno-account__plan">
                   {perfil?.plan === "premium" ? <><Crown />Premium</> : "Plan gratuito"}
                 </small>
               </span>
@@ -100,28 +96,27 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
           </div>
           <button
             type="button"
-            className="student-menu-boton"
+            className="alumno-menu-boton"
             onClick={() => setMenuAbierto(!menuAbierto)}
             aria-expanded={menuAbierto}
-            aria-controls="student-nav"
+            aria-controls="alumno-nav"
             aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
           >
             {menuAbierto ? <X /> : <Menu />}
           </button>
         </header>
-        {/* Al cerrar el panel, lo visto se marca como leído. */}
         <div
-          id="student-avisos"
+          id="alumno-avisos"
           ref={panelAvisos}
           popover="auto"
-          className="student-avisos"
+          className="alumno-avisos"
           aria-label="Notificaciones"
           onToggle={(evento) => {
             if (evento.newState === "closed" && uid && sinLeer.length > 0) marcarLeidas(uid, sinLeer.map((aviso) => aviso.id)).catch(() => {});
           }}
         >
           <h2>Notificaciones</h2>
-          {avisos.length === 0 ? <p className="student-avisos__vacio">Aún no tienes notificaciones.</p> : (
+          {avisos.length === 0 ? <p className="alumno-avisos__vacio">Aún no tienes notificaciones.</p> : (
             <ul>
               {avisos.map((aviso) => (
                 <li key={aviso.id} className={aviso.leida ? "" : "is-nueva"}>
@@ -135,10 +130,11 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
             </ul>
           )}
         </div>
-        <div id="student-menu-cuenta" ref={menuCuenta} popover="auto" className="student-menu-cuenta" aria-label="Menú de la cuenta">
-          <div className="student-menu-cuenta__datos">
+        <div id="alumno-menu-cuenta" ref={menuCuenta} popover="auto" className="alumno-menu-cuenta" aria-label="Menú de la cuenta">
+          <div className="alumno-menu-cuenta__datos">
             <strong>{capitalizarNombre(perfil?.nombre ?? nombre)}</strong>
-            <span>{perfil?.correo}</span>          </div>
+            <span>{perfil?.correo}</span>
+          </div>
           {opcionesCuenta.map(({ href, etiqueta, Icono }) => (
             <Link key={href} href={href} onClick={() => menuCuenta.current?.hidePopover()}>
               <Icono />
@@ -147,7 +143,7 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
           ))}
           <button
             type="button"
-            className="student-menu-cuenta__salir"
+            className="alumno-menu-cuenta__salir"
             onClick={() => {
               menuCuenta.current?.hidePopover();
               confirmarSalida.current?.showModal();
@@ -157,20 +153,19 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
             Cerrar sesión
           </button>
         </div>
-        <dialog ref={confirmarSalida} className="student-logout" aria-labelledby="student-logout-title">
-          <h2 id="student-logout-title">¿Cerrar sesión?</h2>
+        <dialog ref={confirmarSalida} className="alumno-logout" aria-labelledby="alumno-logout-title">
+          <h2 id="alumno-logout-title">¿Cerrar sesión?</h2>
           <p>Tendrás que volver a ingresar para continuar aprendiendo.</p>
-          <div className="student-logout__actions">
+          <div className="alumno-logout__actions">
             <button type="button" onClick={() => confirmarSalida.current?.close()}>
               Cancelar
             </button>
-            <button type="button" className="student-logout__confirm" onClick={() => signOut(auth)}>
+            <button type="button" className="alumno-logout__confirm" onClick={() => signOut(auth)}>
               Cerrar sesión
             </button>
           </div>
         </dialog>
         {children}
-        {/* El pie solo acompaña la portada; en las demás páginas el alumno está trabajando. */}
         {ruta === "/alumno" && <PiePagina />}
       </div>
     </AccesoPorRol>

@@ -6,7 +6,6 @@ import { actualizarCategoria, crearCategoria, eliminarCategoria, type Categoria,
 import "./NuevoCurso.css";
 import "./Categorias.css";
 
-// Comparte el modal de NuevoCurso (.nuevo-curso) y añade solo la lista de categorías.
 export default function Categorias({ categorias, cursos, alCerrar }: { categorias: Categoria[]; cursos: Curso[]; alCerrar: () => void }) {
   const dialogo = useRef<HTMLDialogElement>(null);
   const [nombre, setNombre] = useState("");

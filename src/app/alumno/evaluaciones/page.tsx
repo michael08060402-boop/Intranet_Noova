@@ -40,17 +40,16 @@ export default function MisEvaluaciones() {
     return intento.estado === "entregado" ? "Entregadas" : "Calificadas";
   }
 
-  // Solo exámenes en línea de cursos publicados en los que está inscrito o que ya empezó a rendir.
   const misExamenes = examenes.filter((examen) => examen.modo === "manual" && cursoDe(examen)
     && (inscritos.includes(examen.cursoId) || intentoDe(examen)));
   const visibles = misExamenes.filter((examen) => filtro === "Todas" || grupo(examen) === filtro);
 
   return (
-    <main className="mis-evaluaciones student-fondo">
+    <main className="mis-evaluaciones alumno-fondo">
       <TituloPagina className="mis-evaluaciones__heading" titulo="Mis evaluaciones" descripcion="Revisa tus exámenes pendientes y las notas que obtuviste." />
       <div className="mis-evaluaciones__filtros" aria-label="Filtrar evaluaciones">
         {filtros.map((nombre) => (
-          <button key={nombre} type="button" aria-pressed={filtro === nombre} className={filtro === nombre ? "is-active" : ""} onClick={() => setFiltro(nombre)}>
+          <button key={nombre} type="button" aria-pressed={filtro === nombre} className={filtro === nombre ? "is-activo" : ""} onClick={() => setFiltro(nombre)}>
             {nombre}
             <span>{nombre === "Todas" ? misExamenes.length : misExamenes.filter((examen) => grupo(examen) === nombre).length}</span>
           </button>

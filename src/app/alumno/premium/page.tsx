@@ -19,7 +19,7 @@ const beneficios = [
 
 function Marca({ incluido }: { incluido: boolean }) {
   return (
-    <span className={`premium-page__marca ${incluido ? "is-incluido" : ""}`} aria-label={incluido ? "Incluido" : "No incluido"}>
+    <span className={`premium-page__marca ${incluido ? "is-incluido" : ""}`} role="img" aria-label={incluido ? "Incluido" : "No incluido"}>
       {incluido ? <Check /> : <X />}
     </span>
   );
@@ -74,9 +74,9 @@ export default function Premium() {
               {beneficiosPremium.map((beneficio) => <li key={beneficio}><Marca incluido />{beneficio}</li>)}
             </ul>
             {esPremium ? (
-              <button type="button" className="premium-page__principal student-dorado" disabled><Crown />Ya tienes Premium</button>
+              <button type="button" className="premium-page__principal alumno-dorado" disabled><Crown />Ya tienes Premium</button>
             ) : (
-              <Link href={`/alumno/premium/pago?periodo=${meses}`} className="premium-page__principal student-dorado"><Crown />Hazte Premium</Link>
+              <Link href={`/alumno/premium/pago?periodo=${meses}`} className="premium-page__principal alumno-dorado"><Crown />Hazte Premium</Link>
             )}
           </section>
         </div>

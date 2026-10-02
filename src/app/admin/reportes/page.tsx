@@ -14,7 +14,6 @@ const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "
 const promedio = (notas: number[]) => (notas.length > 0 ? Math.round((notas.reduce((suma, nota) => suma + nota, 0) / notas.length) * 10) / 10 : null);
 const porcentaje = (parte: number, total: number) => (total > 0 ? `${Math.round((parte / total) * 100)} %` : "—");
 
-// CSV con BOM para que Excel respete las tildes; las celdas que empiezan con =, +, - o @ se neutralizan para que no se ejecuten como fórmula.
 function descargarCsv(archivo: string, filas: Celda[][]) {
   const texto = filas.map((fila) => fila.map((celda) => {
     const valor = typeof celda === "string" && /^[=+\-@]/.test(celda) ? `'${celda}` : String(celda);
@@ -50,7 +49,6 @@ export default function ReportesPage() {
   const examenDe = (intento: Intento) => examenes.find((examen) => examen.id === intento.examenId);
   const aprobo = (intento: Intento) => intento.nota !== null && intento.nota >= (examenDe(intento)?.notaMinima ?? NOTA_MAXIMA + 1);
 
-  // El filtro de curso afecta a los resultados de exámenes, no a los totales generales.
   const examenesVisibles = examenes.filter((examen) => filtro === "todos" || examen.cursoId === filtro);
   const idsVisibles = new Set(examenesVisibles.map((examen) => examen.id));
   const intentosVisibles = intentos.filter((intento) => idsVisibles.has(intento.examenId));
@@ -132,7 +130,7 @@ export default function ReportesPage() {
             {cursos.map((curso) => <option key={curso.id} value={curso.id}>{curso.nombre}</option>)}
           </select>
         </div>
-        <div className="admin-tabla-caja">
+        <div className="admin-tabla-caja" tabIndex={0} role="region" aria-label="Tabla de resultados por examen">
           <table className="admin-tabla">
             <thead>
               <tr>
@@ -177,7 +175,7 @@ export default function ReportesPage() {
             <input type="search" value={busqueda} onChange={(evento) => setBusqueda(evento.target.value)} placeholder="Buscar por nombre o correo..." aria-label="Buscar alumno" />
           </label>
         </div>
-        <div className="admin-tabla-caja">
+        <div className="admin-tabla-caja" tabIndex={0} role="region" aria-label="Tabla de resultados por alumno">
           <table className="admin-tabla">
             <thead>
               <tr>

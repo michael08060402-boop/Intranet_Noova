@@ -3,7 +3,6 @@ import { ChartNoAxesColumn, Check, Crown, Lock } from "lucide-react";
 import { nombresNivel, type Curso } from "@/firebase/cursos";
 import "./TarjetaCurso.css";
 
-// Tarjeta del catálogo que comparten Inicio y Explorar; abre el detalle del curso en Explorar.
 export default function TarjetaCurso({
   curso,
   categoria,
@@ -20,7 +19,6 @@ export default function TarjetaCurso({
   return (
     <Link href={`/alumno/explorar?curso=${curso.id}`} className="tarjeta-curso">
       <span className="tarjeta-curso__portada">
-        {/* Las etiquetas son sólidas para leerse sobre portadas claras u oscuras. */}
         <span className="tarjeta-curso__etiquetas">
           {curso.acceso === "premium" && <span className="tarjeta-curso__etiqueta">{bloqueado ? <Lock /> : <Crown />}Premium</span>}
           {inscrito && <span className="tarjeta-curso__etiqueta tarjeta-curso__etiqueta--inscrito"><Check />Inscrito</span>}

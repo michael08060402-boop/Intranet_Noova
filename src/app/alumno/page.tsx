@@ -14,7 +14,6 @@ import "./InicioAlumno.css";
 export default function InicioAlumno() {
   const { usuario, perfil } = useSesion();
   const nombre = capitalizarNombre(perfil?.nombre.split(" ")[0] || "estudiante");
-  // Firebase solo actualiza lastSignInTime al iniciar sesión, así que el saludo inicial se mantiene durante toda la primera sesión.
   const primeraVez = usuario?.metadata.creationTime === usuario?.metadata.lastSignInTime;
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
@@ -50,38 +49,37 @@ export default function InicioAlumno() {
     return total ? Math.min(100, Math.round((completadas / total) * 100)) : 0;
   }
 
-  // Los cursos terminados no se repiten aquí; primero los más avanzados.
   const enCurso = misCursos.filter((curso) => porcentaje(curso) < 100).sort((a, b) => porcentaje(b) - porcentaje(a)).slice(0, 3);
 
   return (
-    <main className="student-main">
-      <section className="student-welcome">
+    <main className="alumno-main">
+      <section className="alumno-welcome">
         <h1>
           {primeraVez ? "¡Te damos la bienvenida, " : "¡Hola de nuevo, "}
-          <span className="student-welcome__nombre">{nombre}</span>!
+          <span className="alumno-welcome__nombre">{nombre}</span>!
         </h1>
         <p>{primeraVez ? "Empieza tu formación explorando los cursos disponibles." : "Continúa aprendiendo donde lo dejaste."}</p>
       </section>
 
-      <section className="student-hero" aria-labelledby="student-hero-title">
-        <div className="student-hero__copy">
-          <h2 id="student-hero-title">Sigue desarrollando tus habilidades en minería</h2>
+      <section className="alumno-portada" aria-labelledby="alumno-portada-title">
+        <div className="alumno-portada__copy">
+          <h2 id="alumno-portada-title">Sigue desarrollando tus habilidades en minería</h2>
           <p>Formación especializada para un sector más seguro, eficiente y sostenible.</p>
-          <div className="student-hero__actions">
-            <Link href="/alumno/explorar" className="student-hero__principal">Explorar cursos</Link>
-            {perfil?.plan === "gratis" && <Link href="/alumno/premium" className="student-hero__secundario"><Crown />Conocer Premium</Link>}
+          <div className="alumno-portada__actions">
+            <Link href="/alumno/explorar" className="alumno-portada__principal">Explorar cursos</Link>
+            {perfil?.plan === "gratis" && <Link href="/alumno/premium" className="alumno-portada__secundario"><Crown />Conocer Premium</Link>}
           </div>
         </div>
-        <Image className="student-hero__image" src={heroAlumno} alt="Profesionales de Noova trabajando en una mina subterránea" sizes="(max-width: 760px) 100vw, 50vw" preload />
+        <Image className="alumno-portada__image" src={heroAlumno} alt="Profesionales de Noova trabajando en una mina subterránea" sizes="(max-width: 760px) 100vw, 50vw" preload />
       </section>
 
-      <section className="student-courses" aria-labelledby="student-featured-title">
-        <div className="student-section-heading">
-          <h2 id="student-featured-title">Cursos destacados</h2>
+      <section className="alumno-courses" aria-labelledby="alumno-featured-title">
+        <div className="alumno-section-heading">
+          <h2 id="alumno-featured-title">Cursos destacados</h2>
           <Link href="/alumno/explorar">Ver todos<ArrowRight /></Link>
         </div>
         {destacados.length > 0 ? (
-          <div className="student-destacados">
+          <div className="alumno-destacados">
             {destacados.map((curso) => (
               <TarjetaCurso
                 key={curso.id}
@@ -94,7 +92,7 @@ export default function InicioAlumno() {
             ))}
           </div>
         ) : (
-          <div className="student-empty">
+          <div className="alumno-empty">
             <span><BookOpen /></span>
             <div>
               <h3>{cargando ? "Cargando cursos…" : "Aún no hay cursos destacados"}</h3>
@@ -104,22 +102,22 @@ export default function InicioAlumno() {
         )}
       </section>
 
-      <section className="student-courses" aria-labelledby="student-learning-title">
-        <div className="student-section-heading">
-          <h2 id="student-learning-title">Continúa aprendiendo</h2>
+      <section className="alumno-courses" aria-labelledby="alumno-learning-title">
+        <div className="alumno-section-heading">
+          <h2 id="alumno-learning-title">Continúa aprendiendo</h2>
           <Link href="/alumno/cursos">Ver mis cursos<ArrowRight /></Link>
         </div>
         {enCurso.length > 0 ? (
-          <div className="student-continuar">
+          <div className="alumno-continuar">
             {enCurso.map((curso) => {
               const valor = porcentaje(curso);
               return (
-                <article key={curso.id} className="student-continuar__curso">
-                  <div className="student-continuar__portada" />
-                  <div className="student-continuar__cuerpo">
+                <article key={curso.id} className="alumno-continuar__curso">
+                  <div className="alumno-continuar__portada" />
+                  <div className="alumno-continuar__cuerpo">
                     <h3>{curso.nombre}</h3>
                     <small>{valor}% completado</small>
-                    <span className="student-continuar__barra"><span style={{ width: `${valor}%` }} /></span>
+                    <span className="alumno-continuar__barra"><span style={{ width: `${valor}%` }} /></span>
                     <Link href={`/alumno/curso?id=${curso.id}`}>{valor === 0 ? "Comenzar" : "Continuar"}<ArrowRight /></Link>
                   </div>
                 </article>
@@ -127,7 +125,7 @@ export default function InicioAlumno() {
             })}
           </div>
         ) : (
-          <div className="student-empty student-empty--centrado">
+          <div className="alumno-empty alumno-empty--centrado">
             <div>
               <h3>Aún no tienes cursos en progreso</h3>
               <p>Cuando te inscribas en un curso, podrás retomarlo desde aquí.</p>

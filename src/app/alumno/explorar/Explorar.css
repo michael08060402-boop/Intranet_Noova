@@ -1,15 +1,14 @@
-.student-explore {
+.alumno-explorar {
   width: min(92%, 1200px);
   margin: 0 auto;
   padding: 26px 0 30px;
 }
-.student-explore__heading {
+.alumno-explorar__heading {
   position: relative;
   isolation: isolate;
   padding: 12px 0 48px;
 }
-/* Mismo tratamiento que el fondo de las demás páginas (.student-fondo), con la foto propia de Explorar. */
-.student-explore__heading::before {
+.alumno-explorar__heading::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -25,24 +24,24 @@
   background-blend-mode: normal, normal, color, normal;
   pointer-events: none;
 }
-.student-explore__layout {
+.alumno-explorar__layout {
   display: grid;
   grid-template-columns: 270px minmax(0, 1fr);
   gap: 18px;
 }
-.student-explore__sidebar {
+.alumno-explorar__sidebar {
   padding: 18px;
   border: 1px solid var(--borde);
   border-radius: var(--radio-grande);
   background: rgb(255 255 255 / 85%);
   box-shadow: 0 8px 24px rgb(29 73 109 / 3%);
 }
-.student-explore__sidebar details + details {
+.alumno-explorar__sidebar details + details {
   margin-top: 20px;
   padding-top: 18px;
   border-top: 1px solid var(--borde);
 }
-.student-explore__sidebar summary {
+.alumno-explorar__sidebar summary {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -52,22 +51,22 @@
   font-size: 15px;
   font-weight: 700;
 }
-.student-explore__sidebar summary::-webkit-details-marker {
+.alumno-explorar__sidebar summary::-webkit-details-marker {
   display: none;
 }
-.student-explore__sidebar summary > svg:last-child {
+.alumno-explorar__sidebar summary > svg:last-child {
   width: 17px;
   margin-left: auto;
 }
-.student-explore__sidebar details[open] summary > svg:last-child {
+.alumno-explorar__sidebar details[open] summary > svg:last-child {
   transform: rotate(180deg);
 }
-.student-explore__categories {
+.alumno-explorar__categories {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-.student-explore__categories button {
+.alumno-explorar__categories button {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -82,35 +81,35 @@
   text-align: left;
   cursor: pointer;
 }
-.student-explore__categories button svg {
+.alumno-explorar__categories button svg {
   color: var(--texto);
   width: 21px;
   height: 21px;
 }
-.student-explore__categories button small,
-.student-explore__types small {
+.alumno-explorar__categories button small,
+.alumno-explorar__types small {
   margin-left: auto;
   color: var(--texto-suave);
   font-size: 13px;
 }
-.student-explore__categories button.is-active {
+.alumno-explorar__categories button.is-activo {
   background: var(--acento-suave);
-  color: var(--acento);
+  color: var(--acento-oscuro);
 }
-.student-explore__categories button.is-active svg,
-.student-explore__categories button.is-active small {
-  color: var(--acento);
+.alumno-explorar__categories button.is-activo svg,
+.alumno-explorar__categories button.is-activo small {
+  color: var(--acento-oscuro);
 }
-.student-explore__categories button:hover {
+.alumno-explorar__categories button:hover {
   background: var(--acento-suave);
 }
-.student-explore__types {
+.alumno-explorar__types {
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding: 8px 7px;
 }
-.student-explore__types label {
+.alumno-explorar__types label {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -118,25 +117,25 @@
   font-size: 14px;
   cursor: pointer;
 }
-.student-explore__types input {
+.alumno-explorar__types input {
   width: 19px;
   height: 19px;
   margin: 0;
   accent-color: var(--acento);
   cursor: pointer;
 }
-.student-explore__catalog {
+.alumno-explorar__catalog {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
-.student-explore__toolbar {
+.alumno-explorar__toolbar {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 18px;
 }
-.student-explore__search {
+.alumno-explorar__search {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -149,11 +148,11 @@
   color: var(--texto);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.student-explore__search:focus-within {
+.alumno-explorar__search:focus-within {
   border-color: var(--acento);
   box-shadow: 0 0 0 3px rgb(0 119 182 / 15%);
 }
-.student-explore__search input {
+.alumno-explorar__search input {
   width: 100%;
   min-width: 0;
   height: 42px;
@@ -164,60 +163,60 @@
   font: inherit;
   font-size: 14px;
 }
-.student-explore__search input::placeholder {
+.alumno-explorar__search input::placeholder {
   color: var(--texto-suave);
 }
-.student-explore__sidebar button:focus-visible,
-.student-explore summary:focus-visible,
-.student-explore__types input:focus-visible {
+.alumno-explorar__sidebar button:focus-visible,
+.alumno-explorar summary:focus-visible,
+.alumno-explorar__types input:focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 3px;
 }
 @media (max-width: 1100px) {
-  .student-explore__layout {
+  .alumno-explorar__layout {
     grid-template-columns: 230px minmax(0, 1fr);
   }
-  .student-explore__toolbar {
+  .alumno-explorar__toolbar {
     flex-wrap: wrap;
   }
-  .student-explore__search {
+  .alumno-explorar__search {
     flex-basis: 100%;
   }
 }
 @media (max-width: 760px) {
-  .student-explore__heading {
+  .alumno-explorar__heading {
     padding: 0 0 24px;
   }
-  .student-explore__heading::before {
+  .alumno-explorar__heading::before {
     display: none;
   }
-  .student-explore__layout {
+  .alumno-explorar__layout {
     grid-template-columns: 1fr;
   }
-  .student-explore__sidebar {
+  .alumno-explorar__sidebar {
     padding: 0;
     border: 0;
     background: transparent;
     box-shadow: none;
   }
-  .student-explore__sidebar details + details {
+  .alumno-explorar__sidebar details + details {
     margin-top: 12px;
     padding-top: 0;
     border-top: 0;
   }
-  .student-explore__sidebar summary {
+  .alumno-explorar__sidebar summary {
     margin-bottom: 8px;
     font-size: 13px;
   }
-  .student-explore__categories,
-  .student-explore__types {
+  .alumno-explorar__categories,
+  .alumno-explorar__types {
     flex-direction: row;
     gap: 8px;
     padding: 0 0 4px;
     overflow-x: auto;
   }
-  .student-explore__categories button,
-  .student-explore__types label {
+  .alumno-explorar__categories button,
+  .alumno-explorar__types label {
     flex-shrink: 0;
     width: auto;
     gap: 8px;
@@ -228,35 +227,35 @@
     font-size: 13px;
     white-space: nowrap;
   }
-  .student-explore__categories button svg {
+  .alumno-explorar__categories button svg {
     width: 18px;
     height: 18px;
   }
-  .student-explore__categories button small,
-  .student-explore__types small {
+  .alumno-explorar__categories button small,
+  .alumno-explorar__types small {
     margin-left: 0;
   }
-  .student-explore__categories button.is-active {
+  .alumno-explorar__categories button.is-activo {
     border-color: var(--acento);
     background: var(--acento);
     color: #fff;
   }
-  .student-explore__categories button.is-active svg,
-  .student-explore__categories button.is-active small {
+  .alumno-explorar__categories button.is-activo svg,
+  .alumno-explorar__categories button.is-activo small {
     color: #fff;
   }
 }
-.student-explore__vacio {
+.alumno-explorar__vacio {
   flex: 1;
   min-height: clamp(330px, 54svh, 630px);
 }
 
-.student-explore__grid {
+.alumno-explorar__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 16px;
 }
-.student-explore__volver {
+.alumno-explorar__volver {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -266,14 +265,14 @@
   font-weight: 600;
   cursor: pointer;
 }
-.student-explore__volver:hover {
+.alumno-explorar__volver:hover {
   text-decoration: underline;
 }
-.student-explore .student-explore__volver svg {
+.alumno-explorar .alumno-explorar__volver svg {
   width: 16px;
   height: 16px;
 }
-.student-curso {
+.alumno-curso {
   display: flex;
   align-items: stretch;
   gap: 32px;
@@ -284,64 +283,60 @@
   background: #fff;
   box-shadow: 0 10px 28px rgb(8 39 71 / 6%);
 }
-.student-curso__info {
+.alumno-curso__info {
   flex: 1;
   min-width: 0;
 }
-/* La portada se estira al alto de la información para que ambos lados terminen alineados; la imagen se recorta si hace falta. */
-.student-curso__cover {
+.alumno-curso__cover {
   width: 46%;
   min-height: 260px;
   flex-shrink: 0;
   border-radius: var(--radio-grande);
-  /* TEMPORAL: la imagen es de prueba para ver el detalle con una portada real; quitarla cuando haya portadas en R2. */
   background: url("../../../assets/fondos/paisaje-mina.webp") center / cover;
 }
-.student-curso__categoria {
+.alumno-curso__categoria {
   color: var(--acento-oscuro);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
-/* Más pequeño que el título general: los nombres de curso suelen ser largos. */
-.student-shell .student-curso h1 {
+.alumno-estructura .alumno-curso h1 {
   margin: 4px 0 10px;
   font-size: clamp(22px, 2vw, 30px);
   letter-spacing: -0.6px;
 }
-.student-curso__info > p {
+.alumno-curso__info > p {
   max-width: 680px;
   margin-bottom: 10px;
   color: #3d5872;
   font-size: 15px;
   line-height: 1.5;
 }
-.student-curso__datos {
+.alumno-curso__datos {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   color: var(--texto-suave);
   font-size: 14px;
 }
-.student-curso__datos span {
+.alumno-curso__datos span {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
-.student-explore .student-curso__datos svg {
+.alumno-explorar .alumno-curso__datos svg {
   width: 18px;
   height: 18px;
 }
-/* Acción del curso (inscribirse, avanzar o ver planes): texto y botón uno debajo de otro. */
-.student-curso__accion {
+.alumno-curso__accion {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 14px;
   margin-top: 20px;
 }
-.student-curso__accion > div {
+.alumno-curso__accion > div {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -350,14 +345,14 @@
   max-width: 420px;
   min-width: 0;
 }
-.student-curso__accion strong {
+.alumno-curso__accion strong {
   font-size: 15px;
 }
-.student-curso__accion small {
+.alumno-curso__accion small {
   color: var(--texto-suave);
   font-size: 13px;
 }
-.student-curso__planes {
+.alumno-curso__planes {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
@@ -367,11 +362,11 @@
   font-size: 14px;
   font-weight: 700;
 }
-.student-explore .student-curso__planes svg {
+.alumno-explorar .alumno-curso__planes svg {
   width: 18px;
   height: 18px;
 }
-.student-curso__principal {
+.alumno-curso__principal {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
@@ -384,30 +379,30 @@
   font-weight: 700;
   cursor: pointer;
 }
-.student-curso__principal:hover:not(:disabled) {
+.alumno-curso__principal:hover:not(:disabled) {
   background: var(--acento-oscuro);
 }
-.student-curso__principal:disabled {
+.alumno-curso__principal:disabled {
   opacity: 0.6;
   cursor: wait;
 }
-.student-explore .student-curso__principal svg {
+.alumno-explorar .alumno-curso__principal svg {
   width: 18px;
   height: 18px;
 }
-.student-curso__error {
+.alumno-curso__error {
   margin-top: 10px;
   color: #b42318;
   font-size: 13px;
 }
-.student-curso__clases {
+.alumno-curso__clases {
   padding: 22px;
   border: 1px solid var(--borde);
   border-radius: 16px;
   background: #fff;
   box-shadow: 0 10px 28px rgb(8 39 71 / 6%);
 }
-.student-curso__clases-titulo {
+.alumno-curso__clases-titulo {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -415,33 +410,33 @@
   gap: 12px;
   margin-bottom: 16px;
 }
-.student-curso__clases h2 {
+.alumno-curso__clases h2 {
   font-size: 19px;
   font-weight: 700;
 }
-.student-curso__clases-titulo small {
+.alumno-curso__clases-titulo small {
   color: var(--texto-suave);
   font-size: 14px;
 }
-.student-curso__barra {
+.alumno-curso__barra {
   height: 8px;
   overflow: hidden;
   border-radius: 999px;
   background: #e6edf3;
 }
-.student-curso__barra span {
+.alumno-curso__barra span {
   display: block;
   height: 100%;
   border-radius: inherit;
   background: var(--celeste);
   transition: width 0.3s ease;
 }
-.student-curso__clases ol {
+.alumno-curso__clases ol {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.student-curso__clases li {
+.alumno-curso__clases li {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -449,15 +444,15 @@
   border: 1px solid var(--borde);
   border-radius: var(--radio);
 }
-.student-curso__clases li > div {
+.alumno-curso__clases li > div {
   flex: 1;
   min-width: 0;
 }
-.student-curso__clases li strong {
+.alumno-curso__clases li strong {
   display: block;
   font-size: 15px;
 }
-.student-curso__clases li small {
+.alumno-curso__clases li small {
   display: block;
   overflow: hidden;
   color: var(--texto-suave);
@@ -465,7 +460,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.student-curso__numero {
+.alumno-curso__numero {
   display: grid;
   place-items: center;
   width: 38px;
@@ -477,24 +472,23 @@
   font-size: 14px;
   font-weight: 600;
 }
-.student-curso__miniatura {
+.alumno-curso__miniatura {
   display: grid;
   place-items: center;
   width: 96px;
   flex-shrink: 0;
   aspect-ratio: 16 / 9;
   border-radius: var(--radio);
-  /* TEMPORAL: imagen de prueba con un velo oscuro para que se vea el ícono; quitarla cuando haya miniaturas reales. */
   background:
     linear-gradient(rgb(4 43 78 / 45%), rgb(4 43 78 / 45%)),
     url("../../../assets/fondos/paisaje-mina.webp") center / cover;
   color: #fff;
 }
-.student-explore .student-curso__miniatura svg {
+.alumno-explorar .alumno-curso__miniatura svg {
   width: 24px;
   height: 24px;
 }
-.student-curso__reproducir {
+.alumno-curso__reproducir {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -506,62 +500,62 @@
   font-size: 13px;
   font-weight: 700;
 }
-.student-curso__reproducir:hover {
+.alumno-curso__reproducir:hover {
   background: var(--acento-oscuro);
 }
-.student-curso__reproducir.is-completada {
+.alumno-curso__reproducir.is-completada {
   background: #e6f6ee;
-  color: #1a7f4b;
+  color: #176f42;
 }
-.student-curso__reproducir.is-completada:hover {
+.alumno-curso__reproducir.is-completada:hover {
   background: #d4efe1;
 }
-.student-explore .student-curso__reproducir svg {
+.alumno-explorar .alumno-curso__reproducir svg {
   width: 16px;
   height: 16px;
 }
-.student-curso__aviso {
+.alumno-curso__aviso {
   padding: 16px 0;
   color: var(--texto-suave);
   font-size: 14px;
 }
-.student-curso__principal:focus-visible,
-.student-curso__planes:focus-visible,
-.student-curso__reproducir:focus-visible,
-.student-explore__volver:focus-visible {
+.alumno-curso__principal:focus-visible,
+.alumno-curso__planes:focus-visible,
+.alumno-curso__reproducir:focus-visible,
+.alumno-explorar__volver:focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 3px;
 }
 @media (max-width: 760px) {
-  .student-curso {
+  .alumno-curso {
     flex-direction: column;
     align-items: flex-start;
   }
-  .student-curso__cover {
+  .alumno-curso__cover {
     width: 100%;
     max-width: 520px;
     min-height: 0;
     aspect-ratio: 16 / 9;
   }
-  .student-curso__accion {
+  .alumno-curso__accion {
     flex-wrap: wrap;
   }
-  .student-curso__miniatura {
+  .alumno-curso__miniatura {
     display: none;
   }
-  .student-curso__clases li {
+  .alumno-curso__clases li {
     flex-wrap: wrap;
   }
 }
 
-.student-curso__examenes {
+.alumno-curso__examenes {
   margin-top: 18px;
 }
-.student-curso__examenes .student-curso__numero svg {
+.alumno-curso__examenes .alumno-curso__numero svg {
   width: 18px;
   height: 18px;
 }
-.student-curso__rendir {
+.alumno-curso__rendir {
   flex-shrink: 0;
   padding: 9px 16px;
   border: 1px solid var(--acento);
@@ -572,6 +566,6 @@
   font-weight: 600;
   white-space: nowrap;
 }
-.student-curso__rendir:hover {
+.alumno-curso__rendir:hover {
   background: #d9f0fb;
 }

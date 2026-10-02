@@ -149,19 +149,17 @@ service cloud.firestore {
         && textoValido(datos.creadoPor, 1, 128);
     }
 
-    function contenidoValido(datos, cursoId, claseId, contenidoId) {
+    // `ruta` es el archivo dentro de la biblioteca de SharePoint; la función obtenerVideo la valida de nuevo antes de usarla.
+    function contenidoValido(datos) {
       return datos.keys().hasAll([
-          'nombre', 'tipo', 'rutaR2', 'orden', 'acceso', 'creadoEn', 'actualizadoEn'
+          'nombre', 'tipo', 'ruta', 'orden', 'acceso', 'creadoEn', 'actualizadoEn'
         ])
         && datos.keys().hasOnly([
-          'nombre', 'tipo', 'rutaR2', 'orden', 'acceso', 'creadoEn', 'actualizadoEn'
+          'nombre', 'tipo', 'ruta', 'orden', 'acceso', 'creadoEn', 'actualizadoEn'
         ])
         && textoValido(datos.nombre, 2, 160)
         && datos.tipo in ['video', 'documento']
-        && datos.rutaR2 is string
-        && datos.rutaR2.matches(
-          '^cursos/' + cursoId + '/clases/' + claseId + '/' + contenidoId + '$'
-        )
+        && textoValido(datos.ruta, 1, 300)
         && datos.orden is int
         && datos.orden >= 0
         && datos.orden <= 10000
@@ -419,12 +417,9 @@ service cloud.firestore {
 
         allow delete: if esAdministrador();
 
+        // Los alumnos no leen contenidos desde el navegador: la función obtenerVideo entrega el video solo si su plan lo permite.
         match /contenidos/{contenidoId} {
-          allow get, list: if esAdministrador()
-            || (esAlumnoVerificado()
-              && cursoPublicado(cursoId)
-              && clasePublicada(cursoId, claseId)
-              && (resource.data.acceso == 'gratis' || tienePlanPremium()));
+          allow get, list: if esAdministrador();
 
           allow create: if esAdministrador()
             && idValido(cursoId)
@@ -432,7 +427,7 @@ service cloud.firestore {
             && idValido(contenidoId)
             && exists(rutaCurso(cursoId))
             && exists(rutaClase(cursoId, claseId))
-            && contenidoValido(request.resource.data, cursoId, claseId, contenidoId)
+            && contenidoValido(request.resource.data)
             && request.resource.data.creadoEn == request.time;
 
           allow update: if esAdministrador()
@@ -441,7 +436,7 @@ service cloud.firestore {
             && idValido(contenidoId)
             && exists(rutaCurso(cursoId))
             && exists(rutaClase(cursoId, claseId))
-            && contenidoValido(request.resource.data, cursoId, claseId, contenidoId)
+            && contenidoValido(request.resource.data)
             && request.resource.data.creadoEn == resource.data.creadoEn;
 
           allow delete: if esAdministrador();

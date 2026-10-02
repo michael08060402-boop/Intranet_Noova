@@ -30,7 +30,6 @@ export default function MisCursos() {
     return () => { dejarCursos(); dejarInscripciones(); dejarProgreso(); };
   }, [usuario]);
 
-  // Un curso despublicado deja de aparecer aunque el alumno siga inscrito.
   const misCursos = cursos.filter((curso) => inscritos.includes(curso.id));
   const idsMisCursos = misCursos.map((curso) => curso.id).join(",");
 
@@ -57,12 +56,12 @@ export default function MisCursos() {
     .sort((a, b) => orden === "nombre" ? a.nombre.localeCompare(b.nombre) : orden === "antiguos" ? a.creadoEn - b.creadoEn : b.creadoEn - a.creadoEn);
 
   return (
-    <main className="my-courses student-fondo">
+    <main className="my-courses alumno-fondo">
       <TituloPagina className="my-courses__heading" titulo="Mis cursos" descripcion="Continúa tu formación donde la dejaste." />
       <div className="my-courses__toolbar">
         <div className="my-courses__filters" aria-label="Filtrar cursos por progreso">
           {filtros.map((nombre) => (
-            <button key={nombre} type="button" aria-pressed={filtro === nombre} className={filtro === nombre ? "is-active" : ""} onClick={() => setFiltro(nombre)}>
+            <button key={nombre} type="button" aria-pressed={filtro === nombre} className={filtro === nombre ? "is-activo" : ""} onClick={() => setFiltro(nombre)}>
               {nombre}
               <span>{nombre === "Todos" ? misCursos.length : misCursos.filter((curso) => estado(curso) === nombre).length}</span>
             </button>

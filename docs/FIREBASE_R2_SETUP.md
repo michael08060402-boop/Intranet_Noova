@@ -1,5 +1,8 @@
 # Firebase y Cloudflare R2: configuración paso a paso
 
+> Los videos de las clases van en SharePoint, no en R2 (ver `docs/VIDEOS_SHAREPOINT.md`); el campo `rutaR2` de `contenidos` ahora se llama `ruta` y apunta al archivo en SharePoint. Esta guía sigue siendo válida si R2 se usa para portadas, fotos o documentos, o como plan B para los videos.
+
+
 Esta guía corresponde al proyecto Firebase `noova-intranet` y al modelo descrito para Noova Learn Mining. Las reglas de Firestore ya están en `firestore.rules`. R2 almacena los archivos; Firestore conserva sus metadatos y la clave privada del objeto.
 
 ## 1. Modelo usado por las reglas

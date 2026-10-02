@@ -3,7 +3,6 @@ import { db } from "./config";
 
 export type Notificacion = { id: string; titulo: string; texto: string; enlace: string; leida: boolean; creadoEn: number };
 
-// Las notificaciones viven en usuarios/{uid}/notificaciones: las crea el administrador y cada alumno solo lee las suyas.
 export function nuevaNotificacion(uid: string, titulo: string, texto: string, enlace: string) {
   return {
     referencia: doc(collection(db, "usuarios", uid, "notificaciones")),
@@ -22,7 +21,6 @@ export function escucharNotificaciones(uid: string, alCambiar: (notificaciones: 
         texto: datos.texto,
         enlace: datos.enlace,
         leida: datos.leida,
-        // serverTimestamp() llega como null mientras la escritura local no se confirma.
         creadoEn: datos.creadoEn?.toMillis() ?? Date.now(),
       };
     }));

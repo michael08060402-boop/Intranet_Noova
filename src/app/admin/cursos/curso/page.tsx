@@ -13,8 +13,12 @@ import {
   eliminarClase,
   escucharClases,
   escucharCurso,
+  guardarVideoClase,
+  leerVideoClase,
+  type Acceso,
   type Clase,
   type Curso,
+  type VideoClase,
 } from "@/firebase/cursos";
 import "./CursoAdmin.css";
 
@@ -31,16 +35,14 @@ export default function CursoAdminPage() {
 function CursoAdmin() {
   const id = useSearchParams().get("id") ?? "";
   const { usuario } = useSesion();
-  // undefined: cargando; null: no existe.
   const [curso, setCurso] = useState<Curso | null | undefined>(undefined);
   const [clases, setClases] = useState<Clase[]>([]);
   const [videos, setVideos] = useState<Record<string, number>>({});
-  // undefined: cargando; null: no se pudo contar.
   const [inscritos, setInscritos] = useState<number | null | undefined>(undefined);
   const [error, setError] = useState("");
-  // undefined: modal cerrado; null: nueva clase; Clase: editar.
   const [editando, setEditando] = useState<Clase | null | undefined>(undefined);
   const [eliminando, setEliminando] = useState<Clase | null>(null);
+  const [version, setVersion] = useState(0);
   const confirmar = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -59,7 +61,7 @@ function CursoAdmin() {
     Promise.all(clases.map(async (clase) => [clase.id, await contarDocumentos(`cursos/${id}/clases/${clase.id}/contenidos`)] as const))
       .then((conteos) => setVideos(Object.fromEntries(conteos)))
       .catch(() => setVideos({}));
-  }, [clases, id]);
+  }, [clases, id, version]);
 
   if (!id || curso === null) {
     return (
@@ -74,10 +76,16 @@ function CursoAdmin() {
     return <main className="curso-admin"><p className="curso-admin__estado">{error || "Cargando curso…"}</p></main>;
   }
 
-  async function guardarClase(datos: DatosFormulario) {
+  async function guardarClase(datos: DatosFormulario, video: VideoClase | null) {
     if (!usuario) return;
-    if (editando) await actualizarClase(id, editando.id, datos);
-    else await crearClase(id, { ...datos, orden: clases.length }, usuario.uid);
+    if (editando) {
+      await actualizarClase(id, editando.id, datos);
+      await guardarVideoClase(id, editando.id, video);
+    } else {
+      const nueva = await crearClase(id, { ...datos, orden: clases.length }, usuario.uid);
+      await guardarVideoClase(id, nueva.id, video).catch(() => setError("La clase se creó, pero no se pudo guardar el video. Ábrela con Editar para reintentar."));
+    }
+    setVersion((actual) => actual + 1);
   }
 
   function pedirEliminar(clase: Clase) {
@@ -182,28 +190,44 @@ function CursoAdmin() {
           <button type="button" className="curso-admin__confirmar-eliminar" onClick={eliminar}>Eliminar</button>
         </div>
       </dialog>
-      {editando !== undefined && <ClaseFormulario clase={editando} alGuardar={guardarClase} alCerrar={() => setEditando(undefined)} />}
+      {editando !== undefined && <ClaseFormulario cursoId={id} accesoCurso={curso.acceso} clase={editando} alGuardar={guardarClase} alCerrar={() => setEditando(undefined)} />}
     </>
   );
 }
 
-function ClaseFormulario({ clase, alGuardar, alCerrar }: { clase: Clase | null; alGuardar: (datos: DatosFormulario) => Promise<void>; alCerrar: () => void }) {
+function ClaseFormulario({ cursoId, accesoCurso, clase, alGuardar, alCerrar }: { cursoId: string; accesoCurso: Acceso; clase: Clase | null; alGuardar: (datos: DatosFormulario, video: VideoClase | null) => Promise<void>; alCerrar: () => void }) {
   const dialogo = useRef<HTMLDialogElement>(null);
   const [nombre, setNombre] = useState(clase?.nombre ?? "");
   const [descripcion, setDescripcion] = useState(clase?.descripcion ?? "");
   const [publicado, setPublicado] = useState(clase?.publicado ?? false);
+  const [ruta, setRuta] = useState("");
+  const [accesoVideo, setAccesoVideo] = useState<Acceso>(accesoCurso);
+  const [cargandoVideo, setCargandoVideo] = useState(clase !== null);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => { dialogo.current?.showModal(); }, []);
 
+  useEffect(() => {
+    if (!clase) return;
+    leerVideoClase(cursoId, clase.id)
+      .then((video) => {
+        if (video) { setRuta(video.ruta); setAccesoVideo(video.acceso); }
+      })
+      .catch(() => setError("No se pudo cargar el video de esta clase."))
+      .finally(() => setCargandoVideo(false));
+  }, [cursoId, clase]);
+
   async function enviar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
     if (nombre.trim().length < 2) return setError("El nombre debe tener al menos 2 caracteres.");
+    const rutaVideo = ruta.trim();
+    if (rutaVideo && !/\.(mp4|webm)$/i.test(rutaVideo)) return setError("La ruta del video debe terminar en .mp4 o .webm.");
+    if (rutaVideo && rutaVideo.split("/").some((parte) => !parte || parte === "." || parte === "..")) return setError("La ruta del video no es válida: usa carpeta/archivo.mp4, sin barras al inicio ni al final.");
     setGuardando(true);
     setError("");
     try {
-      await alGuardar({ nombre: nombre.trim(), descripcion: descripcion.trim(), publicado });
+      await alGuardar({ nombre: nombre.trim(), descripcion: descripcion.trim(), publicado }, rutaVideo ? { ruta: rutaVideo, acceso: accesoVideo } : null);
       dialogo.current?.close();
     } catch {
       setError("No se pudo guardar la clase. Inténtalo nuevamente.");
@@ -223,6 +247,20 @@ function ClaseFormulario({ clase, alGuardar, alCerrar }: { clase: Clase | null; 
           <span>Descripción</span>
           <textarea value={descripcion} onChange={(evento) => setDescripcion(evento.target.value)} placeholder="¿Qué aprenderá el alumno en esta clase?" maxLength={500} />
         </label>
+        <label>
+          <span>Video (ruta en SharePoint)</span>
+          <input value={ruta} onChange={(evento) => setRuta(evento.target.value)} placeholder="Ej. Ventsim/basico-1.mp4" maxLength={300} disabled={cargandoVideo} />
+          <small>Archivo dentro de la biblioteca de videos. Déjalo vacío si la clase aún no tiene video.</small>
+        </label>
+        {ruta.trim() && (
+          <label>
+            <span>Quién puede ver el video</span>
+            <select value={accesoVideo} onChange={(evento) => setAccesoVideo(evento.target.value as Acceso)}>
+              <option value="gratis">Todos los alumnos inscritos</option>
+              <option value="premium">Solo plan Premium</option>
+            </select>
+          </label>
+        )}
         <label className="clase-modal__check">
           <input type="checkbox" checked={publicado} onChange={(evento) => setPublicado(evento.target.checked)} />
           Publicar la clase (visible para los alumnos si el curso está publicado)
@@ -230,7 +268,7 @@ function ClaseFormulario({ clase, alGuardar, alCerrar }: { clase: Clase | null; 
         {error && <p className="clase-modal__error" role="alert">{error}</p>}
         <div className="clase-modal__acciones">
           <button type="button" onClick={() => dialogo.current?.close()}>Cancelar</button>
-          <button type="submit" className="clase-modal__guardar" disabled={guardando}>{guardando ? "Guardando…" : clase ? "Guardar cambios" : "Crear clase"}</button>
+          <button type="submit" className="clase-modal__guardar" disabled={guardando || cargandoVideo}>{guardando ? "Guardando…" : clase ? "Guardar cambios" : "Crear clase"}</button>
         </div>
       </form>
     </dialog>

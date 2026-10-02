@@ -1,4 +1,3 @@
-/* Reinicio base. Va en una capa para que cualquier regla de página o componente lo sobrescriba. */
 @layer base {
   *,
   ::before,

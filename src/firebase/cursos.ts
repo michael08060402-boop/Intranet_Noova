@@ -5,6 +5,7 @@ import {
   deleteDoc,
   doc,
   getCountFromServer,
+  getDoc,
   onSnapshot,
   query,
   serverTimestamp,
@@ -13,7 +14,8 @@ import {
   where,
   type DocumentData,
 } from "firebase/firestore";
-import { db } from "./config";
+import { httpsCallable } from "firebase/functions";
+import { db, funciones } from "./config";
 
 export type Nivel = "basico" | "intermedio" | "avanzado";
 export type Acceso = "gratis" | "premium";
@@ -33,9 +35,9 @@ export type Curso = {
 
 export type Clase = { id: string; nombre: string; descripcion: string; orden: number; publicado: boolean };
 
-export type DatosCategoria = Omit<Categoria, "id">;
-export type DatosCurso = Omit<Curso, "id" | "creadoEn">;
-export type DatosClase = Omit<Clase, "id">;
+type DatosCategoria = Omit<Categoria, "id">;
+type DatosCurso = Omit<Curso, "id" | "creadoEn">;
+type DatosClase = Omit<Clase, "id">;
 
 export const nombresNivel: Record<Nivel, string> = { basico: "Básico", intermedio: "Intermedio", avanzado: "Avanzado" };
 
@@ -48,12 +50,10 @@ function leerCurso(id: string, datos: DocumentData): Curso {
     nivel: datos.nivel,
     acceso: datos.acceso,
     publicado: datos.publicado,
-    // serverTimestamp() llega como null mientras la escritura local no se confirma.
     creadoEn: datos.creadoEn?.toMillis() ?? Date.now(),
   };
 }
 
-// Las reglas no filtran consultas: el alumno debe pedir solo lo activo o publicado, o Firestore rechaza toda la consulta.
 export function escucharCategorias(soloActivas: boolean, alCambiar: (categorias: Categoria[]) => void, alFallar: () => void) {
   const referencia = collection(db, "categorias");
   const consulta = soloActivas ? query(referencia, where("activa", "==", true)) : referencia;
@@ -70,12 +70,10 @@ export function crearCategoria(datos: DatosCategoria) {
   return addDoc(collection(db, "categorias"), { ...datos, creadoEn: serverTimestamp(), actualizadoEn: serverTimestamp() });
 }
 
-// Las reglas exigen el documento completo: se reenvían siempre nombre, descripción y estado.
 export function actualizarCategoria(id: string, datos: DatosCategoria) {
   return updateDoc(doc(db, "categorias", id), { ...datos, actualizadoEn: serverTimestamp() });
 }
 
-// Un curso guarda solo el ID de su categoría: eliminarla dejaría ese curso sin categoría.
 export function eliminarCategoria(id: string) {
   return deleteDoc(doc(db, "categorias", id));
 }
@@ -102,7 +100,6 @@ export function actualizarCurso(id: string, datos: Partial<DatosCurso>) {
   return updateDoc(doc(db, "cursos", id), { ...datos, actualizadoEn: serverTimestamp() });
 }
 
-// Firestore no borra subcolecciones: solo se elimina un curso sin clases para no dejarlas huérfanas.
 export function eliminarCurso(id: string) {
   return deleteDoc(doc(db, "cursos", id));
 }
@@ -127,9 +124,32 @@ export function actualizarClase(cursoId: string, claseId: string, datos: Partial
   return updateDoc(doc(db, "cursos", cursoId, "clases", claseId), { ...datos, actualizadoEn: serverTimestamp() });
 }
 
-// Igual que con los cursos: solo se elimina una clase sin contenidos para no dejarlos huérfanos.
 export function eliminarClase(cursoId: string, claseId: string) {
   return deleteDoc(doc(db, "cursos", cursoId, "clases", claseId));
+}
+
+export type VideoClase = { ruta: string; acceso: Acceso };
+
+function referenciaVideo(cursoId: string, claseId: string) {
+  return doc(db, "cursos", cursoId, "clases", claseId, "contenidos", "video");
+}
+
+export async function leerVideoClase(cursoId: string, claseId: string): Promise<VideoClase | null> {
+  const documento = await getDoc(referenciaVideo(cursoId, claseId));
+  return documento.exists() ? { ruta: documento.data().ruta, acceso: documento.data().acceso } : null;
+}
+
+export async function guardarVideoClase(cursoId: string, claseId: string, video: VideoClase | null) {
+  const referencia = referenciaVideo(cursoId, claseId);
+  if (!video) return deleteDoc(referencia);
+  const datos = { nombre: "Video de la clase", tipo: "video", ruta: video.ruta, orden: 0, acceso: video.acceso, actualizadoEn: serverTimestamp() };
+  if ((await getDoc(referencia)).exists()) return updateDoc(referencia, datos);
+  return setDoc(referencia, { ...datos, creadoEn: serverTimestamp() });
+}
+
+export async function pedirVideo(cursoId: string, claseId: string) {
+  const resultado = await httpsCallable<{ cursoId: string; claseId: string }, { url: string }>(funciones, "obtenerVideo")({ cursoId, claseId });
+  return resultado.data.url;
 }
 
 export function escucharInscripciones(uid: string, alCambiar: (cursoIds: string[]) => void, alFallar: () => void) {
@@ -153,7 +173,6 @@ export function escucharProgreso(uid: string, alCambiar: (progreso: Progreso[]) 
   }, alFallar);
 }
 
-// El id del documento debe ser cursoId_claseId, como exigen las reglas.
 export function marcarClase(uid: string, cursoId: string, claseId: string, completado: boolean) {
   return setDoc(doc(db, "usuarios", uid, "progreso", `${cursoId}_${claseId}`), {
     cursoId,
@@ -169,13 +188,11 @@ export async function contarDocumentos(ruta: string) {
   return resultado.data().count;
 }
 
-// Las inscripciones viven dentro de cada alumno: se cuentan con una consulta de grupo, que usa el índice de firestore.indexes.json.
 export async function contarInscritos(cursoId: string) {
   const resultado = await getCountFromServer(query(collectionGroup(db, "inscripciones"), where("cursoId", "==", cursoId)));
   return resultado.data().count;
 }
 
-// Los alumnos solo pueden contar las clases publicadas; sin el filtro, Firestore rechaza la consulta.
 export async function contarClasesPublicadas(cursoId: string) {
   const resultado = await getCountFromServer(query(collection(db, "cursos", cursoId, "clases"), where("publicado", "==", true)));
   return resultado.data().count;

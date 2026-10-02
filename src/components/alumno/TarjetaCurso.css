@@ -12,13 +12,11 @@
 .tarjeta-curso:hover {
   background: var(--acento-suave);
 }
-/* La portada va dentro de la tarjeta con sus propias esquinas, como en los catálogos de cursos habituales. */
 .tarjeta-curso__portada {
   position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: 10px;
-  /* TEMPORAL: imagen de prueba para ver las etiquetas sobre una portada real; quitar cuando haya portadas en R2. */
   background: url("../../assets/fondos/paisaje-mina.webp") center / cover;
 }
 .tarjeta-curso__etiquetas {
@@ -45,7 +43,7 @@
   background: #fff;
   color: var(--acento);
 }
-.student-shell .tarjeta-curso__etiqueta svg {
+.alumno-estructura .tarjeta-curso__etiqueta svg {
   width: 14px;
   height: 14px;
 }
@@ -94,11 +92,11 @@
   align-items: center;
   gap: 5px;
 }
-.student-shell .tarjeta-curso__meta svg {
+.alumno-estructura .tarjeta-curso__meta svg {
   width: 15px;
   height: 15px;
 }
-.student-shell .tarjeta-curso:focus-visible {
+.alumno-estructura .tarjeta-curso:focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 3px;
 }

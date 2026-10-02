@@ -6,7 +6,6 @@
 .my-courses__heading {
   margin-bottom: 32px;
 }
-/* Filtros como pestañas: solo la activa lleva una línea azul debajo. */
 .my-courses__toolbar {
   display: flex;
   align-items: flex-end;
@@ -35,7 +34,7 @@
 .my-courses__filters button:hover {
   color: var(--texto);
 }
-.my-courses__filters .is-active {
+.my-courses__filters .is-activo {
   border-bottom-color: var(--acento);
   color: var(--acento);
 }
@@ -48,7 +47,7 @@
   font-size: 12px;
   text-align: center;
 }
-.my-courses__filters .is-active span {
+.my-courses__filters .is-activo span {
   background: var(--acento);
   color: #fff;
 }
@@ -56,7 +55,7 @@
   outline: 2px solid var(--acento);
   outline-offset: 2px;
 }
-.my-courses__toolbar .student-orden {
+.my-courses__toolbar .alumno-orden {
   margin-bottom: 8px;
 }
 .my-courses__vacio {
@@ -105,7 +104,6 @@
   flex-shrink: 0;
   aspect-ratio: 16 / 9;
   border-radius: 10px;
-  /* TEMPORAL: imagen de prueba; quitarla cuando haya portadas en R2. */
   background: url("../../../assets/fondos/paisaje-mina.webp") center / cover;
 }
 .my-courses__info {
@@ -194,7 +192,7 @@
     width: 100%;
     column-gap: 20px;
   }
-  .my-courses__toolbar .student-orden {
+  .my-courses__toolbar .alumno-orden {
     order: -1;
     width: 100%;
   }

@@ -22,7 +22,7 @@ import "./Examen.css";
 
 export default function ExamenPage() {
   return (
-    <Suspense fallback={<main className="student-examen" />}>
+    <Suspense fallback={<main className="alumno-examen" />}>
       <RendirExamen />
     </Suspense>
   );
@@ -33,7 +33,6 @@ const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "
 function RendirExamen() {
   const id = useSearchParams().get("id") ?? "";
   const { usuario, perfil } = useSesion();
-  // undefined: cargando; null: no existe o sin acceso.
   const [examen, setExamen] = useState<Examen | null | undefined>(undefined);
   const [curso, setCurso] = useState<Curso | null | undefined>(undefined);
   const [intento, setIntento] = useState<Intento | null | undefined>(undefined);
@@ -59,15 +58,15 @@ function RendirExamen() {
 
   if (!id || examen === null || curso === null) {
     return (
-      <main className="student-examen">
-        <p className="student-examen__aviso">Este examen no está disponible.</p>
-        <Link href="/alumno/explorar" className="student-examen__volver">← Volver a explorar</Link>
+      <main className="alumno-examen">
+        <p className="alumno-examen__aviso">Este examen no está disponible.</p>
+        <Link href="/alumno/explorar" className="alumno-examen__volver">← Volver a explorar</Link>
       </main>
     );
   }
-  if (!examen || !curso || intento === undefined) return <main className="student-examen"><p className="student-examen__aviso">Cargando examen…</p></main>;
+  if (!examen || !curso || intento === undefined) return <main className="alumno-examen"><p className="alumno-examen__aviso">Cargando examen…</p></main>;
 
-  const volver = <Link href={`/alumno/explorar?curso=${examen.cursoId}`} className="student-examen__volver">← Volver al curso</Link>;
+  const volver = <Link href={`/alumno/explorar?curso=${examen.cursoId}`} className="alumno-examen__volver">← Volver al curso</Link>;
   const bloqueado = curso.acceso === "premium" && perfil?.plan !== "premium";
 
   async function comenzar() {
@@ -84,43 +83,43 @@ function RendirExamen() {
   if (intento?.estado === "en_curso") return <Rendicion examen={examen} intento={intento} volver={volver} />;
 
   return (
-    <main className="student-examen">
+    <main className="alumno-examen">
       {volver}
-      <section className="student-examen__tarjeta">
-        <span className="student-examen__eyebrow">{curso.nombre}</span>
+      <section className="alumno-examen__tarjeta">
+        <span className="alumno-examen__eyebrow">{curso.nombre}</span>
         <h1>{examen.nombre}</h1>
-        {examen.descripcion && <p className="student-examen__instrucciones">{examen.descripcion}</p>}
+        {examen.descripcion && <p className="alumno-examen__instrucciones">{examen.descripcion}</p>}
 
         {intento?.estado === "calificado" && intento.nota !== null ? (
-          <div className="student-examen__resultado" role="status">
+          <div className="alumno-examen__resultado" role="status">
             <strong className={intento.nota >= examen.notaMinima ? "is-aprobado" : "is-desaprobado"}>{intento.nota}<small> / {NOTA_MAXIMA}</small></strong>
-            <span className={`student-examen__badge ${intento.nota >= examen.notaMinima ? "is-aprobado" : "is-desaprobado"}`}>{intento.nota >= examen.notaMinima ? "Aprobado" : "Desaprobado"}</span>
+            <span className={`alumno-examen__badge ${intento.nota >= examen.notaMinima ? "is-aprobado" : "is-desaprobado"}`}>{intento.nota >= examen.notaMinima ? "Aprobado" : "Desaprobado"}</span>
             <p>Nota mínima para aprobar: {examen.notaMinima}.{intento.calificadoEn && " "}{intento.calificadoEn && `Calificado el ${formatoFecha.format(intento.calificadoEn)}`}</p>
             {intento.comentario && <blockquote>{intento.comentario}</blockquote>}
           </div>
         ) : intento?.estado === "entregado" ? (
-          <div className="student-examen__resultado" role="status">
+          <div className="alumno-examen__resultado" role="status">
             <CircleCheck />
             <h2>Examen entregado</h2>
             <p>Lo recibimos{intento.fin ? ` el ${formatoFecha.format(intento.fin)}` : ""}. Te avisaremos cuando esté calificado.</p>
           </div>
         ) : bloqueado ? (
-          <div className="student-examen__resultado">
+          <div className="alumno-examen__resultado">
             <Crown />
             <h2>Este examen es Premium</h2>
             <p>Necesitas el plan Premium para rendir los exámenes de este curso.</p>
-            <Link href="/alumno/premium" className="student-examen__boton">Hazte Premium</Link>
+            <Link href="/alumno/premium" className="alumno-examen__boton">Hazte Premium</Link>
           </div>
         ) : (
           <>
-            <ul className="student-examen__datos">
+            <ul className="alumno-examen__datos">
               <li><ListChecks />{examen.preguntas.length} {examen.preguntas.length === 1 ? "pregunta" : "preguntas"}</li>
               <li><Clock />{examen.duracionMin > 0 ? `${examen.duracionMin} minutos` : "Sin límite de tiempo"}</li>
               <li><CircleCheck />Apruebas con {examen.notaMinima} de {NOTA_MAXIMA}</li>
             </ul>
-            <p className="student-examen__advertencia">Solo tienes un intento. {examen.duracionMin > 0 ? "El tiempo corre desde que empiezas y no se detiene aunque cierres la página." : "Tus respuestas se guardan mientras avanzas."}</p>
-            {error && <p className="student-examen__error" role="alert">{error}</p>}
-            <button type="button" className="student-examen__boton" onClick={comenzar} disabled={iniciando || examen.preguntas.length === 0}>{iniciando ? "Iniciando…" : "Comenzar examen"}</button>
+            <p className="alumno-examen__advertencia">Solo tienes un intento. {examen.duracionMin > 0 ? "El tiempo corre desde que empiezas y no se detiene aunque cierres la página." : "Tus respuestas se guardan mientras avanzas."}</p>
+            {error && <p className="alumno-examen__error" role="alert">{error}</p>}
+            <button type="button" className="alumno-examen__boton" onClick={comenzar} disabled={iniciando || examen.preguntas.length === 0}>{iniciando ? "Iniciando…" : "Comenzar examen"}</button>
           </>
         )}
       </section>
@@ -128,7 +127,6 @@ function RendirExamen() {
   );
 }
 
-// Intento en curso: cuenta regresiva, guardado automático de respuestas y entrega (manual o al terminar el tiempo).
 function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Intento; volver: React.ReactNode }) {
   const [respuestas, setRespuestas] = useState<Respuestas>(intento.respuestas);
   const [ahora, setAhora] = useState(() => Date.now());
@@ -167,7 +165,6 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
     setError("");
     try { await entregarIntento(intento.id, respuestas); }
     catch {
-      // Con el tiempo agotado no se reintenta: las reglas ya no aceptan la entrega y el instructor revisa lo guardado.
       if (!agotado) enviado.current = false;
       setEntregando(false);
       setError(agotado
@@ -176,7 +173,6 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
     }
   }
 
-  // Al llegar a cero se entrega sola con lo que haya respondido.
   useEffect(() => {
     if (agotado && !enviado.current) void entregar();
   });
@@ -186,30 +182,30 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
   const segundos = restante === null ? 0 : Math.floor((restante % 60000) / 1000);
 
   return (
-    <main className="student-examen">
+    <main className="alumno-examen">
       {volver}
-      <div className={`student-examen__barra ${restante !== null && restante < 300000 ? "is-urgente" : ""}`}>
+      <div className={`alumno-examen__barra ${restante !== null && restante < 300000 ? "is-urgente" : ""}`}>
         <div>
           <strong>{examen.nombre}</strong>
           <small>{guardado === "guardando" ? "Guardando…" : guardado === "guardado" ? "Respuestas guardadas" : guardado === "error" ? "No se pudo guardar; se reintentará al responder" : "Tus respuestas se guardan automáticamente"}</small>
         </div>
-        <span className="student-examen__reloj" role="timer" aria-label="Tiempo restante">
+        <span className="alumno-examen__reloj" role="timer" aria-label="Tiempo restante">
           <Timer />{restante === null ? "Sin límite" : `${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`}
         </span>
       </div>
 
-      {error && <p className="student-examen__error" role="alert">{error}</p>}
+      {error && <p className="alumno-examen__error" role="alert">{error}</p>}
       <form onSubmit={(evento) => { evento.preventDefault(); confirmar.current?.showModal(); }}>
-        <fieldset disabled={agotado || entregando} className="student-examen__preguntas">
+        <fieldset disabled={agotado || entregando} className="alumno-examen__preguntas">
           {examen.preguntas.map((pregunta, indice) => (
-            <section key={pregunta.id} className="student-examen__pregunta">
+            <section key={pregunta.id} className="alumno-examen__pregunta">
               <header>
-                <span className="student-examen__numero">{indice + 1}</span>
+                <span className="alumno-examen__numero">{indice + 1}</span>
                 <p>{pregunta.enunciado}</p>
                 <small>{pregunta.puntos} {pregunta.puntos === 1 ? "punto" : "puntos"}</small>
               </header>
               {pregunta.tipo === "opcion" ? (
-                <div className="student-examen__opciones" role="radiogroup" aria-label={`Pregunta ${indice + 1}`}>
+                <div className="alumno-examen__opciones" role="radiogroup" aria-label={`Pregunta ${indice + 1}`}>
                   {pregunta.opciones.map((opcion, posicion) => (
                     <label key={posicion} className={respuestas[pregunta.id] === posicion ? "is-elegida" : ""}>
                       <input type="radio" name={`pregunta-${pregunta.id}`} checked={respuestas[pregunta.id] === posicion} onChange={() => responder(pregunta.id, posicion)} />
@@ -223,18 +219,18 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
             </section>
           ))}
         </fieldset>
-        <div className="student-examen__pie">
+        <div className="alumno-examen__pie">
           <span>{sinResponder === 0 ? "Respondiste todas las preguntas." : `${sinResponder} sin responder`}</span>
-          <button type="submit" className="student-examen__boton" disabled={agotado || entregando}>{entregando ? "Entregando…" : "Entregar examen"}</button>
+          <button type="submit" className="alumno-examen__boton" disabled={agotado || entregando}>{entregando ? "Entregando…" : "Entregar examen"}</button>
         </div>
       </form>
 
-      <dialog ref={confirmar} className="student-examen__dialogo" aria-labelledby="entregar-titulo">
+      <dialog ref={confirmar} className="alumno-examen__dialogo" aria-labelledby="entregar-titulo">
         <h2 id="entregar-titulo">¿Entregar el examen?</h2>
         <p>{sinResponder > 0 ? `Tienes ${sinResponder} ${sinResponder === 1 ? "pregunta" : "preguntas"} sin responder. ` : ""}Una vez entregado ya no podrás cambiar tus respuestas.</p>
-        <div className="student-examen__dialogo-acciones">
+        <div className="alumno-examen__dialogo-acciones">
           <button type="button" onClick={() => confirmar.current?.close()}>Seguir respondiendo</button>
-          <button type="button" className="student-examen__boton" onClick={entregar}>Entregar</button>
+          <button type="button" className="alumno-examen__boton" onClick={entregar}>Entregar</button>
         </div>
       </dialog>
     </main>

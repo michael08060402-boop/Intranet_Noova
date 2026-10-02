@@ -1,5 +1,3 @@
-// Datos del plan Premium que comparten la página de planes y la de pago.
-// Premium se paga por periodo (no es suscripción automática) para poder aceptar tarjeta y Yape.
 export const periodos = [
   { meses: 1, precio: 10 },
   { meses: 3, precio: 24 },

@@ -19,7 +19,6 @@ export default function EvaluacionesPage() {
 
 function Evaluaciones() {
   const router = useRouter();
-  // El acceso del panel llega con ?nuevo: el modal se abre cuando ya hay cursos a los que asignar el examen.
   const [pedidoNuevo, setPedidoNuevo] = useState(useSearchParams().has("nuevo"));
   const [examenes, setExamenes] = useState<Examen[]>([]);
   const [cursos, setCursos] = useState<Curso[]>([]);
@@ -28,7 +27,6 @@ function Evaluaciones() {
   const [error, setError] = useState("");
   const [busqueda, setBusqueda] = useState("");
   const [filtro, setFiltro] = useState("todos");
-  // undefined: modal cerrado; null: crear; Examen: editar.
   const [editando, setEditando] = useState<Examen | null | undefined>(undefined);
   const [eliminando, setEliminando] = useState<Examen | null>(null);
   const confirmar = useRef<HTMLDialogElement>(null);
@@ -88,7 +86,7 @@ function Evaluaciones() {
         </div>
         {error && <p className="admin-error" role="alert">{error}</p>}
 
-        <div className="admin-tabla-caja">
+        <div className="admin-tabla-caja" tabIndex={0} role="region" aria-label="Tabla de exámenes">
           <table className="admin-tabla">
             <thead>
               <tr>

@@ -6,7 +6,6 @@
 .mis-evaluaciones__heading {
   margin-bottom: 32px;
 }
-/* Filtros como pestañas, igual que en Mis cursos. */
 .mis-evaluaciones__filtros {
   display: flex;
   flex-wrap: wrap;
@@ -28,7 +27,7 @@
 .mis-evaluaciones__filtros button:hover {
   color: var(--texto);
 }
-.mis-evaluaciones__filtros .is-active {
+.mis-evaluaciones__filtros .is-activo {
   border-bottom-color: var(--acento);
   color: var(--acento);
 }
@@ -41,7 +40,7 @@
   font-size: 12px;
   text-align: center;
 }
-.mis-evaluaciones__filtros .is-active span {
+.mis-evaluaciones__filtros .is-activo span {
   background: var(--acento);
   color: #fff;
 }
@@ -125,7 +124,7 @@
 }
 .mis-evaluaciones__resultado--calificadas {
   background: #e6f6ee;
-  color: #1a7f4b;
+  color: #176f42;
 }
 .mis-evaluaciones__accion {
   flex-shrink: 0;

@@ -1,4 +1,3 @@
-/* Piezas compartidas por las páginas de evaluaciones y reportes del panel. */
 .admin-pagina {
   display: flex;
   flex-direction: column;
@@ -281,7 +280,7 @@
 }
 .admin-badge--ok {
   background: #e6f6ee;
-  color: #1a7f4b;
+  color: #176f42;
 }
 .admin-badge--info {
   background: var(--acento-suave);

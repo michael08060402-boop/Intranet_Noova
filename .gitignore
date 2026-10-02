@@ -21,6 +21,13 @@
 # production
 /build
 
+# cloud functions
+/functions/node_modules/
+/functions/lib/
+
+# graphify
+/graphify-out/
+
 # misc
 .DS_Store
 *.pem

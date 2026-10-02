@@ -24,7 +24,6 @@ export default function CursoDetalle({ curso, categoria, bloqueado, alVolver }: 
     setCargando(false);
   }), [curso.id]);
 
-  // Los exámenes y las notas propias; si fallan, el curso se ve igual sin la sección.
   useEffect(() => escucharExamenesDeCurso(curso.id, setExamenes, () => setExamenes([])), [curso.id]);
   useEffect(() => (uid ? escucharIntentosAlumno(uid, setIntentos, () => setIntentos([])) : undefined), [uid]);
 
@@ -49,52 +48,51 @@ export default function CursoDetalle({ curso, categoria, bloqueado, alVolver }: 
   const porcentaje = clases.length ? Math.round((completadas.length / clases.length) * 100) : 0;
   const siguiente = clases.find((clase) => !completadas.includes(clase)) ?? clases[0];
   const enlaceClase = (claseId: string) => `/alumno/curso?id=${curso.id}&clase=${claseId}`;
-  // Solo los exámenes en línea se rinden desde la plataforma.
   const evaluaciones = examenes.filter((examen) => examen.modo === "manual");
 
   return (
-    <main className="student-explore">
-      <button type="button" className="student-explore__volver" onClick={alVolver}><ArrowLeft />Volver al catálogo</button>
-      <section className="student-curso" aria-labelledby="student-curso-titulo">
-        <div className="student-curso__cover" />
-        <div className="student-curso__info">
-          <small className="student-curso__categoria">{categoria}</small>
-          <h1 id="student-curso-titulo">{curso.nombre}</h1>
+    <main className="alumno-explorar">
+      <button type="button" className="alumno-explorar__volver" onClick={alVolver}><ArrowLeft />Volver al catálogo</button>
+      <section className="alumno-curso" aria-labelledby="alumno-curso-titulo">
+        <div className="alumno-curso__cover" />
+        <div className="alumno-curso__info">
+          <small className="alumno-curso__categoria">{categoria}</small>
+          <h1 id="alumno-curso-titulo">{curso.nombre}</h1>
           {curso.descripcion && <p>{curso.descripcion}</p>}
-          <div className="student-curso__datos">
+          <div className="alumno-curso__datos">
             <span><ChartNoAxesColumn />{nombresNivel[curso.nivel]}</span>
             <span><BookOpen />{clases.length} {clases.length === 1 ? "clase" : "clases"}</span>
             <span>{curso.acceso === "premium" ? <><Crown />Premium</> : <><Tag />Gratuito</>}</span>
             {evaluaciones.length > 0 && <span><ClipboardCheck />{evaluaciones.length} {evaluaciones.length === 1 ? "evaluación" : "evaluaciones"}</span>}
           </div>
           {inscrito ? (
-            <div className="student-curso__accion">
+            <div className="alumno-curso__accion">
               <div>
                 <strong>Tu avance: {porcentaje}%</strong>
-                <span className="student-curso__barra"><span style={{ width: `${porcentaje}%` }} /></span>
+                <span className="alumno-curso__barra"><span style={{ width: `${porcentaje}%` }} /></span>
                 <small>{completadas.length} de {clases.length} {clases.length === 1 ? "clase" : "clases"}</small>
               </div>
-              {siguiente && <Link href={enlaceClase(siguiente.id)} className="student-curso__principal">{completadas.length > 0 ? "Continuar curso" : "Comenzar curso"}<ArrowRight /></Link>}
+              {siguiente && <Link href={enlaceClase(siguiente.id)} className="alumno-curso__principal">{completadas.length > 0 ? "Continuar curso" : "Comenzar curso"}<ArrowRight /></Link>}
             </div>
           ) : bloqueado ? (
-            <div className="student-curso__accion">
-              <Link href="/alumno/premium" className="student-curso__planes student-dorado">Ver planes<ArrowRight /></Link>
+            <div className="alumno-curso__accion">
+              <Link href="/alumno/premium" className="alumno-curso__planes alumno-dorado">Ver planes<ArrowRight /></Link>
             </div>
           ) : (
-            <div className="student-curso__accion">
-              <button type="button" className="student-curso__principal" onClick={inscribir} disabled={inscribiendo || cargando}>
+            <div className="alumno-curso__accion">
+              <button type="button" className="alumno-curso__principal" onClick={inscribir} disabled={inscribiendo || cargando}>
                 <PlusCircle />{inscribiendo ? "Inscribiendo…" : curso.acceso === "gratis" ? "Inscribirse gratis" : "Inscribirse"}
               </button>
             </div>
           )}
-          {error && <p className="student-curso__error" role="alert">{error}</p>}
+          {error && <p className="alumno-curso__error" role="alert">{error}</p>}
         </div>
       </section>
 
-      <section className="student-curso__clases" aria-labelledby="student-curso-clases">
-        <div className="student-curso__clases-titulo">
+      <section className="alumno-curso__clases" aria-labelledby="alumno-curso-clases">
+        <div className="alumno-curso__clases-titulo">
           <div>
-            <h2 id="student-curso-clases">Contenido del curso</h2>
+            <h2 id="alumno-curso-clases">Contenido del curso</h2>
             {clases.length > 0 && (
               <small>
                 {clases.length} {clases.length === 1 ? "clase" : "clases"} · {inscrito ? `${completadas.length} completadas` : bloqueado ? "Contenido bloqueado" : "Inscríbete para acceder"}
@@ -102,22 +100,22 @@ export default function CursoDetalle({ curso, categoria, bloqueado, alVolver }: 
             )}
           </div>
         </div>
-        {cargando ? <p className="student-curso__aviso">Cargando clases…</p>
-          : clases.length === 0 ? <p className="student-curso__aviso">Este curso aún no tiene clases publicadas.</p>
+        {cargando ? <p className="alumno-curso__aviso">Cargando clases…</p>
+          : clases.length === 0 ? <p className="alumno-curso__aviso">Este curso aún no tiene clases publicadas.</p>
           : (
             <ol>
               {clases.map((clase, indice) => {
                 const completada = completadas.includes(clase);
                 return (
                   <li key={clase.id}>
-                    <span className="student-curso__numero">{String(indice + 1).padStart(2, "0")}</span>
-                    <span className="student-curso__miniatura">{inscrito ? <CirclePlay /> : <Lock />}</span>
+                    <span className="alumno-curso__numero">{String(indice + 1).padStart(2, "0")}</span>
+                    <span className="alumno-curso__miniatura">{inscrito ? <CirclePlay /> : <Lock />}</span>
                     <div>
                       <strong>{clase.nombre}</strong>
                       {clase.descripcion && <small>{clase.descripcion}</small>}
                     </div>
                     {inscrito && (
-                      <Link href={enlaceClase(clase.id)} className={`student-curso__reproducir ${completada ? "is-completada" : ""}`}>
+                      <Link href={enlaceClase(clase.id)} className={`alumno-curso__reproducir ${completada ? "is-completada" : ""}`}>
                         {completada ? <><CircleCheck />Completada</> : <><Play />Reproducir</>}
                       </Link>
                     )}
@@ -128,19 +126,19 @@ export default function CursoDetalle({ curso, categoria, bloqueado, alVolver }: 
           )}
       </section>
       {evaluaciones.length > 0 && (
-        <section className={`student-curso__clases student-curso__examenes ${bloqueado ? "is-bloqueado" : ""}`} aria-labelledby="student-curso-examenes">
-          <h2 id="student-curso-examenes">Evaluaciones</h2>
+        <section className={`alumno-curso__clases alumno-curso__examenes ${bloqueado ? "is-bloqueado" : ""}`} aria-labelledby="alumno-curso-examenes">
+          <h2 id="alumno-curso-examenes">Evaluaciones</h2>
           <ol>
             {evaluaciones.map((examen) => {
               const { texto, accion } = estadoExamen(examen, intentos.find((intento) => intento.examenId === examen.id));
               return (
                 <li key={examen.id}>
-                  <span className="student-curso__numero"><ClipboardCheck /></span>
+                  <span className="alumno-curso__numero"><ClipboardCheck /></span>
                   <div>
                     <strong>{examen.nombre}</strong>
                     <small>{bloqueado ? "Requiere el plan Premium" : texto} · {examen.preguntas.length} {examen.preguntas.length === 1 ? "pregunta" : "preguntas"} · {examen.duracionMin > 0 ? `${examen.duracionMin} min` : "sin límite de tiempo"}</small>
                   </div>
-                  {bloqueado ? <Lock /> : <Link href={`/alumno/examen?id=${examen.id}`} className="student-curso__rendir">{accion}</Link>}
+                  {bloqueado ? <Lock /> : <Link href={`/alumno/examen?id=${examen.id}`} className="alumno-curso__rendir">{accion}</Link>}
                 </li>
               );
             })}

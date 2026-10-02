@@ -12,7 +12,7 @@ import "./Explorar.css";
 
 export default function ExplorarPage() {
   return (
-    <Suspense fallback={<main className="student-explore" />}>
+    <Suspense fallback={<main className="alumno-explorar" />}>
       <Explorar />
     </Suspense>
   );
@@ -20,7 +20,6 @@ export default function ExplorarPage() {
 
 function Explorar() {
   const router = useRouter();
-  // Las tarjetas (aquí y en Inicio) abren el detalle con ?curso=id.
   const abiertoId = useSearchParams().get("curso");
   const { perfil, usuario } = useSesion();
   const [cursos, setCursos] = useState<Curso[]>([]);
@@ -42,7 +41,6 @@ function Explorar() {
 
   useEffect(() => (usuario ? escucharInscripciones(usuario.uid, setInscritos, () => setInscritos([])) : undefined), [usuario]);
 
-  // Bloqueo visual; el contenido premium también lo protegen las reglas de Firestore.
   const bloqueado = (curso: Curso) => curso.acceso === "premium" && perfil?.plan !== "premium";
   const nombreCategoria = (id: string) => categorias.find((item) => item.id === id)?.nombre ?? "General";
 
@@ -63,28 +61,28 @@ function Explorar() {
     .sort((a, b) => orden === "nombre" ? a.nombre.localeCompare(b.nombre) : orden === "antiguos" ? a.creadoEn - b.creadoEn : b.creadoEn - a.creadoEn);
 
   return (
-    <main className="student-explore">
+    <main className="alumno-explorar">
       <TituloPagina
-        className="student-explore__heading"
+        className="alumno-explorar__heading"
         titulo="Explora nuestros cursos"
         descripcion="Accede a todos los cursos disponibles y continúa desarrollando tus conocimientos en la industria minera."
       />
-      <div className="student-explore__layout">
-        <aside className="student-explore__sidebar" aria-label="Filtros del catálogo">
+      <div className="alumno-explorar__layout">
+        <aside className="alumno-explorar__sidebar" aria-label="Filtros del catálogo">
           <details open>
             <summary>
               <Layers />
               Categorías
               <ChevronDown />
             </summary>
-            <div className="student-explore__categories">
-              <button type="button" className={categoria === "todas" ? "is-active" : ""} aria-pressed={categoria === "todas"} onClick={() => setCategoria("todas")}>
+            <div className="alumno-explorar__categories">
+              <button type="button" className={categoria === "todas" ? "is-activo" : ""} aria-pressed={categoria === "todas"} onClick={() => setCategoria("todas")}>
                 <LayoutGrid />
                 <span>Todos</span>
                 <small>{cursos.length}</small>
               </button>
               {categorias.map((item) => (
-                <button type="button" key={item.id} className={categoria === item.id ? "is-active" : ""} aria-pressed={categoria === item.id} onClick={() => setCategoria(item.id)}>
+                <button type="button" key={item.id} className={categoria === item.id ? "is-activo" : ""} aria-pressed={categoria === item.id} onClick={() => setCategoria(item.id)}>
                   <Layers />
                   <span>{item.nombre}</span>
                   <small>{cursos.filter((curso) => curso.categoriaId === item.id).length}</small>
@@ -98,7 +96,7 @@ function Explorar() {
               Tipo de curso
               <ChevronDown />
             </summary>
-            <div className="student-explore__types">
+            <div className="alumno-explorar__types">
               <label>
                 <input type="checkbox" checked={tipos.length === 0} onChange={() => setTipos([])} />
                 Todos<small>{cursos.length}</small>
@@ -113,16 +111,16 @@ function Explorar() {
             </div>
           </details>
         </aside>
-        <section className="student-explore__catalog" aria-label="Catálogo de cursos">
-          <div className="student-explore__toolbar">
-            <label className="student-explore__search">
+        <section className="alumno-explorar__catalog" aria-label="Catálogo de cursos">
+          <div className="alumno-explorar__toolbar">
+            <label className="alumno-explorar__search">
               <Search />
               <input type="search" value={busqueda} onChange={(evento) => setBusqueda(evento.target.value)} placeholder="Buscar cursos, temas o palabras clave..." aria-label="Buscar en el catálogo" />
             </label>
             <SelectorOrden orden={orden} alCambiar={setOrden} />
           </div>
           {visibles.length > 0 ? (
-            <div className="student-explore__grid">
+            <div className="alumno-explorar__grid">
               {visibles.map((curso) => (
                 <TarjetaCurso
                   key={curso.id}
@@ -135,7 +133,7 @@ function Explorar() {
             </div>
           ) : (
             <EstadoVacio
-              className="student-explore__vacio"
+              className="alumno-explorar__vacio"
               Icono={BookOpen}
               titulo={error ? "No se pudo cargar el catálogo" : cargando ? "Cargando cursos…" : cursos.length > 0 ? "Ningún curso coincide con tu búsqueda" : "Aún no hay cursos registrados"}
               texto={error || (cursos.length > 0 ? "Prueba con otra categoría o palabra clave." : "Los cursos disponibles aparecerán aquí cuando se publiquen.")}

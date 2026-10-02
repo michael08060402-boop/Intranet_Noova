@@ -1,4 +1,3 @@
-/* Espacios compactos para que la compra completa quepa en una pantalla de laptop sin desplazarse. */
 .pago-page {
   width: min(92%, 1100px);
   margin: 0 auto;
@@ -83,7 +82,6 @@
   flex-shrink: 0;
   color: var(--acento);
 }
-/* El ícono de tarjeta es una silueta usada como máscara: toma el color del texto. */
 .pago-page__logo {
   width: 28px;
   height: 28px;
@@ -149,7 +147,6 @@
   outline: none;
   box-shadow: 0 0 0 3px rgb(0 119 182 / 15%);
 }
-/* Campo con ícono a la izquierda (y, en el CVV, una ayuda a la derecha) dentro del mismo borde. */
 .pago-page__campo {
   position: relative;
   display: flex;
@@ -322,7 +319,7 @@
   width: 56px;
   height: 56px;
   margin-bottom: 10px;
-  color: #1a7f4b;
+  color: #176f42;
 }
 .pago-page__resultado h1 {
   font-size: 24px;

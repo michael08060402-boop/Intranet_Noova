@@ -27,7 +27,6 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   const { perfil } = useSesion();
   const confirmarSalida = useRef<HTMLDialogElement>(null);
   const nombre = capitalizarNombre(perfil?.nombre.split(" ")[0] || "Administrador");
-  // Entregas de exámenes que esperan nota: es el aviso del administrador.
   const [porCalificar, setPorCalificar] = useState(0);
 
   useEffect(() => escucharIntentos("entregado", (intentos) => setPorCalificar(intentos.length), () => setPorCalificar(0)), []);
@@ -51,7 +50,7 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
                 <Link
                   key={href}
                   href={href}
-                  className={activo ? "is-active" : ""}
+                  className={activo ? "is-activo" : ""}
                   aria-current={activo ? "page" : undefined}
                 >
                   <Icono />

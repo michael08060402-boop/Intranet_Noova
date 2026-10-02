@@ -23,7 +23,7 @@ export type Orden = "recientes" | "antiguos" | "nombre";
 
 export function SelectorOrden({ orden, alCambiar }: { orden: Orden; alCambiar: (orden: Orden) => void }) {
   return (
-    <select className="student-orden" aria-label="Ordenar cursos" value={orden} onChange={(evento) => alCambiar(evento.target.value as Orden)}>
+    <select className="alumno-orden" aria-label="Ordenar cursos" value={orden} onChange={(evento) => alCambiar(evento.target.value as Orden)}>
       <option value="recientes">Más recientes</option>
       <option value="antiguos">Más antiguos</option>
       <option value="nombre">Nombre: A–Z</option>
@@ -45,7 +45,7 @@ export function EstadoVacio({
   children?: ReactNode;
 }) {
   return (
-    <section className={className ? `student-vacio ${className}` : "student-vacio"} role="status">
+    <section className={className ? `alumno-vacio ${className}` : "alumno-vacio"} role="status">
       {Icono && (
         <span>
           <Icono />

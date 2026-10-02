@@ -24,22 +24,22 @@ export default function PaginaAcceso() {
 
   if (cargando || usuario) {
     return (
-      <main className="auth-loading" aria-label="Cargando">
+      <main className="acceso-loading" aria-label="Cargando">
         <span />
       </main>
     );
   }
 
   return (
-    <main className="auth-shell">
-      <section className="auth-panel">
-        <div className="auth-barra">
-          <a href="https://www.noovasac.com/" className="auth-web"><ArrowLeft />Ir al sitio de Noova</a>
-          <Image className="auth-logo" src={logoNoova} alt="Noova Consulting" sizes="90px" />
+    <main className="acceso-shell">
+      <section className="acceso-panel">
+        <div className="acceso-barra">
+          <a href="https://www.noovasac.com/" className="acceso-web"><ArrowLeft />Ir al sitio de Noova</a>
+          <Image className="acceso-logo" src={logoNoova} alt="Noova Consulting" sizes="90px" />
         </div>
         <FormularioAcceso />
       </section>
-      <section className="auth-visual" aria-label="Noova Learn Mining">
+      <section className="acceso-visual" aria-label="Noova Learn Mining">
         <h2>
           Tu próximo nivel
           <br />

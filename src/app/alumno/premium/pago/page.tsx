@@ -15,7 +15,6 @@ type Metodo = "tarjeta" | "yape";
 
 const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "long", year: "numeric" });
 
-// Agrupa los dígitos de la tarjeta de cuatro en cuatro mientras se escriben.
 const formatoTarjeta = (valor: string) => valor.replace(/\D/g, "").slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1 ");
 const formatoVencimiento = (valor: string) => valor.replace(/\D/g, "").slice(0, 4).replace(/(\d{2})(?=\d)/, "$1/");
 const soloDigitos = (valor: string, maximo: number) => valor.replace(/\D/g, "").slice(0, maximo);
@@ -28,13 +27,12 @@ function vencimientoPlan(meses: number) {
 
 export default function PagoPage() {
   return (
-    <Suspense fallback={<main className="pago-page student-fondo" />}>
+    <Suspense fallback={<main className="pago-page alumno-fondo" />}>
       <Pago />
     </Suspense>
   );
 }
 
-// Pago simulado: no hay pasarela conectada, no se cobra nada y los datos de pago solo viven en esta pantalla.
 function Pago() {
   const { perfil } = useSesion();
   const [meses, setMeses] = useState(buscarPeriodo(Number(useSearchParams().get("periodo"))).meses);
@@ -86,7 +84,7 @@ function Pago() {
 
   if (perfil?.plan === "premium") {
     return (
-      <main className="pago-page student-fondo">
+      <main className="pago-page alumno-fondo">
         <section className="pago-page__resultado">
           <CircleCheck />
           <h1>Ya tienes Premium</h1>
@@ -99,7 +97,7 @@ function Pago() {
 
   if (paso === "exito") {
     return (
-      <main className="pago-page student-fondo">
+      <main className="pago-page alumno-fondo">
         <section className="pago-page__resultado">
           <CircleCheck />
           <h1>¡Pago exitoso!</h1>
@@ -114,7 +112,7 @@ function Pago() {
   }
 
   return (
-    <main className="pago-page student-fondo">
+    <main className="pago-page alumno-fondo">
       <Link href="/alumno/premium" className="pago-page__volver"><ArrowLeft />Volver a planes</Link>
       <header className="pago-page__encabezado">
         <h1>Completa tu compra</h1>
@@ -136,7 +134,6 @@ function Pago() {
               <span className="pago-page__radio">{metodo === "yape" && <CircleCheck />}</span>
             </button>
           </div>
-          {/* autoComplete="off" evita que el navegador ofrezca tarjetas guardadas en una pantalla de prueba. */}
           <form className="pago-page__formulario" onSubmit={pagar} autoComplete="off">
             {metodo === "tarjeta" ? (
               <>
@@ -182,7 +179,7 @@ function Pago() {
               </>
             )}
             {error && <p className="pago-page__error" role="alert">{error}</p>}
-            <button type="submit" className="pago-page__pagar student-dorado" disabled={paso === "procesando"}>
+            <button type="submit" className="pago-page__pagar alumno-dorado" disabled={paso === "procesando"}>
               {paso === "procesando" ? "Procesando pago…" : <>Pagar S/ {precio}<ArrowRight /></>}
             </button>
           </form>

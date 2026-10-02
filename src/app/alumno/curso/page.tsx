@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import type { FunctionsError } from "firebase/functions";
 import { ChevronRight, Circle, CircleCheck } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
-import { escucharClases, escucharCurso, escucharInscripciones, escucharProgreso, marcarClase, type Clase, type Curso, type Progreso } from "@/firebase/cursos";
+import { escucharClases, escucharCurso, escucharInscripciones, escucharProgreso, marcarClase, pedirVideo, type Clase, type Curso, type Progreso } from "@/firebase/cursos";
 import "./Clase.css";
 
 export default function ClasePage() {
   return (
-    <Suspense fallback={<main className="clase-page student-fondo"><p className="clase-page__estado">Cargando clase…</p></main>}>
+    <Suspense fallback={<main className="clase-page alumno-fondo"><p className="clase-page__estado">Cargando clase…</p></main>}>
       <ClaseCurso />
     </Suspense>
   );
@@ -21,7 +22,6 @@ function ClaseCurso() {
   const cursoId = parametros.get("id") ?? "";
   const claseId = parametros.get("clase");
   const { usuario } = useSesion();
-  // undefined: cargando; null: no existe o no está publicado.
   const [curso, setCurso] = useState<Curso | null | undefined>(undefined);
   const [clases, setClases] = useState<Clase[]>([]);
   const [inscrito, setInscrito] = useState<boolean | undefined>(undefined);
@@ -48,7 +48,7 @@ function ClaseCurso() {
 
   if (!cursoId || curso === null) {
     return (
-      <main className="clase-page student-fondo">
+      <main className="clase-page alumno-fondo">
         <p className="clase-page__estado">Este curso no existe o ya no está disponible.</p>
         <Link href="/alumno/explorar" className="clase-page__enlace">Volver a Explorar</Link>
       </main>
@@ -56,12 +56,12 @@ function ClaseCurso() {
   }
 
   if (curso === undefined || inscrito === undefined) {
-    return <main className="clase-page student-fondo"><p className="clase-page__estado">Cargando clase…</p></main>;
+    return <main className="clase-page alumno-fondo"><p className="clase-page__estado">Cargando clase…</p></main>;
   }
 
   if (!inscrito) {
     return (
-      <main className="clase-page student-fondo">
+      <main className="clase-page alumno-fondo">
         <p className="clase-page__estado">Inscríbete en <strong>{curso.nombre}</strong> para acceder a sus clases.</p>
         <Link href={`/alumno/explorar?curso=${curso.id}`} className="clase-page__enlace">Ir al curso</Link>
       </main>
@@ -69,7 +69,6 @@ function ClaseCurso() {
   }
 
   const completada = (clase: Clase) => progreso.some((item) => item.claseId === clase.id);
-  // Sin clase indicada se abre la primera pendiente, para continuar donde se quedó.
   const indice = Math.max(0, clases.findIndex((clase) => claseId ? clase.id === claseId : !completada(clase)));
   const actual = clases[indice];
   const enlace = (clase: Clase) => `/alumno/curso?id=${curso.id}&clase=${clase.id}`;
@@ -84,7 +83,7 @@ function ClaseCurso() {
   }
 
   return (
-    <main className="clase-page student-fondo">
+    <main className="clase-page alumno-fondo">
       <nav className="clase-page__ruta" aria-label="Ruta">
         <Link href="/alumno/cursos">Mis cursos</Link>
         <ChevronRight />
@@ -103,9 +102,8 @@ function ClaseCurso() {
           {error && <p className="clase-page__error" role="alert">{error}</p>}
 
           <div className="clase-page__layout">
-            <section className="clase-page__principal">
-              {/* El reproductor se añadirá cuando las clases tengan video en R2. */}
-              <div className="clase-page__video" />
+            <section>
+              <ReproductorClase cursoId={curso.id} claseId={actual.id} />
               <div className="clase-page__detalle">
                 <div className="clase-page__pestanas" role="tablist">
                   <button type="button" role="tab" aria-selected={pestana === "descripcion"} onClick={() => setPestana("descripcion")}>Descripción</button>
@@ -141,5 +139,62 @@ function ClaseCurso() {
         </>
       )}
     </main>
+  );
+}
+
+type Problema = "sinVideo" | "premium" | "fallo";
+type Video = { claseId: string; url: string } | { claseId: string; problema: Problema };
+
+function problemaDe(error: unknown): Problema {
+  const { code, details } = error as FunctionsError;
+  if (code === "functions/not-found") return "sinVideo";
+  if (code === "functions/permission-denied" && (details as { motivo?: string } | undefined)?.motivo === "premium") return "premium";
+  return "fallo";
+}
+
+function ReproductorClase({ cursoId, claseId }: { cursoId: string; claseId: string }) {
+  const [video, setVideo] = useState<Video | null>(null);
+  const [intento, setIntento] = useState(0);
+
+  useEffect(() => {
+    let vigente = true;
+    pedirVideo(cursoId, claseId)
+      .then((url) => vigente && setVideo({ claseId, url }))
+      .catch((error) => vigente && setVideo({ claseId, problema: problemaDe(error) }));
+    return () => { vigente = false; };
+  }, [cursoId, claseId, intento]);
+
+  const actual = video?.claseId === claseId ? video : null;
+
+  function reintentar() {
+    setVideo(null);
+    setIntento((anterior) => anterior + 1);
+  }
+
+  return (
+    <div className="clase-page__video">
+      {!actual && <p>Cargando video…</p>}
+      {actual && "url" in actual && (
+        <video src={actual.url} controls controlsList="nodownload" disablePictureInPicture playsInline preload="metadata"
+          onContextMenu={(evento) => evento.preventDefault()} onError={() => setVideo({ claseId, problema: "fallo" })} />
+      )}
+      {actual && "problema" in actual && (
+        <div className="clase-page__video-aviso">
+          {actual.problema === "sinVideo" && <p>Esta clase aún no tiene video.</p>}
+          {actual.problema === "premium" && (
+            <>
+              <p>Este video es parte del plan Premium.</p>
+              <Link href="/alumno/premium" className="clase-page__enlace">Conocer Premium</Link>
+            </>
+          )}
+          {actual.problema === "fallo" && (
+            <>
+              <p>No se pudo cargar el video.</p>
+              <button type="button" onClick={reintentar}>Reintentar</button>
+            </>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

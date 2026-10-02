@@ -36,10 +36,8 @@ export default function EntregasPage() {
 
 function Entregas() {
   const id = useSearchParams().get("id") ?? "";
-  // undefined: cargando; null: no existe.
   const [examen, setExamen] = useState<Examen | null | undefined>(undefined);
   const [intentos, setIntentos] = useState<Intento[]>([]);
-  // null: aún cargando; sin las claves no se puede puntuar ninguna respuesta.
   const [claves, setClaves] = useState<Claves | null>(null);
   const [error, setError] = useState("");
   const [ahora, setAhora] = useState(() => Date.now());
@@ -145,7 +143,7 @@ function Entregas() {
         {error && <p className="admin-error" role="alert">{error}</p>}
         {mensaje && <p className="admin-aviso entregas__aviso" role="status">{mensaje}</p>}
 
-        <div className="admin-tabla-caja">
+        <div className="admin-tabla-caja" tabIndex={0} role="region" aria-label="Tabla de entregas">
           <table className="admin-tabla">
             <thead>
               <tr>
@@ -196,7 +194,6 @@ function Entregas() {
   );
 }
 
-// Modal de calificación: las de opción múltiple llegan puntuadas por la clave; las abiertas las puntúa el administrador.
 function Revision({ examen, intento, claves, alCerrar }: { examen: Examen; intento: Intento; claves: Claves; alCerrar: () => void }) {
   const dialogo = useRef<HTMLDialogElement>(null);
   const [puntajes, setPuntajes] = useState<Puntajes>(() => ({ ...puntajesAutomaticos(examen, claves, intento.respuestas), ...intento.puntajes }));

@@ -8,7 +8,6 @@ import { guardarExamen, leerClaves, NOTA_MAXIMA, type Claves, type Examen, type 
 import "../cursos/NuevoCurso.css";
 import "./NuevoExamen.css";
 
-// Pregunta en edición: "correcta" es el índice de la opción correcta (-1 en las abiertas).
 type PreguntaEditable = Pregunta & { correcta: number };
 
 const duraciones = [0, 10, 15, 20, 30, 45, 60, 90, 120, 180];
@@ -27,7 +26,6 @@ export default function NuevoExamen({ examen, cursos, alCerrar }: { examen: Exam
   const [notaMinima, setNotaMinima] = useState(examen?.notaMinima ?? 16);
   const [publicado, setPublicado] = useState(examen?.publicado ?? false);
   const [preguntas, setPreguntas] = useState<PreguntaEditable[]>(() => examen?.preguntas.map((pregunta) => ({ ...pregunta, correcta: -1 })) ?? [nuevaPregunta("opcion")]);
-  // Al editar, las respuestas correctas se leen aparte (el examen público no las incluye).
   const [cargandoClaves, setCargandoClaves] = useState(!!examen);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");

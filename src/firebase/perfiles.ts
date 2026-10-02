@@ -56,7 +56,6 @@ export async function asegurarPerfil(usuario: User) {
   return referencia;
 }
 
-// Las reglas solo dejan que el alumno cambie su nombre; plan y estado los gestiona el administrador.
 export function actualizarNombre(uid: string, nombre: string) {
   return updateDoc(doc(db, "usuarios", uid), { nombre: capitalizarNombre(nombre).slice(0, 120) });
 }

@@ -32,7 +32,6 @@ export default function CursosPage() {
 
 function Cursos() {
   const router = useRouter();
-  // Los accesos del panel llegan con ?nuevo (crear curso) o ?categorias para abrir el modal al entrar.
   const parametros = useSearchParams();
   const nuevo = parametros.has("nuevo");
   const conParametro = nuevo || parametros.has("categorias");
@@ -44,7 +43,6 @@ function Cursos() {
   const [busqueda, setBusqueda] = useState("");
   const [filtro, setFiltro] = useState("todas");
   const [orden, setOrden] = useState<{ columna: Columna; ascendente: boolean }>({ columna: "nombre", ascendente: true });
-  // undefined: modal cerrado; null: crear; Curso: editar.
   const [editando, setEditando] = useState<Curso | null | undefined>(nuevo ? null : undefined);
   const [gestionandoCategorias, setGestionandoCategorias] = useState(parametros.has("categorias"));
   const [eliminando, setEliminando] = useState<Curso | null>(null);

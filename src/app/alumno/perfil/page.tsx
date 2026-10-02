@@ -14,11 +14,9 @@ const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "
 
 export default function Perfil() {
   const { usuario, perfil } = useSesion();
-  // Las reglas solo guardan un campo "nombre": la primera palabra se muestra como nombre y el resto como apellidos.
   const partes = capitalizarNombre(perfil?.nombre ?? "").split(" ");
   const nombreGuardado = partes[0] ?? "";
   const apellidosGuardados = partes.slice(1).join(" ");
-  // null: el campo no se ha editado y muestra lo guardado.
   const [nombre, setNombre] = useState<string | null>(null);
   const [apellidos, setApellidos] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
@@ -65,7 +63,7 @@ export default function Perfil() {
   }
 
   return (
-    <main className="perfil-page student-fondo">
+    <main className="perfil-page alumno-fondo">
       <TituloPagina className="perfil-page__heading" titulo="Mi perfil" descripcion="Administra tus datos, la seguridad de tu cuenta y tu plan." />
 
       <section className="perfil-page__tarjeta perfil-page__tarjeta--datos" aria-labelledby="perfil-datos">
@@ -73,7 +71,6 @@ export default function Perfil() {
         <div className="perfil-page__foto">
           <span className="perfil-page__avatar">{nombreGuardado.charAt(0) || "?"}</span>
           <div>
-            {/* La foto necesita almacenamiento de archivos (R2), que aún no está conectado. */}
             <button type="button" disabled title="Disponible próximamente"><Camera />Cambiar foto</button>
             <small>La foto de perfil estará disponible próximamente.</small>
           </div>
@@ -140,7 +137,6 @@ export default function Perfil() {
           <div className="perfil-page__fila">
             <div>
               <strong>Suscripción</strong>
-              {/* Administrar la suscripción depende de la pasarela de pago, que aún no está integrada. */}
               <small>Disponible al habilitar el pago en línea.</small>
             </div>
             <button type="button" className="perfil-page__secundario" disabled title="Disponible próximamente">Administrar plan</button>
@@ -151,7 +147,7 @@ export default function Perfil() {
               <strong>Hazte Premium</strong>
               <small>Todos los cursos, contenido especializado y certificados.</small>
             </div>
-            <Link href="/alumno/premium" className="student-dorado"><Crown />Hazte Premium</Link>
+            <Link href="/alumno/premium" className="alumno-dorado"><Crown />Hazte Premium</Link>
           </div>
         )}
       </section>

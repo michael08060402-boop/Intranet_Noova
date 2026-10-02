@@ -1,4 +1,3 @@
-/* El layout del admin fija el alto de la pantalla; esta página puede ser más larga, así que usa el scroll normal. */
 .admin-shell:has(.curso-admin) {
   height: auto;
 }
@@ -106,7 +105,7 @@
 }
 .curso-admin__estado-badge.is-publicado {
   background: #e6f6ee;
-  color: #1a7f4b;
+  color: #176f42;
 }
 .curso-admin__estado-badge.is-borrador {
   background: #fff1db;
@@ -404,7 +403,8 @@
   font-weight: 650;
 }
 .clase-modal input:not([type="checkbox"]),
-.clase-modal textarea {
+.clase-modal textarea,
+.clase-modal select {
   width: 100%;
   padding: 11px 14px;
   border: 1px solid #cfdbe7;
@@ -416,6 +416,11 @@
 }
 .clase-modal textarea {
   min-height: 90px;
+}
+.clase-modal small {
+  color: var(--texto-suave);
+  font-size: 12px;
+  font-weight: 400;
 }
 .clase-modal .clase-modal__check {
   flex-direction: row;

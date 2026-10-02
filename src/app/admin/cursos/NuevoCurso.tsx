@@ -13,7 +13,6 @@ export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Cur
   const [nombre, setNombre] = useState(curso?.nombre ?? "");
   const [descripcion, setDescripcion] = useState(curso?.descripcion ?? "");
   const [categoriaId, setCategoriaId] = useState(curso?.categoriaId ?? "");
-  // Las categorías pueden llegar después de abrir el formulario; mientras no se elija una, se usa la primera activa.
   const categoriaElegida = categoriaId || activas[0]?.id || "";
   const [nivel, setNivel] = useState<Nivel>(curso?.nivel ?? "basico");
   const [acceso, setAcceso] = useState<Acceso>(curso?.acceso ?? "gratis");
@@ -27,7 +26,6 @@ export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Cur
     evento.preventDefault();
     if (!usuario) return;
     if (nombre.trim().length < 2) return setError("El nombre debe tener al menos 2 caracteres.");
-    // Al editar se permite conservar una categoría ya desactivada; las reglas solo exigen una activa al cambiarla.
     const valida = activas.some((categoria) => categoria.id === categoriaElegida) || categoriaElegida === curso?.categoriaId;
     if (!valida) return setError("Selecciona una categoría activa.");
 

@@ -1,4 +1,4 @@
-.student-header {
+.alumno-header {
   position: relative;
   isolation: isolate;
   overflow: clip;
@@ -12,29 +12,28 @@
   background: var(--fondo-barra);
   color: #fff;
 }
-.student-shell .student-header__ondas {
+.alumno-estructura .alumno-header__ondas {
   position: absolute;
   z-index: -1;
   inset: auto 0 0;
   width: 100%;
   height: 100%;
 }
-.student-brand {
+.alumno-brand {
   justify-self: start;
   display: flex;
   align-items: center;
 }
-.student-brand img {
+.alumno-brand img {
   width: auto;
   height: 44px;
 }
-.student-nav {
+.alumno-nav {
   display: flex;
   gap: 12px;
   align-items: center;
 }
-.student-nav a,
-.student-nav button {
+.alumno-nav a {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -50,18 +49,14 @@
   white-space: nowrap;
   cursor: pointer;
 }
-.student-nav .is-active {
+.alumno-nav .is-activo {
   background: rgb(255 255 255 / 14%);
   color: var(--acento-claro);
 }
-.student-nav button > svg:last-child:not(:first-child) {
-  width: 16px;
-}
-.student-nav a:hover,
-.student-nav button:hover {
+.alumno-nav a:hover {
   background: rgb(255 255 255 / 9%);
 }
-.student-menu-boton {
+.alumno-menu-boton {
   display: none;
   place-items: center;
   padding: 6px;
@@ -71,10 +66,10 @@
   color: #fff;
   cursor: pointer;
 }
-.student-menu-boton:hover {
+.alumno-menu-boton:hover {
   background: rgb(255 255 255 / 12%);
 }
-.student-account button {
+.alumno-account button {
   display: grid;
   place-items: center;
   padding: 6px;
@@ -84,10 +79,10 @@
   color: #fff;
   cursor: pointer;
 }
-.student-account button:hover {
+.alumno-account button:hover {
   background: rgb(255 255 255 / 12%);
 }
-.student-account {
+.alumno-account {
   justify-self: end;
   display: flex;
   align-items: center;
@@ -95,7 +90,7 @@
   font-size: 14px;
   font-weight: 600;
 }
-.student-account .student-cuenta {
+.alumno-account .alumno-cuenta {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -107,21 +102,20 @@
   font: inherit;
   text-align: left;
 }
-.student-account .student-cuenta:hover {
+.alumno-account .alumno-cuenta:hover {
   border-color: rgb(255 255 255 / 40%);
   background: rgb(255 255 255 / 16%);
 }
-/* El ícono de la flecha trae aire propio a los lados: se acerca al texto para que el contenido quede centrado. */
-.student-account .student-cuenta > svg {
+.alumno-account .alumno-cuenta > svg {
   width: 16px;
   margin-left: -4px;
 }
-.student-account__name {
+.alumno-account__name {
   max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.student-account__plan {
+.alumno-account__plan {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -131,12 +125,12 @@
   font-weight: 400;
   white-space: nowrap;
 }
-.student-account .student-account__plan svg {
+.alumno-account .alumno-account__plan svg {
   width: 13px;
   height: 13px;
   color: var(--premium);
 }
-.student-avatar {
+.alumno-avatar {
   display: grid;
   place-items: center;
   width: 34px;
@@ -145,16 +139,16 @@
   background: var(--acento);
   color: #fff;
 }
-.student-account button svg {
+.alumno-account button svg {
   width: 19px;
 }
-.student-campana {
+.alumno-campana {
   position: relative;
 }
-.student-campana svg {
+.alumno-campana svg {
   width: 21px;
 }
-.student-account .student-campana span {
+.alumno-account .alumno-campana span {
   position: absolute;
   top: -4px;
   right: -6px;
@@ -168,7 +162,7 @@
   line-height: 16px;
   text-align: center;
 }
-.student-avisos {
+.alumno-avisos {
   inset: 62px 3% auto auto;
   width: min(92%, 360px);
   max-height: min(70svh, 460px);
@@ -181,52 +175,52 @@
   color: var(--texto);
   box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
 }
-.student-avisos h2 {
+.alumno-avisos h2 {
   margin-bottom: 10px;
   font-size: 16px;
   font-weight: 700;
 }
-.student-avisos__vacio {
+.alumno-avisos__vacio {
   padding: 14px 0 6px;
   color: var(--texto-suave);
   font-size: 14px;
 }
-.student-avisos ul {
+.alumno-avisos ul {
   display: flex;
   flex-direction: column;
   gap: 6px;
   list-style: none;
 }
-.student-avisos li a {
+.alumno-avisos li a {
   display: block;
   padding: 10px 12px;
   border-left: 3px solid transparent;
   border-radius: var(--radio);
   font-size: 14px;
 }
-.student-avisos li a:hover {
+.alumno-avisos li a:hover {
   background: var(--acento-suave);
 }
-.student-avisos li.is-nueva a {
+.alumno-avisos li.is-nueva a {
   border-left: 3px solid var(--acento);
   background: #f3faff;
 }
-.student-avisos li strong {
+.alumno-avisos li strong {
   display: block;
   font-weight: 650;
 }
-.student-avisos li span {
+.alumno-avisos li span {
   display: block;
   margin-top: 2px;
   color: var(--texto-suave);
 }
-.student-avisos li small {
+.alumno-avisos li small {
   display: block;
   margin-top: 4px;
   color: var(--texto-suave);
   font-size: 12px;
 }
-.student-menu-cuenta {
+.alumno-menu-cuenta {
   inset: 62px 3% auto auto;
   width: min(92%, 260px);
   margin: 0;
@@ -237,7 +231,7 @@
   color: var(--texto);
   box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
 }
-.student-menu-cuenta__datos {
+.alumno-menu-cuenta__datos {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -245,18 +239,18 @@
   padding: 10px 12px 12px;
   border-bottom: 1px solid var(--borde);
 }
-.student-menu-cuenta__datos strong {
+.alumno-menu-cuenta__datos strong {
   font-size: 15px;
   font-weight: 700;
 }
-.student-menu-cuenta__datos span {
+.alumno-menu-cuenta__datos span {
   overflow: hidden;
   color: var(--texto-suave);
   font-size: 13px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.student-menu-cuenta a {
+.alumno-menu-cuenta a {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -265,11 +259,11 @@
   font-size: 14px;
   font-weight: 600;
 }
-.student-menu-cuenta a:hover {
+.alumno-menu-cuenta a:hover {
   background: var(--acento-suave);
   color: var(--acento-oscuro);
 }
-.student-menu-cuenta__salir {
+.alumno-menu-cuenta__salir {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -284,26 +278,26 @@
   font-weight: 600;
   cursor: pointer;
 }
-.student-menu-cuenta__salir:hover {
+.alumno-menu-cuenta__salir:hover {
   background: #fdf0f0;
 }
-.student-shell .student-menu-cuenta .student-menu-cuenta__salir svg {
+.alumno-estructura .alumno-menu-cuenta .alumno-menu-cuenta__salir svg {
   color: #b42318;
 }
-.student-shell .student-menu-cuenta__salir:focus-visible {
+.alumno-estructura .alumno-menu-cuenta__salir:focus-visible {
   outline-color: #b42318;
   outline-offset: -2px;
 }
-.student-shell .student-menu-cuenta svg {
+.alumno-estructura .alumno-menu-cuenta svg {
   width: 18px;
   height: 18px;
   color: var(--acento);
 }
-.student-shell .student-menu-cuenta a:focus-visible {
+.alumno-estructura .alumno-menu-cuenta a:focus-visible {
   outline-color: var(--acento);
   outline-offset: -2px;
 }
-.student-logout {
+.alumno-logout {
   width: min(92%, 380px);
   margin: auto;
   padding: 26px;
@@ -313,26 +307,26 @@
   color: var(--texto);
   box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
 }
-.student-logout::backdrop {
+.alumno-logout::backdrop {
   background: rgb(3 35 55 / 45%);
 }
-.student-logout h2 {
+.alumno-logout h2 {
   margin: 0 0 6px;
   font-size: 19px;
   font-weight: 700;
 }
-.student-logout p {
+.alumno-logout p {
   margin: 0 0 22px;
   color: var(--texto-suave);
   font-size: 14px;
   line-height: 1.45;
 }
-.student-logout__actions {
+.alumno-logout__actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
 }
-.student-logout__actions button {
+.alumno-logout__actions button {
   padding: 10px 18px;
   border: 1px solid var(--borde);
   border-radius: var(--radio);
@@ -343,55 +337,54 @@
   font-weight: 600;
   cursor: pointer;
 }
-.student-logout__actions button:hover {
+.alumno-logout__actions button:hover {
   background: var(--acento-suave);
 }
-.student-logout__actions .student-logout__confirm {
+.alumno-logout__actions .alumno-logout__confirm {
   border-color: #0c4566;
   background: linear-gradient(100deg, #0c4566, #1a7299);
   color: #fff;
 }
-.student-logout__actions .student-logout__confirm:hover {
+.alumno-logout__actions .alumno-logout__confirm:hover {
   background: linear-gradient(100deg, #115a7f, #2186b3);
 }
-.student-shell .student-logout button:focus-visible {
+.alumno-estructura .alumno-logout button:focus-visible {
   outline-color: var(--acento);
 }
 @media (max-width: 1200px) {
-  .student-header {
+  .alumno-header {
     column-gap: 20px;
   }
-  .student-nav {
+  .alumno-nav {
     gap: 4px;
   }
-  .student-nav a,
-  .student-nav button {
+  .alumno-nav a {
     padding: 10px 12px;
   }
 }
 @media (max-width: 1080px) {
-  .student-header {
+  .alumno-header {
     grid-template-columns: auto 1fr auto;
   }
-  .student-nav {
+  .alumno-nav {
     justify-self: center;
   }
-  .student-brand img {
+  .alumno-brand img {
     height: 40px;
   }
-  .student-account__name {
+  .alumno-account__name {
     display: none;
   }
 }
 @media (max-width: 900px) {
-  .student-header {
+  .alumno-header {
     grid-template-columns: 1fr auto auto;
     row-gap: 0;
   }
-  .student-menu-boton {
+  .alumno-menu-boton {
     display: grid;
   }
-  .student-nav {
+  .alumno-nav {
     grid-column: 1 / -1;
     order: 4;
     display: none;
@@ -403,32 +396,26 @@
     padding-top: 10px;
     border-top: 1px solid rgb(255 255 255 / 15%);
   }
-  .student-nav.is-abierto {
+  .alumno-nav.is-abierto {
     display: flex;
   }
-  .student-nav a,
-  .student-nav button {
+  .alumno-nav a {
     padding: 12px 14px;
     font-size: 15px;
   }
-  .student-nav button > svg:last-child:not(:first-child) {
-    margin-left: auto;
-  }
 }
 @media (max-width: 760px) {
-  .student-header {
+  .alumno-header {
     padding: 9px 4%;
   }
-  .student-brand img {
+  .alumno-brand img {
     height: 36px;
   }
 }
 
-.student-shell {
-  /* Azul de botones y enlaces: más profundo que el celeste para que el texto blanco se lea bien y combine con el navbar. */
+.alumno-estructura {
   --acento: #0077b6;
   --acento-oscuro: #005f92;
-  /* Celeste brillante solo para detalles que deben destacar, como las barras de progreso. */
   --celeste: #0098db;
   --acento-claro: #3fd0f5;
   --acento-suave: #e8f6fd;
@@ -436,11 +423,9 @@
   --texto-suave: #536d88;
   --borde: #e2ebf4;
   --premium: #ffd100;
-  /* Azul marino del navbar y del pie de página. */
   --fondo-barra: linear-gradient(100deg, #042b4e 0%, #063a66 55%, #0a568a 100%);
   --radio: 8px;
   --radio-grande: 14px;
-  /* Columna para que el pie quede abajo aunque la página tenga poco contenido. */
   display: flex;
   flex-direction: column;
   min-height: 100svh;
@@ -448,21 +433,19 @@
   background: #f3f6f9;
   color: var(--texto);
 }
-.student-shell svg {
+.alumno-estructura svg {
   width: 23px;
   height: 23px;
   flex-shrink: 0;
   stroke-width: 1.8;
 }
-.student-shell a:focus-visible,
-.student-shell button:focus-visible {
+.alumno-estructura a:focus-visible,
+.alumno-estructura button:focus-visible {
   outline: 2px solid var(--acento-claro);
   outline-offset: 4px;
 }
 
-/* Botones para mejorar el plan (Planes, detalle del curso y perfil): dorado con bordes ámbar y franjas diagonales
-   claras solo en los extremos, sin pasar por el texto. Los bordes no bajan de #b98a2c para que el texto azul marino se lea bien. */
-.student-dorado {
+.alumno-dorado {
   background:
     linear-gradient(115deg,
       transparent 0 4%, rgb(255 255 255 / 26%) 4% 10%,
@@ -474,22 +457,21 @@
   color: #042b4e;
   transition: filter .2s ease, box-shadow .2s ease;
 }
-.student-dorado:hover:not(:disabled) {
+.alumno-dorado:hover:not(:disabled) {
   filter: brightness(1.08);
   box-shadow: 0 6px 18px rgb(185 138 44 / 35%);
 }
 @media (prefers-reduced-motion: reduce) {
-  .student-dorado {
+  .alumno-dorado {
     transition: none;
   }
 }
 
-/* Paisaje en duotono detrás del encabezado de las páginas del alumno, a todo el ancho; cada página puede ajustar --alto-fondo. */
-.student-fondo {
+.alumno-fondo {
   position: relative;
   isolation: isolate;
 }
-.student-fondo::before {
+.alumno-fondo::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -497,8 +479,6 @@
   left: calc((100% - 100vw) / 2);
   width: 100vw;
   height: var(--alto-fondo, 380px);
-  /* Claro a la izquierda (detrás del título) y abajo (donde empieza el contenido); a la derecha la foto se ve
-     con sus colores apenas teñidos de azul, para que ese lado no quede vacío. */
   background:
     linear-gradient(0deg, #f3f6f9 0%, rgb(243 246 249 / 0%) 55%),
     linear-gradient(90deg, #f3f6f9 0%, rgb(243 246 249 / 85%) 30%, rgb(243 246 249 / 20%) 70%, rgb(243 246 249 / 0%) 100%),
@@ -508,7 +488,7 @@
   pointer-events: none;
 }
 
-.student-shell h1 {
+.alumno-estructura h1 {
   margin: 0 0 2px;
   font-size: clamp(26px, 2.4vw, 34px);
   font-weight: 750;

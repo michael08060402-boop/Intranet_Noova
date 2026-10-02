@@ -1,25 +1,25 @@
-.student-main {
+.alumno-main {
   width: min(92%, 1200px);
   margin: 0 auto;
   padding: 26px 0 40px;
 }
 
-.student-welcome {
+.alumno-welcome {
   margin-bottom: 22px;
   text-align: center;
 }
-.student-welcome h1 {
+.alumno-welcome h1 {
   margin-bottom: 2px;
 }
-.student-welcome__nombre {
-  color: var(--celeste);
+.alumno-welcome__nombre {
+  color: var(--acento-oscuro);
 }
-.student-welcome p {
+.alumno-welcome p {
   color: var(--texto-suave);
   font-size: clamp(14px, 1.2vw, 17px);
 }
 
-.student-hero {
+.alumno-portada {
   position: relative;
   isolation: isolate;
   display: flex;
@@ -32,7 +32,7 @@
   color: #fff;
   box-shadow: 0 24px 48px rgb(8 39 71 / 22%);
 }
-.student-hero .student-hero__image {
+.alumno-portada .alumno-portada__image {
   position: absolute;
   z-index: -1;
   top: 0;
@@ -43,28 +43,28 @@
   object-position: center 40%;
   mask-image: linear-gradient(90deg, transparent 0%, #000 45%);
 }
-.student-hero__copy {
+.alumno-portada__copy {
   max-width: 520px;
 }
-.student-hero__copy h2 {
+.alumno-portada__copy h2 {
   margin-bottom: 12px;
   font-size: clamp(24px, 2.4vw, 34px);
   font-weight: 750;
   letter-spacing: -0.7px;
   line-height: 1.15;
 }
-.student-hero__copy > p {
+.alumno-portada__copy > p {
   margin-bottom: 24px;
   color: #dbe8f2;
   font-size: clamp(14px, 1.2vw, 16px);
   line-height: 1.5;
 }
-.student-hero__actions {
+.alumno-portada__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
-.student-hero__actions a {
+.alumno-portada__actions a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -73,42 +73,42 @@
   font-size: 14px;
   font-weight: 700;
 }
-.student-hero__principal {
+.alumno-portada__principal {
   background: #fff;
   color: #0c4566;
 }
-.student-hero__principal:hover {
+.alumno-portada__principal:hover {
   background: var(--acento-suave);
 }
-.student-hero__secundario {
+.alumno-portada__secundario {
   border: 1px solid rgb(255 255 255 / 45%);
   color: #fff;
 }
-.student-hero__secundario:hover {
+.alumno-portada__secundario:hover {
   background: rgb(255 255 255 / 12%);
 }
-.student-main .student-hero__secundario svg {
+.alumno-main .alumno-portada__secundario svg {
   width: 18px;
   height: 18px;
   color: var(--premium);
 }
 
-.student-courses {
+.alumno-courses {
   margin-top: 34px;
 }
-.student-section-heading {
+.alumno-section-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
   margin-bottom: 14px;
 }
-.student-section-heading h2 {
+.alumno-section-heading h2 {
   font-size: 24px;
   font-weight: 750;
   letter-spacing: -0.6px;
 }
-.student-section-heading a {
+.alumno-section-heading a {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -116,15 +116,15 @@
   font-size: 14px;
   font-weight: 700;
 }
-.student-section-heading a:hover {
+.alumno-section-heading a:hover {
   text-decoration: underline;
 }
-.student-main .student-section-heading svg {
+.alumno-main .alumno-section-heading svg {
   width: 16px;
   height: 16px;
 }
 
-.student-empty {
+.alumno-empty {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -137,7 +137,7 @@
   color: var(--texto-suave);
   box-shadow: 0 10px 28px rgb(8 39 71 / 6%);
 }
-.student-empty > span {
+.alumno-empty > span {
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -147,31 +147,31 @@
   background: var(--acento-suave);
   color: var(--acento);
 }
-.student-empty h3 {
+.alumno-empty h3 {
   margin-bottom: 4px;
   color: var(--texto);
   font-size: 15px;
   font-weight: 650;
 }
-.student-empty p {
+.alumno-empty p {
   font-size: 13px;
 }
-.student-empty--centrado {
+.alumno-empty--centrado {
   text-align: center;
 }
 
-.student-destacados {
+.alumno-destacados {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
 }
 
-.student-continuar {
+.alumno-continuar {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
 }
-.student-continuar__curso {
+.alumno-continuar__curso {
   display: flex;
   gap: 14px;
   padding: 14px;
@@ -180,44 +180,43 @@
   background: #fff;
   box-shadow: 0 10px 28px rgb(8 39 71 / 6%);
 }
-.student-continuar__portada {
+.alumno-continuar__portada {
   width: 96px;
   flex-shrink: 0;
   border-radius: 10px;
-  /* TEMPORAL: imagen de prueba; quitarla cuando haya portadas en R2. */
   background: url("../../assets/fondos/paisaje-mina.webp") center / cover;
 }
-.student-continuar__cuerpo {
+.alumno-continuar__cuerpo {
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 6px;
   min-width: 0;
 }
-.student-continuar h3 {
+.alumno-continuar h3 {
   overflow: hidden;
   font-size: 15px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.student-continuar small {
+.alumno-continuar small {
   color: var(--texto-suave);
   font-size: 12px;
 }
-.student-continuar__barra {
+.alumno-continuar__barra {
   height: 6px;
   overflow: hidden;
   border-radius: 999px;
   background: #e6edf3;
 }
-.student-continuar__barra span {
+.alumno-continuar__barra span {
   display: block;
   height: 100%;
   border-radius: inherit;
   background: var(--celeste);
 }
-.student-continuar__cuerpo a {
+.alumno-continuar__cuerpo a {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -226,49 +225,49 @@
   font-size: 14px;
   font-weight: 700;
 }
-.student-continuar__cuerpo a:hover {
+.alumno-continuar__cuerpo a:hover {
   text-decoration: underline;
 }
-.student-main .student-continuar svg {
+.alumno-main .alumno-continuar svg {
   width: 16px;
   height: 16px;
 }
 
 @media (max-width: 1000px) {
-  .student-destacados {
+  .alumno-destacados {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .student-continuar {
+  .alumno-continuar {
     grid-template-columns: 1fr;
   }
 }
 @media (max-width: 760px) {
-  .student-main {
+  .alumno-main {
     padding-top: 24px;
   }
-  .student-hero {
+  .alumno-portada {
     min-height: 0;
   }
-  .student-hero .student-hero__image {
+  .alumno-portada .alumno-portada__image {
     width: 100%;
     opacity: 0.35;
     mask-image: none;
   }
-  .student-section-heading h2 {
+  .alumno-section-heading h2 {
     font-size: 20px;
   }
 }
 @media (max-width: 440px) {
-  .student-destacados {
+  .alumno-destacados {
     grid-template-columns: 1fr;
   }
-  .student-hero__actions {
+  .alumno-portada__actions {
     flex-direction: column;
   }
-  .student-section-heading {
+  .alumno-section-heading {
     align-items: flex-start;
   }
-  .student-empty {
+  .alumno-empty {
     flex-direction: column;
     text-align: center;
   }

@@ -51,17 +51,17 @@ export default function VerificacionCorreo({ usuario }: { usuario: User }) {
           tu correo para continuar.
         </p>
         {error && (
-          <p className="auth-message auth-message--error" role="alert">
+          <p className="acceso-message acceso-message--error" role="alert">
             {error}
           </p>
         )}
         {aviso && (
-          <p className="auth-message auth-message--success" role="status">
+          <p className="acceso-message acceso-message--success" role="status">
             {aviso}
           </p>
         )}
         <div className="verification-actions">
-          <button className="auth-submit" type="button" onClick={revisar}>
+          <button className="acceso-submit" type="button" onClick={revisar}>
             Ya verifiqué mi correo
           </button>
           <button className="verification-secondary" type="button" onClick={reenviar}>

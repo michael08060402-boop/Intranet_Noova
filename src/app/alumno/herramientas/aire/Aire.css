@@ -1,0 +1,80 @@
+.aire__dato {
+  grid-column: 1 / -1;
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+.aire__dato strong {
+  color: var(--texto);
+  font-variant-numeric: tabular-nums;
+}
+.aire__equipo {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto repeat(3, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 12px;
+}
+.aire__equipo-numero {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 46px;
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 700;
+}
+.aire__equipo button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  color: #b42318;
+  cursor: pointer;
+}
+.aire__equipo button:hover {
+  background: #fdf0f0;
+}
+.aire__agregar {
+  grid-column: 1 / -1;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px dashed #8fb3cf;
+  border-radius: 10px;
+  color: var(--acento-oscuro);
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.aire__agregar:hover {
+  background: var(--acento-suave);
+}
+.alumno-estructura .aire__equipo svg,
+.alumno-estructura .aire__agregar svg {
+  width: 18px;
+  height: 18px;
+}
+.aire__barra {
+  display: flex;
+  gap: 3px;
+  height: 10px;
+  margin-bottom: 18px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.aire__barra span {
+  min-width: 0;
+}
+@media (max-width: 560px) {
+  .aire__equipo {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  }
+  .aire__equipo-numero {
+    display: none;
+  }
+}

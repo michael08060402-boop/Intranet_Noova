@@ -23,7 +23,6 @@ const accesos = [
 
 const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 
-// La actividad se arma con cursos y alumnos existentes, así que limpiarla solo oculta lo anterior a esa fecha en este navegador.
 const claveLimpieza = "admin-actividad-limpiada";
 
 function leerLimpieza() {
@@ -32,7 +31,6 @@ function leerLimpieza() {
 }
 
 export default function PanelAdmin() {
-  // null: cargando.
   const [cursos, setCursos] = useState<Curso[] | null>(null);
   const [categorias, setCategorias] = useState<Categoria[] | null>(null);
   const [alumnos, setAlumnos] = useState<Alumno[] | null>(null);
@@ -40,7 +38,6 @@ export default function PanelAdmin() {
   const [limpiadoHasta, setLimpiadoHasta] = useState(leerLimpieza);
 
   useEffect(() => {
-    // Cada consulta falla por separado (por ejemplo, alumnos sin permisos) sin ocultar las demás.
     const fallo = (clave: string) => () => setFallos((actuales) => [...actuales, clave]);
     const dejarCursos = escucharCursos(false, setCursos, fallo("cursos"));
     const dejarCategorias = escucharCategorias(false, setCategorias, fallo("categorias"));
