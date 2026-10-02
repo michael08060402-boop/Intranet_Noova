@@ -18,10 +18,10 @@ service cloud.firestore {
       return sesionIniciada() && request.auth.token.email_verified == true;
     }
 
-    // `estado` es opcional para que los perfiles creados antes de este campo sigan siendo válidos.
+    // `estado` y `foto` son opcionales: los perfiles anteriores a esos campos siguen siendo válidos.
     function perfilValido(datos) {
       return datos.keys().hasAll(['nombre', 'correo', 'rol', 'plan', 'creadoEn'])
-        && datos.keys().hasOnly(['nombre', 'correo', 'rol', 'plan', 'creadoEn', 'estado'])
+        && datos.keys().hasOnly(['nombre', 'correo', 'rol', 'plan', 'creadoEn', 'estado', 'foto'])
         && datos.nombre is string
         && datos.nombre.size() > 0
         && datos.nombre.size() <= 120
@@ -31,6 +31,7 @@ service cloud.firestore {
         && datos.rol in ['alumno', 'admin']
         && datos.plan in ['gratis', 'premium']
         && datos.get('estado', 'activo') in ['activo', 'suspendido']
+        && (!('foto' in datos) || (datos.foto is string && datos.foto.size() <= 40000 && datos.foto.matches('^data:image/jpeg;base64,.*')))
         && datos.creadoEn is timestamp;
     }
 
@@ -180,7 +181,7 @@ service cloud.firestore {
         ])
         && datos.keys().hasOnly([
           'cursoId', 'nombre', 'descripcion', 'modo', 'duracionMin', 'notaMinima',
-          'publicado', 'preguntas', 'creadoEn', 'actualizadoEn', 'creadoPor'
+          'publicado', 'preguntas', 'creadoEn', 'actualizadoEn', 'creadoPor', 'herramientas'
         ])
         && idValido(datos.cursoId)
         && textoValido(datos.nombre, 2, 120)
@@ -193,6 +194,7 @@ service cloud.firestore {
         && datos.notaMinima >= 0
         && datos.notaMinima <= 20
         && datos.publicado is bool
+        && (!('herramientas' in datos) || datos.herramientas is bool)
         && datos.preguntas is list
         && datos.preguntas.size() <= 100
         && (datos.modo == 'archivo' || datos.preguntas.size() >= 1)
@@ -254,6 +256,51 @@ service cloud.firestore {
         && datos.creadoEn == request.time;
     }
 
+    function ticketMensajeValido(mensaje, de) {
+      return mensaje is map
+        && mensaje.keys().hasAll(['de', 'autor', 'texto', 'fecha'])
+        && mensaje.keys().hasOnly(['de', 'autor', 'texto', 'fecha'])
+        && mensaje.de == de
+        && textoValido(mensaje.autor, 1, 120)
+        && textoValido(mensaje.texto, 1, 2000)
+        && mensaje.fecha is number;
+    }
+
+    function ticketNuevoValido(datos) {
+      return datos.keys().hasAll([
+          'uid', 'nombre', 'correo', 'rol', 'asunto', 'categoria', 'estado',
+          'mensajes', 'sinLeer', 'creadoEn', 'actualizadoEn'
+        ])
+        && datos.keys().hasOnly([
+          'uid', 'nombre', 'correo', 'rol', 'asunto', 'categoria', 'estado',
+          'mensajes', 'sinLeer', 'creadoEn', 'actualizadoEn'
+        ])
+        && datos.uid == request.auth.uid
+        && datos.nombre == perfilActual().nombre
+        && datos.correo == perfilActual().correo
+        && datos.rol == perfilActual().rol
+        && textoValido(datos.asunto, 3, 100)
+        && datos.categoria in ['Cursos', 'Exámenes', 'Herramientas', 'Pagos y planes', 'Mi cuenta', 'Otro']
+        && datos.estado == 'abierto'
+        && datos.sinLeer == false
+        && datos.mensajes is list
+        && datos.mensajes.size() == 1
+        && ticketMensajeValido(datos.mensajes[0], 'usuario')
+        && datos.creadoEn == request.time
+        && datos.actualizadoEn == request.time;
+    }
+
+    // Una sola respuesta nueva al final; los mensajes anteriores no cambian.
+    function ticketConMensajeNuevo(de) {
+      let antes = resource.data.mensajes;
+      let despues = request.resource.data.mensajes;
+      return despues is list
+        && despues.size() == antes.size() + 1
+        && despues.size() <= 200
+        && despues[0:antes.size()] == antes
+        && ticketMensajeValido(despues[despues.size() - 1], de);
+    }
+
     function progresoValido(datos, progresoId) {
       return datos.keys().hasAll([
           'cursoId', 'claseId', 'completado', 'completadoEn', 'actualizadoEn'
@@ -286,14 +333,14 @@ service cloud.firestore {
         && request.resource.data.get('estado', 'activo') == 'activo'
         && request.resource.data.creadoEn == request.time;
 
-      // El dueño solo puede cambiar su nombre; rol y plan requieren un proceso confiable.
+      // El dueño solo puede cambiar su nombre y su foto; rol y plan requieren un proceso confiable.
       allow update: if esPropietario(uid)
         && perfilValido(request.resource.data)
         && request.resource.data.correo == resource.data.correo
         && request.resource.data.rol == resource.data.rol
         && request.resource.data.plan == resource.data.plan
         && request.resource.data.creadoEn == resource.data.creadoEn
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nombre']);
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nombre', 'foto']);
 
       // El admin solo gestiona plan y estado; el rol se cambia fuera de la app.
       allow update: if esAdministrador()
@@ -512,6 +559,55 @@ service cloud.firestore {
         && request.resource.data.actualizadoEn == request.time;
 
       allow delete: if esAdministrador();
+    }
+
+    match /tickets/{ticketId} {
+      allow get, list: if esAdministrador()
+        || (perfilActivo() && resource.data.uid == request.auth.uid);
+
+      // Cualquier usuario activo, alumno o administrador, abre tickets a su nombre.
+      allow create: if perfilActivo() && ticketNuevoValido(request.resource.data);
+
+      // El dueño agrega un mensaje mientras el ticket siga abierto.
+      allow update: if perfilActivo()
+        && resource.data.uid == request.auth.uid
+        && resource.data.estado != 'cerrado'
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['mensajes', 'estado', 'actualizadoEn'])
+        && request.resource.data.estado == 'abierto'
+        && ticketConMensajeNuevo('usuario')
+        && request.resource.data.actualizadoEn == request.time;
+
+      // El dueño marca la respuesta como leída o cierra su ticket.
+      allow update: if perfilActivo()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['sinLeer'])
+        && request.resource.data.sinLeer == false;
+
+      allow update: if perfilActivo()
+        && resource.data.uid == request.auth.uid
+        && resource.data.estado != 'cerrado'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'actualizadoEn'])
+        && request.resource.data.estado == 'cerrado'
+        && request.resource.data.actualizadoEn == request.time;
+
+      // Soporte responde (deja el ticket como respondido y avisa al dueño).
+      allow update: if esAdministrador()
+        && resource.data.estado != 'cerrado'
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['mensajes', 'estado', 'sinLeer', 'actualizadoEn'])
+        && request.resource.data.estado == 'respondido'
+        && request.resource.data.sinLeer == true
+        && ticketConMensajeNuevo('soporte')
+        && request.resource.data.actualizadoEn == request.time;
+
+      // Soporte cierra o reabre.
+      allow update: if esAdministrador()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'actualizadoEn'])
+        && request.resource.data.estado in ['abierto', 'cerrado']
+        && request.resource.data.actualizadoEn == request.time;
+
+      allow delete: if false;
     }
 
     match /{documento=**} {

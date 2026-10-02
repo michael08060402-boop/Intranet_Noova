@@ -2,15 +2,18 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BookOpen, ChartColumn, ChevronRight, ClipboardCheck, Clock, FileText, Layers, Plus, Trash2, Users, Zap } from "lucide-react";
+import { BookOpen, ChartColumn, ChevronRight, ClipboardCheck, Clock, FileText, Layers, LifeBuoy, Plus, Trash2, Users, Zap } from "lucide-react";
 import { escucharCategorias, escucharCursos, type Categoria, type Curso } from "@/firebase/cursos";
+import { useSesion } from "@/components/acceso/SesionProvider";
 import { escucharAlumnos, type Alumno } from "@/firebase/perfiles";
+import { escucharTickets } from "@/firebase/tickets";
 import "./PanelAdmin.css";
 
 const metricas = [
   { clave: "cursos", etiqueta: "Cursos", Icono: BookOpen, href: "/admin/cursos" },
   { clave: "categorias", etiqueta: "Categorías", Icono: Layers, href: "/admin/cursos?categorias" },
   { clave: "alumnos", etiqueta: "Alumnos", Icono: Users, href: "/admin/alumnos" },
+  { clave: "soporte", etiqueta: "Tickets abiertos", Icono: LifeBuoy, href: "/admin/soporte" },
 ];
 
 const accesos = [
@@ -31,11 +34,13 @@ function leerLimpieza() {
 }
 
 export default function PanelAdmin() {
+  const uid = useSesion().usuario?.uid;
   const [cursos, setCursos] = useState<Curso[] | null>(null);
   const [categorias, setCategorias] = useState<Categoria[] | null>(null);
   const [alumnos, setAlumnos] = useState<Alumno[] | null>(null);
   const [fallos, setFallos] = useState<string[]>([]);
   const [limpiadoHasta, setLimpiadoHasta] = useState(leerLimpieza);
+  const [porResponder, setPorResponder] = useState(0);
 
   useEffect(() => {
     const fallo = (clave: string) => () => setFallos((actuales) => [...actuales, clave]);
@@ -44,6 +49,11 @@ export default function PanelAdmin() {
     const dejarAlumnos = escucharAlumnos(setAlumnos, fallo("alumnos"));
     return () => { dejarCursos(); dejarCategorias(); dejarAlumnos(); };
   }, []);
+
+  useEffect(() => escucharTickets(
+    (tickets) => setPorResponder(tickets.filter((ticket) => (ticket.uid === uid ? ticket.sinLeer : ticket.estado === "abierto")).length),
+    () => setPorResponder(0),
+  ), [uid]);
 
   const listas: Record<string, unknown[] | null> = { cursos, categorias, alumnos };
   const total = (clave: string) => fallos.includes(clave) ? "—" : listas[clave] ? String(listas[clave].length) : "…";
@@ -62,9 +72,7 @@ export default function PanelAdmin() {
   return (
     <main className="admin-dashboard">
       <section className="admin-welcome" aria-labelledby="bienvenida-titulo">
-        <p className="admin-kicker">Panel administrativo</p>
         <h1 id="bienvenida-titulo">Panel de administración</h1>
-        <p className="admin-lead">Administra el contenido de Noova Learn Mining.</p>
       </section>
       <section className="admin-metrics" aria-label="Indicadores">
         {metricas.map(({ clave, etiqueta, Icono, href }) => (
@@ -74,7 +82,7 @@ export default function PanelAdmin() {
             </span>
             <div>
               <p>{etiqueta}</p>
-              <strong>{total(clave)}</strong>
+              <strong>{clave === "soporte" ? porResponder : total(clave)}</strong>
             </div>
             <span className="admin-arrow">
               <ChevronRight />

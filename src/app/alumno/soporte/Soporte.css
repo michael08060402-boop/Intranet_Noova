@@ -1,0 +1,8 @@
+.soporte-pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: min(92%, 1200px);
+  margin: 0 auto;
+  padding: 24px 0 40px;
+}
