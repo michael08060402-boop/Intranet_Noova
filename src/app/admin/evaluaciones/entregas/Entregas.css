@@ -8,7 +8,7 @@
   color: #176f42;
 }
 .entregas__nota.is-desaprobado {
-  color: #b42318;
+  color: var(--peligro);
 }
 .revision {
   width: min(720px, calc(100% - 32px));
@@ -62,7 +62,7 @@
 }
 .revision__opciones .is-elegida:not(.is-correcta) {
   border-color: #f0a19a;
-  background: #fdecea;
+  background: var(--peligro-suave);
 }
 .revision__sin-respuesta {
   color: var(--texto-suave);
@@ -72,7 +72,7 @@
   margin: 0 0 12px;
   padding: 10px 12px;
   border-radius: var(--radio);
-  background: #f3f6f9;
+  background: #f4f4f4;
   font-size: 14px;
   line-height: 1.5;
   white-space: pre-wrap;
@@ -89,7 +89,7 @@
   width: 76px;
   height: 36px;
   padding: 0 8px;
-  border: 1px solid #cfdbe7;
+  border: 1px solid var(--borde);
   border-radius: var(--radio);
   font-size: 14px;
   text-align: center;

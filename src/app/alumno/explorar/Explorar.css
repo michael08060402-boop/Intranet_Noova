@@ -17,9 +17,9 @@
   left: calc((100% - 100vw) / 2);
   width: 100vw;
   background:
-    linear-gradient(0deg, #f3f6f9 0%, #f3f6f9 18%, rgb(243 246 249 / 0%) 60%),
-    linear-gradient(90deg, #f3f6f9 0%, rgb(243 246 249 / 85%) 30%, rgb(243 246 249 / 20%) 70%, rgb(243 246 249 / 0%) 100%),
-    linear-gradient(rgb(26 114 153 / 35%), rgb(26 114 153 / 35%)),
+    linear-gradient(0deg, #f4f4f4 0%, #f4f4f4 18%, rgb(244 244 244 / 0%) 60%),
+    linear-gradient(90deg, #f4f4f4 0%, rgb(244 244 244 / 85%) 30%, rgb(244 244 244 / 20%) 70%, rgb(244 244 244 / 0%) 100%),
+    linear-gradient(rgb(26 114 153 / 35%), rgb(0 0 0 / 28%)),
     url("../../../assets/fondos/fondo-explorar.webp") center 25% / cover;
   background-blend-mode: normal, normal, color, normal;
   pointer-events: none;
@@ -34,7 +34,6 @@
   border: 1px solid var(--borde);
   border-radius: var(--radio-grande);
   background: rgb(255 255 255 / 85%);
-  box-shadow: 0 8px 24px rgb(29 73 109 / 3%);
 }
 .alumno-explorar__sidebar details + details {
   margin-top: 20px;
@@ -50,6 +49,9 @@
   cursor: pointer;
   font-size: 15px;
   font-weight: 700;
+}
+.alumno-explorar__sidebar summary:hover {
+  color: var(--texto-suave);
 }
 .alumno-explorar__sidebar summary::-webkit-details-marker {
   display: none;
@@ -117,6 +119,9 @@
   font-size: 14px;
   cursor: pointer;
 }
+.alumno-explorar__types label:hover {
+  color: var(--texto);
+}
 .alumno-explorar__types input {
   width: 19px;
   height: 19px;
@@ -146,11 +151,12 @@
   border-radius: var(--radio);
   background: #fff;
   color: var(--texto);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 .alumno-explorar__search:focus-within {
   border-color: var(--acento);
-  box-shadow: 0 0 0 3px rgb(0 119 182 / 15%);
+  outline: 2px solid var(--acento);
+  outline-offset: 1px;
 }
 .alumno-explorar__search input {
   width: 100%;
@@ -191,13 +197,12 @@
     display: none;
   }
   .alumno-explorar__layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .alumno-explorar__sidebar {
     padding: 0;
     border: 0;
     background: transparent;
-    box-shadow: none;
   }
   .alumno-explorar__sidebar details + details {
     margin-top: 12px;
@@ -252,7 +257,7 @@
 
 .alumno-explorar__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
   gap: 16px;
 }
 .alumno-explorar__volver {
@@ -281,7 +286,6 @@
   border: 1px solid var(--borde);
   border-radius: 16px;
   background: #fff;
-  box-shadow: 0 10px 28px rgb(8 39 71 / 6%);
 }
 .alumno-curso__info {
   flex: 1;
@@ -392,7 +396,7 @@
 }
 .alumno-curso__error {
   margin-top: 10px;
-  color: #b42318;
+  color: var(--peligro);
   font-size: 13px;
 }
 .alumno-curso__clases {
@@ -400,7 +404,6 @@
   border: 1px solid var(--borde);
   border-radius: 16px;
   background: #fff;
-  box-shadow: 0 10px 28px rgb(8 39 71 / 6%);
 }
 .alumno-curso__clases-titulo {
   display: flex;
@@ -480,7 +483,7 @@
   aspect-ratio: 16 / 9;
   border-radius: var(--radio);
   background:
-    linear-gradient(rgb(4 43 78 / 45%), rgb(4 43 78 / 45%)),
+    linear-gradient(rgb(4 43 78 / 45%), rgb(0 0 0 / 45%)),
     url("../../../assets/fondos/paisaje-mina.webp") center / cover;
   color: #fff;
 }
@@ -504,11 +507,11 @@
   background: var(--acento-oscuro);
 }
 .alumno-curso__reproducir.is-completada {
-  background: #e6f6ee;
-  color: #176f42;
+  background: #e4e4e4;
+  color: #000;
 }
 .alumno-curso__reproducir.is-completada:hover {
-  background: #d4efe1;
+  background: #cfcfcf;
 }
 .alumno-explorar .alumno-curso__reproducir svg {
   width: 16px;
@@ -567,5 +570,5 @@
   white-space: nowrap;
 }
 .alumno-curso__rendir:hover {
-  background: #d9f0fb;
+  background: #e4e4e4;
 }

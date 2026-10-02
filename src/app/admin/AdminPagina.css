@@ -112,10 +112,10 @@
   border-color: var(--acento);
 }
 .admin-icono--peligro {
-  color: #d92d20;
+  color: var(--peligro);
 }
 .admin-icono--peligro:hover:not(:disabled) {
-  border-color: #d92d20;
+  border-color: var(--peligro);
   background: #fef3f2;
 }
 .admin-icono:disabled {
@@ -204,8 +204,8 @@
   margin: 0 0 12px;
   padding: 10px 14px;
   border-radius: var(--radio);
-  background: #fdecea;
-  color: #b42318;
+  background: var(--peligro-suave);
+  color: var(--peligro);
   font-size: 13px;
 }
 .admin-aviso {
@@ -291,8 +291,8 @@
   color: #8a6400;
 }
 .admin-badge--error {
-  background: #fdecea;
-  color: #b42318;
+  background: var(--peligro-suave);
+  color: var(--peligro);
 }
 
 .admin-confirmar {
@@ -302,7 +302,6 @@
   border-radius: var(--radio-grande);
   background: #fff;
   color: var(--texto);
-  box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
 }
 .admin-confirmar::backdrop {
   background: rgb(3 35 55 / 45%);
@@ -337,12 +336,12 @@
   background: var(--acento-suave);
 }
 .admin-confirmar__acciones .admin-confirmar__peligro {
-  border-color: #d92d20;
-  background: #d92d20;
+  border-color: var(--peligro);
+  background: var(--peligro);
   color: #fff;
 }
 .admin-confirmar__acciones .admin-confirmar__peligro:hover {
-  background: #b42318;
+  background: var(--peligro);
 }
 
 @media (max-width: 600px) {
@@ -361,4 +360,7 @@
     max-width: none;
     width: 100%;
   }
+}
+.admin-selector:hover {
+  border-color: #8c8c8c;
 }

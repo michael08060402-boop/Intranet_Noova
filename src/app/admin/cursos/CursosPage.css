@@ -1,5 +1,6 @@
 .cursos-page {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(340px, 1fr);
   gap: 22px;
   width: min(94%, 1660px);
@@ -16,27 +17,12 @@
   align-items: flex-start;
   gap: 24px;
 }
-.cursos-eyebrow {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--acento-oscuro);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.6px;
-  text-transform: uppercase;
-}
 .cursos-heading h1 {
   margin: 0 0 4px;
   font-size: clamp(26px, 2.4vw, 34px);
   font-weight: 750;
   letter-spacing: -1px;
   line-height: 1.2;
-}
-.cursos-heading p {
-  margin: 0;
-  color: #3d5872;
-  font-size: clamp(14px, 1.2vw, 17px);
-  font-weight: 500;
 }
 .cursos-heading__acciones {
   display: flex;
@@ -173,8 +159,8 @@
   margin: 0 0 12px;
   padding: 10px 14px;
   border-radius: var(--radio);
-  background: #fdecea;
-  color: #b42318;
+  background: var(--peligro-suave);
+  color: var(--peligro);
   font-size: 13px;
 }
 
@@ -205,10 +191,14 @@
 .cursos-table th:last-child {
   text-align: right;
 }
+.cursos-table .cursos-centro {
+  text-align: center;
+}
 .cursos-ordenar {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-height: 28px;
   cursor: pointer;
 }
 .cursos-ordenar svg {
@@ -228,20 +218,6 @@
   display: flex;
   align-items: center;
   gap: 16px;
-}
-.cursos-portada {
-  display: grid;
-  place-items: center;
-  width: 88px;
-  flex-shrink: 0;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--radio);
-  background: var(--acento-suave);
-  color: #7fb8d4;
-}
-.cursos-portada svg {
-  width: 22px;
-  height: 22px;
 }
 .cursos-curso > div {
   min-width: 0;
@@ -331,10 +307,10 @@
   border-color: var(--acento);
 }
 .cursos-icono--peligro {
-  color: #d92d20;
+  color: var(--peligro);
 }
 .cursos-icono--peligro:hover:not(:disabled) {
-  border-color: #d92d20;
+  border-color: var(--peligro);
   background: #fef3f2;
 }
 .cursos-icono:disabled {
@@ -426,7 +402,6 @@
   border-radius: var(--radio-grande);
   background: #fff;
   color: var(--texto);
-  box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
 }
 .cursos-confirmar::backdrop {
   background: rgb(3 35 55 / 45%);
@@ -461,12 +436,12 @@
   background: var(--acento-suave);
 }
 .cursos-confirmar__acciones .cursos-confirmar__eliminar {
-  border-color: #d92d20;
-  background: #d92d20;
+  border-color: var(--peligro);
+  background: var(--peligro);
   color: #fff;
 }
 .cursos-confirmar__acciones .cursos-confirmar__eliminar:hover {
-  background: #b42318;
+  background: var(--peligro);
 }
 .cursos-confirmar button:focus-visible {
   outline: 2px solid var(--acento);
@@ -495,9 +470,6 @@
 @media (max-width: 600px) {
   .cursos-heading {
     gap: 12px;
-  }
-  .cursos-heading p {
-    max-width: 190px;
   }
   .cursos-heading__acciones {
     flex-direction: column;
@@ -542,4 +514,7 @@
   .cursos-empty__break {
     display: none;
   }
+}
+.cursos-category:hover {
+  border-color: #8c8c8c;
 }

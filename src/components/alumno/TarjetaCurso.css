@@ -37,7 +37,10 @@
   color: #fff;
   font-size: 12px;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgb(3 35 55 / 30%);
+}
+.tarjeta-curso__etiqueta--premium {
+  background: var(--dorado);
+  color: #3b2a05;
 }
 .tarjeta-curso__etiqueta--inscrito {
   background: #fff;

@@ -46,7 +46,7 @@ export default function MisEvaluaciones() {
 
   return (
     <main className="mis-evaluaciones alumno-fondo">
-      <TituloPagina className="mis-evaluaciones__heading" titulo="Mis evaluaciones" descripcion="Revisa tus exámenes pendientes y las notas que obtuviste." />
+      <TituloPagina className="mis-evaluaciones__heading" titulo="Mis evaluaciones" />
       <div className="mis-evaluaciones__filtros" aria-label="Filtrar evaluaciones">
         {filtros.map((nombre) => (
           <button key={nombre} type="button" aria-pressed={filtro === nombre} className={filtro === nombre ? "is-activo" : ""} onClick={() => setFiltro(nombre)}>
@@ -62,7 +62,6 @@ export default function MisEvaluaciones() {
           <EstadoVacio
             className="mis-evaluaciones__vacio"
             titulo={filtro === "Todas" ? "Aún no tienes evaluaciones" : `No tienes evaluaciones ${filtro.toLowerCase()}`}
-            texto="Los exámenes de los cursos en los que te inscribas aparecerán aquí."
           >
             <Link href="/alumno/cursos" className="mis-evaluaciones__enlace">Ir a mis cursos</Link>
           </EstadoVacio>

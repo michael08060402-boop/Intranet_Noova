@@ -45,7 +45,6 @@ export default function PaginaAcceso() {
           <br />
           comienza aquí.
         </h2>
-        <p>Desarrolla tus habilidades y construye tu futuro en la industria minera.</p>
       </section>
     </main>
   );

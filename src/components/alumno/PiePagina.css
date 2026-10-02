@@ -2,7 +2,7 @@
   position: relative;
   isolation: isolate;
   margin-top: auto;
-  padding: 14px 0;
+  padding: 18px 0;
   overflow: hidden;
   background: var(--fondo-barra);
   color: rgb(196 220 234 / 85%);
@@ -17,86 +17,87 @@
 .pie-pagina__contenido {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
   width: min(92%, 1200px);
   margin: 0 auto;
 }
-.pie-pagina__marca {
-  padding-right: 28px;
-  border-right: 1px solid rgb(255 255 255 / 22%);
-}
-.pie-pagina__logo {
-  display: block;
-  width: auto;
-  height: 46px;
-}
 .pie-pagina p {
-  flex: 1;
-  padding: 0 28px;
   font-size: 13px;
-  text-align: center;
 }
-.pie-pagina__acciones {
+.pie-pagina__contacto {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 22px;
-  padding-left: 28px;
-  border-left: 1px solid rgb(255 255 255 / 22%);
+  justify-content: flex-end;
+  gap: 12px 20px;
+}
+.pie-pagina__correo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.pie-pagina__correo:hover {
+  color: #fff;
 }
 .pie-pagina__soporte {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 16px;
-  border: 1px solid rgb(63 208 245 / 55%);
+  padding: 9px 18px;
   border-radius: 999px;
-  background: rgb(255 255 255 / 4%);
+  background: var(--exito);
   color: #fff;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 650;
   white-space: nowrap;
 }
-.pie-pagina__soporte:hover {
-  border-color: var(--acento-claro);
-  background: rgb(255 255 255 / 12%);
-}
-.pie-pagina__web {
+.pie-pagina__ticket {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  padding: 8px 18px;
+  border: 1px solid rgb(255 255 255 / 55%);
+  border-radius: 999px;
   color: #fff;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 650;
   white-space: nowrap;
 }
-.pie-pagina__web:hover {
-  text-decoration: underline;
+.pie-pagina__ticket:hover {
+  border-color: #fff;
+  background: rgb(255 255 255 / 14%);
 }
-.alumno-estructura .pie-pagina__acciones svg {
+.pie-pagina__aviso {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--exito);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+.pie-pagina__soporte:hover {
+  background: var(--exito-oscuro);
+}
+.alumno-estructura .pie-pagina__contacto svg {
   width: 18px;
   height: 18px;
 }
-@media (max-width: 1000px) {
+@media (max-width: 640px) {
   .pie-pagina__contenido {
-    display: flex;
     flex-direction: column;
-    gap: 16px;
+    text-align: center;
   }
-  .pie-pagina__marca,
-  .pie-pagina__acciones {
-    padding: 0;
-    border: 0;
+  .pie-pagina__contacto {
+    justify-content: center;
   }
   .pie-pagina p {
-    flex: none;
-    order: 3;
-    padding: 14px 0 0;
-    border-top: 1px solid rgb(255 255 255 / 15%);
+    order: 2;
     font-size: 12px;
-  }
-}
-@media (max-width: 440px) {
-  .pie-pagina__acciones {
-    flex-direction: column;
-    gap: 12px;
   }
 }

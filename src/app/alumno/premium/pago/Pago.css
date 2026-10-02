@@ -24,10 +24,6 @@
 .pago-page .pago-page__encabezado h1 {
   font-size: clamp(24px, 2.2vw, 30px);
 }
-.pago-page__encabezado p {
-  color: var(--texto-suave);
-  font-size: 15px;
-}
 .pago-page__layout {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
@@ -40,7 +36,6 @@
   border: 1px solid var(--borde);
   border-radius: 18px;
   background: #fff;
-  box-shadow: 0 16px 32px rgb(8 39 71 / 8%);
 }
 .pago-page__panel h2 {
   margin-bottom: 14px;
@@ -50,7 +45,7 @@
 
 .pago-page__metodos {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
 }
 .pago-page__metodos button {
@@ -116,7 +111,7 @@
 .pago-page__formulario {
   margin-top: 18px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px 14px;
 }
 .pago-page__formulario label {
@@ -144,8 +139,8 @@
 }
 .pago-page__formulario input:focus {
   border-color: var(--acento);
-  outline: none;
-  box-shadow: 0 0 0 3px rgb(0 119 182 / 15%);
+  outline: 2px solid var(--acento);
+  outline-offset: 1px;
 }
 .pago-page__campo {
   position: relative;
@@ -173,7 +168,7 @@
   font-weight: 400;
 }
 .pago-page__error {
-  color: #b42318;
+  color: var(--peligro);
   font-size: 13px;
 }
 .pago-page__pagar {
@@ -243,6 +238,8 @@
   font-weight: 600;
 }
 .pago-page__detalle select {
+  min-height: 36px;
+  padding: 0 8px;
   border: 0;
   background: transparent;
   color: var(--texto);
@@ -319,7 +316,7 @@
   width: 56px;
   height: 56px;
   margin-bottom: 10px;
-  color: #176f42;
+  color: #000;
 }
 .pago-page__resultado h1 {
   font-size: 24px;
@@ -349,7 +346,7 @@
 }
 @media (max-width: 860px) {
   .pago-page__layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 480px) {
@@ -358,6 +355,9 @@
     padding: 18px;
   }
   .pago-page__metodos {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
+}
+.pago-page__detalle select:hover {
+  color: var(--texto-suave);
 }

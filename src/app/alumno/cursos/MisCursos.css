@@ -39,13 +39,17 @@
   color: var(--acento);
 }
 .my-courses__filters button span {
+  display: inline-grid;
+  place-items: center;
   min-width: 22px;
-  padding: 1px 7px;
+  height: 22px;
+  padding: 0 7px;
   border-radius: 999px;
   background: #e6edf3;
   color: var(--texto-suave);
   font-size: 12px;
-  text-align: center;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 .my-courses__filters .is-activo span {
   background: var(--acento);
@@ -61,7 +65,6 @@
 .my-courses__vacio {
   min-height: clamp(260px, 42svh, 440px);
   border-radius: 16px;
-  box-shadow: 0 16px 32px rgb(8 39 71 / 8%);
 }
 .my-courses__explorar {
   margin-top: 20px;
@@ -82,7 +85,7 @@
   font-size: 14px;
 }
 .my-courses__error {
-  color: #b42318;
+  color: var(--peligro);
 }
 .my-courses__lista {
   display: flex;
@@ -97,7 +100,6 @@
   border: 1px solid var(--borde);
   border-radius: 14px;
   background: #fff;
-  box-shadow: 0 10px 26px rgb(8 39 71 / 7%);
 }
 .my-courses__portada {
   width: 200px;

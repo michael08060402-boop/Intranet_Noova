@@ -116,7 +116,6 @@ function Pago() {
       <Link href="/alumno/premium" className="pago-page__volver"><ArrowLeft />Volver a planes</Link>
       <header className="pago-page__encabezado">
         <h1>Completa tu compra</h1>
-        <p>Activa tu acceso Premium y continúa aprendiendo.</p>
       </header>
 
       <div className="pago-page__layout">
@@ -191,7 +190,6 @@ function Pago() {
             <span className="pago-page__corona"><Crown /></span>
             <div>
               <strong>Plan Premium</strong>
-              <small>Acceso completo a todos los cursos.</small>
             </div>
           </div>
           <dl className="pago-page__detalle">

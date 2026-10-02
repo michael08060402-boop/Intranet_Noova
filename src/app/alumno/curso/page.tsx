@@ -184,7 +184,7 @@ function ReproductorClase({ cursoId, claseId }: { cursoId: string; claseId: stri
           {actual.problema === "premium" && (
             <>
               <p>Este video es parte del plan Premium.</p>
-              <Link href="/alumno/premium" className="clase-page__enlace">Conocer Premium</Link>
+              <Link href="/alumno/premium" className="clase-page__enlace alumno-dorado">Conocer Premium</Link>
             </>
           )}
           {actual.problema === "fallo" && (

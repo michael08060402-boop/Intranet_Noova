@@ -24,12 +24,11 @@
   inset: 0 0 0 auto;
   width: 42%;
   background:
-    linear-gradient(0deg, #e6f1f9 0%, transparent 22%),
     linear-gradient(200deg, rgb(238 245 251 / 85%) 0%, rgb(238 245 251 / 30%) 22%, transparent 42%),
     linear-gradient(#1a7299, #1a7299),
     url("../../../assets/fondos/fondo-premium.webp") 45% center / cover;
   background-blend-mode: normal, normal, color, normal;
-  mask-image: linear-gradient(90deg, transparent 0%, #000 60%), linear-gradient(180deg, transparent 0%, #000 12%, #000 80%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 60%), linear-gradient(180deg, transparent 0%, #000 12%);
   mask-composite: intersect;
   opacity: 0.7;
 }
@@ -75,11 +74,6 @@
 .premium-page__heading h1 span {
   color: var(--acento);
 }
-.premium-page__heading p {
-  color: var(--texto-suave);
-  font-size: clamp(16px, 1.4vw, 20px);
-  line-height: 1.45;
-}
 .premium-page__planes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 390px));
@@ -94,10 +88,9 @@
   border: 1px solid var(--borde);
   border-radius: 18px;
   background: #fff;
-  box-shadow: 0 20px 44px rgb(8 39 71 / 10%);
 }
 .premium-page__plan--premium {
-  border: 2px solid var(--acento);
+  border: 2px solid var(--premium);
   background: rgb(255 255 255 / 94%);
 }
 .premium-page__popular {
@@ -108,8 +101,8 @@
   margin-bottom: 14px;
   padding: 5px 12px;
   border-radius: var(--radio);
-  background: var(--acento);
-  color: #fff;
+  background: var(--dorado);
+  color: #3b2a05;
   font-size: 13px;
   font-weight: 700;
 }
@@ -118,14 +111,10 @@
   height: 16px;
 }
 .premium-page__plan h2 {
+  margin-bottom: 14px;
   font-size: 24px;
   font-weight: 750;
   letter-spacing: -0.6px;
-}
-.premium-page__descripcion {
-  margin: 4px 0 18px;
-  color: var(--texto-suave);
-  font-size: 15px;
 }
 .premium-page__periodos {
   display: flex;
@@ -150,7 +139,6 @@
 .premium-page__periodos .is-activo {
   background: #fff;
   color: var(--acento);
-  box-shadow: 0 2px 6px rgb(8 39 71 / 12%);
 }
 .premium-page__periodo b {
   color: var(--acento);
@@ -160,6 +148,11 @@
   font-weight: 800;
   letter-spacing: -1px;
   line-height: 1.1;
+}
+.premium-page__precio + ul {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--borde);
 }
 .premium-page__periodo {
   margin: 4px 0 20px;
@@ -194,7 +187,11 @@
   color: #fff;
 }
 .premium-page__marca.is-incluido {
-  background: var(--acento);
+  background: var(--exito);
+}
+.premium-page__plan--premium .premium-page__marca.is-incluido {
+  background: var(--dorado);
+  color: #3b2a05;
 }
 .premium-page .premium-page__marca svg {
   width: 14px;
@@ -215,14 +212,15 @@
   cursor: pointer;
 }
 .premium-page__secundario {
-  border: 1.5px solid var(--acento);
+  border: 1.5px solid #b9c2cc;
   background: #fff;
   color: var(--acento-oscuro);
 }
 .premium-page__secundario:hover {
+  border-color: var(--acento);
   background: var(--acento-suave);
 }
-.premium-page__principal {
+.premium-page .premium-page__principal {
   font-size: 18px;
 }
 .premium-page__principal:disabled {
@@ -264,10 +262,6 @@
     margin-bottom: clamp(4px, 1svh, 12px);
     font-size: clamp(26px, 4.8svh, 52px);
   }
-  .premium-page__heading p {
-    font-size: clamp(14px, 1.9svh, 20px);
-    line-height: 1.35;
-  }
   .premium-page__planes {
     margin-top: clamp(12px, 2.6svh, 32px);
   }
@@ -280,10 +274,6 @@
   }
   .premium-page__plan h2 {
     font-size: clamp(19px, 2.6svh, 24px);
-  }
-  .premium-page__descripcion {
-    margin: 2px 0 clamp(6px, 1.4svh, 18px);
-    font-size: clamp(13px, 1.7svh, 15px);
   }
   .premium-page__precio {
     font-size: clamp(24px, 3.8svh, 36px);
@@ -324,11 +314,8 @@
   .premium-page__contenido {
     padding: 28px 0 40px;
   }
-  .premium-page__salto {
-    display: none;
-  }
   .premium-page__planes {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .premium-page__plan {
     padding: 24px 22px;

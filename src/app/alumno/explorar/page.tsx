@@ -46,7 +46,7 @@ function Explorar() {
 
   const abierto = cursos.find((curso) => curso.id === abiertoId);
   if (abierto) {
-    return <CursoDetalle curso={abierto} categoria={nombreCategoria(abierto.categoriaId)} bloqueado={bloqueado(abierto)} alVolver={() => router.push("/alumno/explorar")} />;
+    return <CursoDetalle curso={abierto} categoria={nombreCategoria(abierto.categoriaId)} bloqueado={bloqueado(abierto)} inscrito={inscritos.includes(abierto.id)} alVolver={() => router.push("/alumno/explorar")} />;
   }
 
   function cambiarTipo(tipo: Acceso) {
@@ -65,8 +65,7 @@ function Explorar() {
       <TituloPagina
         className="alumno-explorar__heading"
         titulo="Explora nuestros cursos"
-        descripcion="Accede a todos los cursos disponibles y continúa desarrollando tus conocimientos en la industria minera."
-      />
+             />
       <div className="alumno-explorar__layout">
         <aside className="alumno-explorar__sidebar" aria-label="Filtros del catálogo">
           <details open>
@@ -136,7 +135,7 @@ function Explorar() {
               className="alumno-explorar__vacio"
               Icono={BookOpen}
               titulo={error ? "No se pudo cargar el catálogo" : cargando ? "Cargando cursos…" : cursos.length > 0 ? "Ningún curso coincide con tu búsqueda" : "Aún no hay cursos registrados"}
-              texto={error || (cursos.length > 0 ? "Prueba con otra categoría o palabra clave." : "Los cursos disponibles aparecerán aquí cuando se publiquen.")}
+              texto={error || undefined}
             />
           )}
         </section>

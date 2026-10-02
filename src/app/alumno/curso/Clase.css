@@ -67,9 +67,9 @@
   background: var(--acento-suave);
 }
 .clase-page__completar.is-completada {
-  border-color: #176f42;
+  border-color: #000;
   background: #e6f6ee;
-  color: #176f42;
+  color: #000;
 }
 .clase-page__completar:disabled {
   opacity: 0.6;
@@ -81,7 +81,7 @@
 }
 .clase-page__error {
   margin: -12px 0 16px;
-  color: #b42318;
+  color: var(--peligro);
   font-size: 13px;
 }
 .clase-page__layout {
@@ -98,7 +98,6 @@
   aspect-ratio: 16 / 9;
   border-radius: 14px;
   background: #11161c;
-  box-shadow: 0 18px 40px rgb(8 39 71 / 18%);
   color: #fff;
   font-size: 15px;
 }
@@ -146,6 +145,9 @@
   font-weight: 600;
   cursor: pointer;
 }
+.clase-page__pestanas button:hover:not([aria-selected="true"]) {
+  color: var(--texto);
+}
 .clase-page__pestanas button[aria-selected="true"] {
   border-bottom-color: var(--acento);
   color: var(--acento-oscuro);
@@ -168,7 +170,6 @@
   border: 1px solid var(--borde);
   border-radius: 14px;
   background: #fff;
-  box-shadow: 0 12px 28px rgb(8 39 71 / 8%);
 }
 .clase-page__lateral-titulo {
   display: flex;
@@ -235,7 +236,7 @@
 
 @media (max-width: 960px) {
   .clase-page__layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .clase-page__lateral {
     position: static;

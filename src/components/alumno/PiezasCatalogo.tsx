@@ -2,19 +2,10 @@ import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import "./PiezasCatalogo.css";
 
-export function TituloPagina({
-  titulo,
-  descripcion,
-  className,
-}: {
-  titulo: string;
-  descripcion: string;
-  className?: string;
-}) {
+export function TituloPagina({ titulo, className }: { titulo: string; className?: string }) {
   return (
     <header className={className ? `titulo-pagina ${className}` : "titulo-pagina"}>
       <h1>{titulo}</h1>
-      <p>{descripcion}</p>
     </header>
   );
 }
@@ -40,7 +31,7 @@ export function EstadoVacio({
 }: {
   Icono?: LucideIcon;
   titulo: string;
-  texto: string;
+  texto?: string;
   className?: string;
   children?: ReactNode;
 }) {
@@ -52,7 +43,7 @@ export function EstadoVacio({
         </span>
       )}
       <h2>{titulo}</h2>
-      <p>{texto}</p>
+      {texto && <p>{texto}</p>}
       {children}
     </section>
   );

@@ -88,7 +88,7 @@ export default function FormularioAcceso() {
   return (
     <div className="acceso-card">
       <h1>{titulos[modo]}</h1>
-      {modo === "recuperar" && <p className="acceso-card__lead">Te enviaremos un enlace para que recuperes el acceso.</p>}
+      {modo === "recuperar" && <p className="acceso-card__lead">Te enviaremos un enlace a tu correo.</p>}
 
       <form className="acceso-form" onSubmit={enviarFormulario}>
         {modo === "registrar" && (

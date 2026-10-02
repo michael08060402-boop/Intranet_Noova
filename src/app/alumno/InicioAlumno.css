@@ -14,10 +14,6 @@
 .alumno-welcome__nombre {
   color: var(--acento-oscuro);
 }
-.alumno-welcome p {
-  color: var(--texto-suave);
-  font-size: clamp(14px, 1.2vw, 17px);
-}
 
 .alumno-portada {
   position: relative;
@@ -28,9 +24,8 @@
   padding: clamp(28px, 4vw, 52px);
   overflow: hidden;
   border-radius: 18px;
-  background: linear-gradient(100deg, #0c4566 0%, #115a7f 55%, #1a7299 100%);
+  background: var(--fondo-barra);
   color: #fff;
-  box-shadow: 0 24px 48px rgb(8 39 71 / 22%);
 }
 .alumno-portada .alumno-portada__image {
   position: absolute;
@@ -75,22 +70,23 @@
 }
 .alumno-portada__principal {
   background: #fff;
-  color: #0c4566;
+  color: #000;
 }
 .alumno-portada__principal:hover {
   background: var(--acento-suave);
 }
 .alumno-portada__secundario {
-  border: 1px solid rgb(255 255 255 / 45%);
-  color: #fff;
+  border: 1.5px solid var(--premium);
+  color: #f4d98f;
 }
 .alumno-portada__secundario:hover {
-  background: rgb(255 255 255 / 12%);
+  border-color: transparent;
+  background: var(--dorado);
+  color: #3b2a05;
 }
 .alumno-main .alumno-portada__secundario svg {
   width: 18px;
   height: 18px;
-  color: var(--premium);
 }
 
 .alumno-courses {
@@ -135,7 +131,6 @@
   border-radius: 16px;
   background: #fff;
   color: var(--texto-suave);
-  box-shadow: 0 10px 28px rgb(8 39 71 / 6%);
 }
 .alumno-empty > span {
   display: grid;
@@ -152,9 +147,6 @@
   color: var(--texto);
   font-size: 15px;
   font-weight: 650;
-}
-.alumno-empty p {
-  font-size: 13px;
 }
 .alumno-empty--centrado {
   text-align: center;
@@ -178,7 +170,6 @@
   border: 1px solid var(--borde);
   border-radius: 16px;
   background: #fff;
-  box-shadow: 0 10px 28px rgb(8 39 71 / 6%);
 }
 .alumno-continuar__portada {
   width: 96px;
@@ -238,7 +229,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .alumno-continuar {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 760px) {
@@ -259,7 +250,7 @@
 }
 @media (max-width: 440px) {
   .alumno-destacados {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .alumno-portada__actions {
     flex-direction: column;

@@ -1,12 +1,12 @@
 .admin-header {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px clamp(18px, 2.4vw, 38px);
   min-height: 76px;
   padding: 14px 3%;
   border-bottom: 1px solid rgb(63 208 245 / 25%);
-  background: linear-gradient(100deg, #072b43 0%, #0b3f5e 45%, #115a7f 100%);
+  background: var(--fondo-barra);
   color: #fff;
 }
 .admin-header svg {
@@ -27,6 +27,7 @@
 .admin-header__nav {
   display: flex;
   align-items: center;
+  justify-self: center;
   gap: 12px;
 }
 .admin-header__nav a {
@@ -45,8 +46,7 @@
   background: rgb(255 255 255 / 9%);
 }
 .admin-header__nav a.is-activo {
-  background: rgb(255 255 255 / 14%);
-  color: var(--acento-claro);
+  background: rgb(0 0 0 / 24%);
 }
 .admin-header__actions {
   justify-self: end;
@@ -62,8 +62,9 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: var(--acento);
-  color: #fff;
+  background: #fff;
+  color: #042b4e;
+  font-weight: 700;
 }
 .admin-header__identity {
   max-width: 140px;
@@ -100,8 +101,8 @@
   min-width: 18px;
   padding: 1px 5px;
   border-radius: 999px;
-  background: #ffd100;
-  color: #082747;
+  background: var(--premium);
+  color: var(--texto);
   font-size: 11px;
   font-weight: 700;
   line-height: 16px;
@@ -124,7 +125,7 @@
   width: 19px;
 }
 .admin-header a:focus-visible, .admin-header__logout:focus-visible, .admin-header__campana:focus-visible {
-  outline: 2px solid var(--acento-claro);
+  outline: 2px solid #fff;
   outline-offset: 4px;
 }
 .admin-logout {
@@ -135,7 +136,6 @@
   border-radius: var(--radio-grande);
   background: #fff;
   color: var(--texto);
-  box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
 }
 .admin-logout::backdrop {
   background: rgb(3 35 55 / 45%);
@@ -171,24 +171,18 @@
   background: var(--acento-suave);
 }
 .admin-logout__actions .admin-logout__confirm {
-  border-color: #072b43;
-  background: linear-gradient(100deg, #072b43, #115a7f);
+  border-color: #000;
+  background: #000;
   color: #fff;
 }
 .admin-logout__actions .admin-logout__confirm:hover {
-  background: linear-gradient(100deg, #0b3f5e, #17698d);
+  background: #2b2b2b;
 }
 .admin-logout button:focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 3px;
 }
 @media (max-width: 1080px) {
-  .admin-header {
-    grid-template-columns: auto 1fr auto;
-  }
-  .admin-header__nav {
-    justify-self: center;
-  }
   .admin-header__brand img {
     height: 44px;
   }
@@ -203,7 +197,7 @@
 }
 @media (max-width: 760px) {
   .admin-header {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     row-gap: 10px;
     padding: 12px 4% 6px;
   }
@@ -238,20 +232,26 @@
 }
 
 .admin-shell {
-  --acento: #0077b6;
-  --acento-oscuro: #005f92;
+  --acento: #000;
+  --acento-oscuro: #333;
+  --exito: #138a4b;
   --acento-claro: #3fd0f5;
-  --acento-suave: #e8f6fd;
-  --texto: #082747;
-  --texto-suave: #536d88;
-  --borde: #d6e2ed;
+  --acento-suave: #f0f0f0;
+  --texto: #0a0a0a;
+  --texto-suave: #5a5a5a;
+  --borde: #d9d9d9;
+  --peligro: #b42318;
+  --peligro-suave: #fdecea;
+  --premium: #e9b949;
+  --fondo-barra: linear-gradient(100deg, #042b4e 0%, #063a66 55%, #0a568a 100%);
   --radio: 8px;
   --radio-grande: 14px;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr);
   min-height: 100svh;
   overflow-x: clip;
-  background: #f3f6f9;
+  background: #f4f4f4;
   color: var(--texto);
 }
 

@@ -54,20 +54,6 @@
 .curso-admin__volver:hover {
   border-color: var(--acento);
 }
-.curso-admin__portada {
-  display: grid;
-  place-items: center;
-  width: 110px;
-  flex-shrink: 0;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--radio);
-  background: var(--acento-suave);
-  color: #7fb8d4;
-}
-.curso-admin__portada svg {
-  width: 24px;
-  height: 24px;
-}
 .curso-admin__titulo {
   min-width: 0;
 }
@@ -131,8 +117,8 @@
   margin-bottom: 14px;
   padding: 10px 14px;
   border-radius: var(--radio);
-  background: #fdecea;
-  color: #b42318;
+  background: var(--peligro-suave);
+  color: var(--peligro);
   font-size: 13px;
 }
 
@@ -153,11 +139,6 @@
   font-size: 21px;
   font-weight: 750;
   letter-spacing: -.5px;
-}
-.curso-admin__panel-heading p {
-  margin-top: 2px;
-  color: var(--texto-suave);
-  font-size: 14px;
 }
 .curso-admin__nueva {
   display: inline-flex;
@@ -180,6 +161,7 @@
 }
 
 .curso-admin__tabla-wrap {
+  position: relative;
   overflow-x: auto;
 }
 .curso-admin__tabla {
@@ -257,7 +239,7 @@
   flex-shrink: 0;
   aspect-ratio: 16 / 9;
   border-radius: var(--radio);
-  background: linear-gradient(135deg, #0c4566, #1a7299 60%, #3fb6dd);
+  background: var(--fondo-barra);
   color: #fff;
 }
 .curso-admin__miniatura svg {
@@ -316,7 +298,7 @@
 }
 .curso-admin__icono--peligro {
   border-color: #f5b5ae;
-  color: #d92d20;
+  color: var(--peligro);
 }
 .curso-admin__icono--peligro:hover:not(:disabled) {
   background: #fef3f2;
@@ -339,7 +321,6 @@
   border-radius: var(--radio-grande);
   background: #fff;
   color: var(--texto);
-  box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
 }
 .clase-modal {
   width: min(92%, 500px);
@@ -382,12 +363,12 @@
   background: var(--acento-suave);
 }
 .curso-admin__confirmar-acciones .curso-admin__confirmar-eliminar {
-  border-color: #d92d20;
-  background: #d92d20;
+  border-color: var(--peligro);
+  background: var(--peligro);
   color: #fff;
 }
 .curso-admin__confirmar-acciones .curso-admin__confirmar-eliminar:hover {
-  background: #b42318;
+  background: var(--peligro);
 }
 .clase-modal form {
   display: flex;
@@ -407,7 +388,7 @@
 .clase-modal select {
   width: 100%;
   padding: 11px 14px;
-  border: 1px solid #cfdbe7;
+  border: 1px solid var(--borde);
   border-radius: var(--radio);
   background: #fff;
   color: var(--texto);
@@ -434,7 +415,7 @@
   accent-color: var(--acento);
 }
 .clase-modal__error {
-  color: #b42318;
+  color: var(--peligro);
   font-size: 13px;
 }
 .clase-modal__acciones .clase-modal__guardar {
@@ -459,9 +440,6 @@
   .curso-admin__heading {
     flex-wrap: wrap;
   }
-  .curso-admin__portada {
-    width: 80px;
-  }
   .curso-admin__heading > .curso-admin__estado-badge {
     margin-left: 0;
   }
@@ -474,4 +452,9 @@
   .curso-admin__miniatura {
     width: 72px;
   }
+}
+.clase-modal input:not([type="checkbox"]):hover:not(:focus),
+.clase-modal textarea:hover:not(:focus),
+.clase-modal select:hover {
+  border-color: #8c8c8c;
 }

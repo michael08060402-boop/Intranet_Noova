@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { BookOpen, ChevronsUpDown, Image as IconoImagen, Layers, Pencil, Plus, Search, Settings, Trash2 } from "lucide-react";
+import { BookOpen, ChevronsUpDown, Layers, Pencil, Plus, Search, Settings, Trash2 } from "lucide-react";
 import { contarDocumentos, eliminarCurso, escucharCategorias, escucharCursos, nombresNivel, type Categoria, type Curso } from "@/firebase/cursos";
 import Categorias from "./Categorias";
 import NuevoCurso from "./NuevoCurso";
@@ -101,9 +101,7 @@ function Cursos() {
     <main className="cursos-page">
       <header className="cursos-heading">
         <div>
-          <span className="cursos-eyebrow">Gestión académica</span>
           <h1>Cursos</h1>
-          <p>Administra tus cursos y sus clases.</p>
         </div>
         <div className="cursos-heading__acciones">
           <button className="cursos-secundario" type="button" onClick={() => setGestionandoCategorias(true)}><Layers />Categorías</button>
@@ -134,7 +132,7 @@ function Cursos() {
             <thead>
               <tr>
                 {columnas.map(({ clave, titulo }) => (
-                  <th key={clave} scope="col" aria-sort={orden.columna === clave ? (orden.ascendente ? "ascending" : "descending") : undefined}>
+                  <th key={clave} scope="col" className={clave === "clases" ? "cursos-centro" : undefined} aria-sort={orden.columna === clave ? (orden.ascendente ? "ascending" : "descending") : undefined}>
                     <button type="button" className="cursos-ordenar" onClick={() => ordenarPor(clave)}>{titulo}<ChevronsUpDown /></button>
                   </th>
                 ))}
@@ -148,7 +146,6 @@ function Cursos() {
                   <tr key={curso.id}>
                     <td>
                       <div className="cursos-curso">
-                        <span className="cursos-portada" title="La portada estará disponible próximamente"><IconoImagen /></span>
                         <div>
                           <strong className="cursos-nombre">{curso.nombre}</strong>
                           {curso.descripcion && <small className="cursos-descripcion">{curso.descripcion}</small>}
@@ -159,7 +156,7 @@ function Cursos() {
                     <td>{nombresNivel[curso.nivel]}</td>
                     <td><span className={`cursos-badge cursos-badge--${curso.acceso}`}>{curso.acceso === "premium" ? "Premium" : "Gratis"}</span></td>
                     <td><span className={`cursos-badge ${curso.publicado ? "cursos-badge--publicado" : "cursos-badge--borrador"}`}>{curso.publicado ? "Publicado" : "Borrador"}</span></td>
-                    <td>{clases[curso.id] ?? "…"}</td>
+                    <td className="cursos-centro">{clases[curso.id] ?? "…"}</td>
                     <td>
                       <div className="cursos-acciones">
                         <Link href={`/admin/cursos/curso?id=${curso.id}`} className="cursos-administrar"><Settings />Administrar curso</Link>

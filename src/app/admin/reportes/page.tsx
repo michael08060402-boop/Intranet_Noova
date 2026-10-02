@@ -92,9 +92,7 @@ export default function ReportesPage() {
     <main className="admin-pagina">
       <header className="admin-pagina__cabecera">
         <div>
-          <span className="admin-pagina__eyebrow">Seguimiento</span>
           <h1>Reportes</h1>
-          <p>Resumen de alumnos, cursos y resultados de las evaluaciones.</p>
         </div>
         <div className="admin-pagina__acciones">
           <button type="button" className="admin-boton admin-boton--secundario" onClick={exportarAlumnos} disabled={alumnos.length === 0}><Download />Alumnos (CSV)</button>
@@ -204,7 +202,6 @@ export default function ReportesPage() {
         </div>
       </section>
 
-      <p className="admin-aviso">El avance por clase y el tiempo de estudio aparecerán aquí cuando los alumnos puedan ver los videos y se registre su progreso.</p>
     </main>
   );
 }

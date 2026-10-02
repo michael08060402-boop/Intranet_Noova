@@ -1,5 +1,6 @@
 .alumnos-page {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(340px, 1fr);
   gap: 22px;
   width: min(94%, 1660px);
@@ -9,26 +10,12 @@
 .alumnos-page svg {
   stroke-width: 1.8;
 }
-.alumnos-eyebrow {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--acento-oscuro);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.6px;
-  text-transform: uppercase;
-}
 .alumnos-heading h1 {
   margin-bottom: 4px;
   font-size: clamp(26px, 2.4vw, 34px);
   font-weight: 750;
   letter-spacing: -1px;
   line-height: 1.2;
-}
-.alumnos-heading p {
-  color: #3d5872;
-  font-size: clamp(14px, 1.2vw, 17px);
-  font-weight: 500;
 }
 
 .alumnos-panel {
@@ -124,8 +111,8 @@
   margin-bottom: 12px;
   padding: 10px 14px;
   border-radius: var(--radio);
-  background: #fdecea;
-  color: #b42318;
+  background: var(--peligro-suave);
+  color: var(--peligro);
   font-size: 13px;
 }
 
@@ -261,4 +248,7 @@
   .alumnos-empty p {
     font-size: 14px;
   }
+}
+.alumnos-plan:hover {
+  border-color: #8c8c8c;
 }

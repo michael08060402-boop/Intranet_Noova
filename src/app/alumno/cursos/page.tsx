@@ -57,7 +57,7 @@ export default function MisCursos() {
 
   return (
     <main className="my-courses alumno-fondo">
-      <TituloPagina className="my-courses__heading" titulo="Mis cursos" descripcion="Continúa tu formación donde la dejaste." />
+      <TituloPagina className="my-courses__heading" titulo="Mis cursos" />
       <div className="my-courses__toolbar">
         <div className="my-courses__filters" aria-label="Filtrar cursos por progreso">
           {filtros.map((nombre) => (
@@ -76,7 +76,6 @@ export default function MisCursos() {
           <EstadoVacio
             className="my-courses__vacio"
             titulo={filtro === "Todos" ? "Aún no tienes cursos" : `No tienes cursos ${filtro.toLowerCase()}`}
-            texto="Cuando te inscribas en un curso desde Explorar, aparecerá aquí con tu avance."
           >
             <Link href="/alumno/explorar" className="my-courses__explorar">Explorar cursos</Link>
           </EstadoVacio>

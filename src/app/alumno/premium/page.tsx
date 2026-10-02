@@ -38,15 +38,12 @@ export default function Premium() {
         <header className="premium-page__heading">
           <span className="premium-page__eyebrow">Plan Premium</span>
           <h1>Lleva tu aprendizaje<br /><span>al siguiente nivel</span></h1>
-          <p>Accede a todo el contenido de Noova Learn Mining<br className="premium-page__salto" /> y potencia tus habilidades en minería.</p>
         </header>
 
         <div className="premium-page__planes">
           <section className="premium-page__plan" aria-labelledby="plan-gratis">
             <h2 id="plan-gratis">Plan Gratuito</h2>
-            <p className="premium-page__descripcion">Ideal para comenzar tu aprendizaje.</p>
             <strong className="premium-page__precio">S/ 0</strong>
-            <p className="premium-page__periodo">Siempre será gratuito.</p>
             <ul>
               {beneficios.map((beneficio) => (
                 <li key={beneficio.texto} className={beneficio.gratis ? "" : "is-excluido"}><Marca incluido={beneficio.gratis} />{beneficio.texto}</li>
@@ -58,7 +55,6 @@ export default function Premium() {
           <section className="premium-page__plan premium-page__plan--premium" aria-labelledby="plan-premium">
             <span className="premium-page__popular"><Crown />Recomendado</span>
             <h2 id="plan-premium">Plan Premium</h2>
-            <p className="premium-page__descripcion">Accede a todo el contenido de la plataforma.</p>
             <div className="premium-page__periodos" role="radiogroup" aria-label="Periodo del plan">
               {periodos.map((periodo) => (
                 <button key={periodo.meses} type="button" role="radio" aria-checked={meses === periodo.meses} className={meses === periodo.meses ? "is-activo" : ""} onClick={() => setMeses(periodo.meses)}>

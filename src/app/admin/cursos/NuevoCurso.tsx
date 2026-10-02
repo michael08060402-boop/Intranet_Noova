@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Image as IconoImagen, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { actualizarCurso, crearCurso, nombresNivel, type Acceso, type Categoria, type Curso, type Nivel } from "@/firebase/cursos";
 import "./NuevoCurso.css";
@@ -96,18 +96,10 @@ export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Cur
             </select>
           </label>
         </div>
-        <div className="nuevo-curso__field">
-          <span>Portada del curso</span>
-          <div className="nuevo-curso__upload" aria-disabled="true">
-            <IconoImagen />
-            <span>Disponible próximamente</span>
-            <small>Podrás añadir la portada al editar el curso.</small>
-          </div>
-        </div>
         <fieldset className="nuevo-curso__states">
           <legend>Estado</legend>
-          <label><input type="radio" name="estado" checked={!publicado} onChange={() => setPublicado(false)} /><span>Borrador<small>El curso no será visible para los alumnos.</small></span></label>
-          <label><input type="radio" name="estado" checked={publicado} onChange={() => setPublicado(true)} /><span>Publicado<small>El curso estará disponible para los alumnos.</small></span></label>
+          <label><input type="radio" name="estado" checked={!publicado} onChange={() => setPublicado(false)} /><span>Borrador</span></label>
+          <label><input type="radio" name="estado" checked={publicado} onChange={() => setPublicado(true)} /><span>Publicado</span></label>
         </fieldset>
         {error && <p className="nuevo-curso__error" role="alert">{error}</p>}
         <footer className="nuevo-curso__footer">

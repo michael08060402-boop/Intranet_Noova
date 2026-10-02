@@ -26,9 +26,7 @@ export default function AlumnosPage() {
   return (
     <main className="alumnos-page">
       <header className="alumnos-heading">
-        <span className="alumnos-eyebrow">Comunidad de aprendizaje</span>
         <h1>Alumnos</h1>
-        <p>Consulta los estudiantes registrados en la plataforma.</p>
       </header>
 
       <section className="alumnos-panel" aria-label="Listado de alumnos">

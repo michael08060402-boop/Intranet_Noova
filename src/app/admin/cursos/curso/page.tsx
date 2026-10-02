@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowLeft, CirclePlay, Image as IconoImagen, Pencil, Plus, Trash2, Users, Video } from "lucide-react";
+import { ArrowLeft, CirclePlay, Pencil, Plus, Trash2, Users, Video } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import {
   actualizarClase,
@@ -112,7 +112,6 @@ function CursoAdmin() {
 
         <header className="curso-admin__heading">
           <Link href="/admin/cursos" className="curso-admin__volver" aria-label="Volver a cursos"><ArrowLeft /></Link>
-          <span className="curso-admin__portada" title="La portada estará disponible próximamente"><IconoImagen /></span>
           <div className="curso-admin__titulo">
             <h1>{curso.nombre}</h1>
             {curso.descripcion && <p>{curso.descripcion}</p>}
@@ -129,7 +128,6 @@ function CursoAdmin() {
           <div className="curso-admin__panel-heading">
             <div>
               <h2 id="clases-titulo">Clases</h2>
-              <p>Organiza y administra las clases de este curso.</p>
             </div>
             <button type="button" className="curso-admin__nueva" onClick={() => setEditando(null)}><Plus />Nueva clase</button>
           </div>
@@ -250,7 +248,7 @@ function ClaseFormulario({ cursoId, accesoCurso, clase, alGuardar, alCerrar }: {
         <label>
           <span>Video (ruta en SharePoint)</span>
           <input value={ruta} onChange={(evento) => setRuta(evento.target.value)} placeholder="Ej. Ventsim/basico-1.mp4" maxLength={300} disabled={cargandoVideo} />
-          <small>Archivo dentro de la biblioteca de videos. Déjalo vacío si la clase aún no tiene video.</small>
+          <small>Déjalo vacío si aún no hay video.</small>
         </label>
         {ruta.trim() && (
           <label>

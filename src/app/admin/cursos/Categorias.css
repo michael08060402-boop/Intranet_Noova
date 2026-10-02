@@ -113,12 +113,12 @@
   cursor: pointer;
 }
 .categorias__confirmar .categorias__eliminar {
-  border-color: #d92d20;
-  background: #d92d20;
+  border-color: var(--peligro);
+  background: var(--peligro);
   color: #fff;
 }
 .categorias__confirmar .categorias__eliminar:hover {
-  background: #b42318;
+  background: var(--peligro);
 }
 @media (max-width: 480px) {
   .categorias__formulario {

@@ -60,9 +60,7 @@ function Evaluaciones() {
     <main className="admin-pagina">
       <header className="admin-pagina__cabecera">
         <div>
-          <span className="admin-pagina__eyebrow">Gestión académica</span>
           <h1>Evaluaciones</h1>
-          <p>Crea exámenes para tus cursos y califica las entregas.</p>
         </div>
         <button type="button" className="admin-boton" onClick={() => setEditando(null)} disabled={cursos.length === 0} title={cursos.length === 0 ? "Crea primero un curso" : undefined}>
           <Plus />Nuevo examen

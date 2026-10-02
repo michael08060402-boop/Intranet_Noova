@@ -58,13 +58,12 @@ export default function InicioAlumno() {
           {primeraVez ? "¡Te damos la bienvenida, " : "¡Hola de nuevo, "}
           <span className="alumno-welcome__nombre">{nombre}</span>!
         </h1>
-        <p>{primeraVez ? "Empieza tu formación explorando los cursos disponibles." : "Continúa aprendiendo donde lo dejaste."}</p>
       </section>
 
       <section className="alumno-portada" aria-labelledby="alumno-portada-title">
         <div className="alumno-portada__copy">
           <h2 id="alumno-portada-title">Sigue desarrollando tus habilidades en minería</h2>
-          <p>Formación especializada para un sector más seguro, eficiente y sostenible.</p>
+          <p>Cursos, exámenes y calculadoras de ventilación y bombeo en un solo lugar.</p>
           <div className="alumno-portada__actions">
             <Link href="/alumno/explorar" className="alumno-portada__principal">Explorar cursos</Link>
             {perfil?.plan === "gratis" && <Link href="/alumno/premium" className="alumno-portada__secundario"><Crown />Conocer Premium</Link>}
@@ -96,7 +95,6 @@ export default function InicioAlumno() {
             <span><BookOpen /></span>
             <div>
               <h3>{cargando ? "Cargando cursos…" : "Aún no hay cursos destacados"}</h3>
-              <p>Los cursos disponibles aparecerán en este espacio.</p>
             </div>
           </div>
         )}
@@ -128,7 +126,6 @@ export default function InicioAlumno() {
           <div className="alumno-empty alumno-empty--centrado">
             <div>
               <h3>Aún no tienes cursos en progreso</h3>
-              <p>Cuando te inscribas en un curso, podrás retomarlo desde aquí.</p>
             </div>
           </div>
         )}
