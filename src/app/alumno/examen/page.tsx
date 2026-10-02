@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef, useState } from "react";
-import { CircleCheck, Clock, Crown, ListChecks, Timer } from "lucide-react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Calculator, CircleCheck, Clock, Crown, ListChecks, Timer } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { escucharCurso, type Curso } from "@/firebase/cursos";
 import {
@@ -18,6 +18,7 @@ import {
   type Intento,
   type Respuestas,
 } from "@/firebase/evaluaciones";
+import PanelHerramientas from "./PanelHerramientas";
 import "./Examen.css";
 
 export default function ExamenPage() {
@@ -116,6 +117,7 @@ function RendirExamen() {
               <li><ListChecks />{examen.preguntas.length} {examen.preguntas.length === 1 ? "pregunta" : "preguntas"}</li>
               <li><Clock />{examen.duracionMin > 0 ? `${examen.duracionMin} minutos` : "Sin límite de tiempo"}</li>
               <li><CircleCheck />Apruebas con {examen.notaMinima} de {NOTA_MAXIMA}</li>
+              {examen.herramientas && <li><Calculator />Puedes usar las calculadoras</li>}
             </ul>
             <p className="alumno-examen__advertencia">Solo tienes un intento. {examen.duracionMin > 0 ? "El tiempo corre desde que empiezas y no se detiene aunque cierres la página." : "Tus respuestas se guardan mientras avanzas."}</p>
             {error && <p className="alumno-examen__error" role="alert">{error}</p>}
@@ -133,6 +135,7 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
   const [guardado, setGuardado] = useState<"" | "guardando" | "guardado" | "error">("");
   const [entregando, setEntregando] = useState(false);
   const [error, setError] = useState("");
+  const [herramientasAbiertas, setHerramientasAbiertas] = useState(false);
   const confirmar = useRef<HTMLDialogElement>(null);
   const temporizador = useRef<ReturnType<typeof setTimeout>>(undefined);
   const enviado = useRef(false);
@@ -155,6 +158,8 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
       guardarRespuestas(intento.id, siguientes).then(() => setGuardado("guardado")).catch(() => setGuardado("error"));
     }, 1200);
   }
+
+  const cerrarHerramientas = useCallback(() => setHerramientasAbiertas(false), []);
 
   async function entregar() {
     if (enviado.current) return;
@@ -182,18 +187,26 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
   const segundos = restante === null ? 0 : Math.floor((restante % 60000) / 1000);
 
   return (
-    <main className="alumno-examen">
+    <main className={herramientasAbiertas ? "alumno-examen alumno-examen--con-panel" : "alumno-examen"}>
       {volver}
       <div className={`alumno-examen__barra ${restante !== null && restante < 300000 ? "is-urgente" : ""}`}>
         <div>
           <strong>{examen.nombre}</strong>
           <small>{guardado === "guardando" ? "Guardando…" : guardado === "guardado" ? "Respuestas guardadas" : guardado === "error" ? "No se pudo guardar; se reintentará al responder" : "Tus respuestas se guardan automáticamente"}</small>
         </div>
-        <span className="alumno-examen__reloj" role="timer" aria-label="Tiempo restante">
-          <Timer />{restante === null ? "Sin límite" : `${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`}
-        </span>
+        <div className="alumno-examen__lado">
+          {examen.herramientas && (
+            <button type="button" className="alumno-examen__herramientas" aria-expanded={herramientasAbiertas} onClick={() => setHerramientasAbiertas(!herramientasAbiertas)}>
+              <Calculator aria-hidden="true" />Calculadoras
+            </button>
+          )}
+          <span className="alumno-examen__reloj" role="timer" aria-label="Tiempo restante">
+            <Timer />{restante === null ? "Sin límite" : `${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`}
+          </span>
+        </div>
       </div>
 
+      {examen.herramientas && herramientasAbiertas && <PanelHerramientas alCerrar={cerrarHerramientas} />}
       {error && <p className="alumno-examen__error" role="alert">{error}</p>}
       <form onSubmit={(evento) => { evento.preventDefault(); confirmar.current?.showModal(); }}>
         <fieldset disabled={agotado || entregando} className="alumno-examen__preguntas">

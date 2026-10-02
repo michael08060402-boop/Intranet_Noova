@@ -1,0 +1,81 @@
+.panel-herramientas {
+  position: fixed;
+  z-index: 20;
+  top: 72px;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(440px, 100vw);
+  border-left: 1.5px solid #000;
+  background: #fff;
+}
+.panel-herramientas__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 0;
+}
+.panel-herramientas__cabecera strong {
+  font-size: 18px;
+  font-weight: 700;
+}
+.panel-herramientas__cabecera button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: #000;
+  cursor: pointer;
+}
+.panel-herramientas__cabecera button:hover {
+  background: #000;
+  color: #fff;
+}
+.alumno-estructura .panel-herramientas__cabecera svg {
+  width: 20px;
+  height: 20px;
+}
+.panel-herramientas__pestanas {
+  display: flex;
+  column-gap: 20px;
+  overflow-x: auto;
+  padding: 6px 18px 0;
+  border-bottom: 1.5px solid #000;
+}
+.panel-herramientas__pestanas button {
+  padding: 10px 2px 12px;
+  border-bottom: 3px solid transparent;
+  color: #595959;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.panel-herramientas__pestanas button:hover {
+  color: #000;
+}
+.panel-herramientas__pestanas .is-activo {
+  border-bottom-color: #000;
+  color: #000;
+}
+.panel-herramientas button:focus-visible {
+  outline: 3px solid #000;
+  outline-offset: 2px;
+}
+.panel-herramientas__cuerpo {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+}
+@media (max-width: 900px) {
+  .panel-herramientas {
+    top: auto;
+    height: 62svh;
+    width: 100%;
+    border-top: 1.5px solid #000;
+    border-left: 0;
+    border-radius: 16px 16px 0 0;
+  }
+}

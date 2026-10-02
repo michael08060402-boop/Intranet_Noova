@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CampoNumero, FilaResultado, ListaResultado, PaginaHerramienta, PanelResultado, Seccion } from "@/components/herramientas/PiezasHerramienta";
+import { CampoNumero, Curva, paleta, FilaResultado, ListaResultado, PaginaHerramienta, PanelResultado, Paso } from "@/components/herramientas/PiezasHerramienta";
 import { formatoNumero, leerNumero } from "../numeros";
 import { calcularBombeo } from "../bombeo";
 
@@ -22,20 +22,22 @@ export default function Bombeo() {
 
   return (
     <PaginaHerramienta
+      conDatos={JSON.stringify(datos) !== JSON.stringify(inicial)}
+      alEjemplo={() => setDatos({ caudal: "25", diametro: "100", longitud: "600", coeficiente: "130", alturaEstatica: "80", eficiencia: "70" })}
+      alLimpiar={() => setDatos(inicial)}
       titulo="Bombeo de agua"
-      descripcion="Altura dinámica total y potencia de la bomba con la fórmula de Hazen-Williams."
       formulario={
         <>
-          <Seccion numero={1} titulo="Tubería" formula="hf = 10,67 × L × Q¹˙⁸⁵² / (C¹˙⁸⁵² × D⁴˙⁸⁷)" abierta>
+          <Paso color={paleta.agua} titulo="Tubería" formula="hf = 10,67 × L × Q¹˙⁸⁵² / (C¹˙⁸⁵² × D⁴˙⁸⁷)">
             <CampoNumero nombre="Caudal (Q)" unidad="L/s" {...campo("caudal")} />
             <CampoNumero nombre="Diámetro interior (D)" unidad="mm" {...campo("diametro")} />
             <CampoNumero nombre="Longitud (L)" unidad="m" {...campo("longitud")} />
             <CampoNumero nombre="Coeficiente (C)" {...campo("coeficiente")} />
-          </Seccion>
-          <Seccion numero={2} titulo="Bomba" formula="P = ρ × g × Q × H / η" abierta>
+          </Paso>
+          <Paso color={paleta.acero} titulo="Bomba" formula="H = Hest + hf  ·  P = ρ × g × Q × H / η">
             <CampoNumero nombre="Altura estática" unidad="m" {...campo("alturaEstatica")} />
             <CampoNumero nombre="Eficiencia (η)" unidad="%" maximo={100} {...campo("eficiencia")} />
-          </Seccion>
+          </Paso>
         </>
       }
       resultado={
@@ -44,15 +46,28 @@ export default function Bombeo() {
           valor={resultado ? formatoNumero.format(resultado.altura) : undefined}
           unidad="m"
           error={error}
-          alLimpiar={() => setDatos(inicial)}
         >
           {resultado && (
+            <>
+            <Curva
+              titulo="Altura que exige el sistema según el caudal"
+              puntos={Array.from({ length: 13 }, (_, i) => {
+                const q = (numeros.caudal * 1.5 * i) / 12;
+                return [q, calcularBombeo({ ...numeros, caudal: q })?.altura ?? 0] as [number, number];
+              })}
+              actual={[numeros.caudal, resultado.altura]}
+              etiquetaX="L/s"
+              etiquetaY="m"
+              formato={formatoNumero.format}
+              color={paleta.agua}
+            />
             <ListaResultado>
               <FilaResultado nombre="Velocidad en la tubería" valor={`${formatoNumero.format(resultado.velocidad)} m/s`} />
               <FilaResultado nombre="Pérdida por fricción" valor={`${formatoNumero.format(resultado.perdida)} m`} />
               <FilaResultado nombre="Potencia hidráulica" valor={`${formatoNumero.format(resultado.potenciaHidraulica)} kW`} />
               <FilaResultado nombre="Potencia en el eje" valor={`${formatoNumero.format(resultado.potenciaEje)} kW · ${formatoNumero.format(resultado.potenciaEjeHp)} HP`} />
             </ListaResultado>
+            </>
           )}
         </PanelResultado>
       }

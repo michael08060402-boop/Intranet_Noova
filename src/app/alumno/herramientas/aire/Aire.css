@@ -1,40 +1,28 @@
-.aire__dato {
-  grid-column: 1 / -1;
-  color: var(--texto-suave);
-  font-size: 14px;
-}
-.aire__dato strong {
-  color: var(--texto);
-  font-variant-numeric: tabular-nums;
+.aire__grilla {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 .aire__equipo {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: auto repeat(3, minmax(0, 1fr)) auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
   align-items: end;
   gap: 12px;
-}
-.aire__equipo-numero {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 46px;
-  color: var(--texto-suave);
-  font-size: 13px;
-  font-weight: 700;
 }
 .aire__equipo button {
   display: grid;
   place-items: center;
   width: 46px;
   height: 46px;
-  border: 1px solid var(--borde);
+  border: 1.5px solid #000;
   border-radius: 10px;
-  color: #b42318;
+  color: #000;
   cursor: pointer;
 }
-.aire__equipo button:hover {
-  background: #fdf0f0;
+.aire__equipo button:hover:not(:disabled) {
+  background: #000;
+  color: #fff;
 }
 .aire__agregar {
   grid-column: 1 / -1;
@@ -44,37 +32,80 @@
   gap: 8px;
   min-height: 44px;
   padding: 0 16px;
-  border: 1px dashed #8fb3cf;
+  border: 1.5px dashed #000;
   border-radius: 10px;
-  color: var(--acento-oscuro);
+  color: #000;
   font-size: 14px;
   font-weight: 650;
   cursor: pointer;
 }
 .aire__agregar:hover {
-  background: var(--acento-suave);
+  background: #000;
+  border-style: solid;
+  color: #fff;
 }
 .alumno-estructura .aire__equipo svg,
 .alumno-estructura .aire__agregar svg {
   width: 18px;
   height: 18px;
 }
-.aire__barra {
-  display: flex;
-  gap: 3px;
-  height: 10px;
-  margin-bottom: 18px;
-  border-radius: 999px;
-  overflow: hidden;
-}
-.aire__barra span {
-  min-width: 0;
-}
 @media (max-width: 560px) {
   .aire__equipo {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .aire__equipo-numero {
-    display: none;
+}
+@media (max-width: 1180px) {
+  .aire__grilla {
+    grid-template-columns: minmax(0, 1fr);
   }
+}
+
+.herramienta--compacta .aire__grilla {
+  grid-template-columns: minmax(0, 1fr);
+}
+.aire__equipo button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.aire__opcionales {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px 20px;
+  padding: 18px 24px;
+  border: 1.5px dashed #000;
+  border-radius: 14px;
+}
+.aire__opcionales h2 {
+  font-size: 16px;
+  font-weight: 800;
+}
+.aire__opcionales div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.aire__opcionales button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1.5px solid #000;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.aire__opcionales button:hover {
+  background: #000;
+  color: #fff;
+}
+.alumno-estructura .aire__opcionales svg {
+  width: 16px;
+  height: 16px;
 }

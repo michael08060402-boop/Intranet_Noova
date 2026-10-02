@@ -1,51 +1,6 @@
 .nuevo-examen {
   width: min(760px, calc(100% - 32px));
 }
-.nuevo-examen__modos {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.nuevo-examen__modos label {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 14px;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: default;
-}
-.nuevo-examen__modos label.is-activo {
-  border-color: var(--acento);
-  background: var(--acento-suave);
-}
-.nuevo-examen__modos label.is-deshabilitado {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.nuevo-examen__modos input {
-  margin-top: 3px;
-  accent-color: var(--acento);
-}
-.nuevo-examen__modos span {
-  display: block;
-}
-.nuevo-examen__modos svg {
-  display: inline;
-  width: 16px;
-  height: 16px;
-  margin-right: 6px;
-  vertical-align: -3px;
-}
-.nuevo-examen__modos small {
-  display: block;
-  margin-top: 2px;
-  color: var(--texto-suave);
-  font-size: 12px;
-  font-weight: 400;
-}
 .nuevo-examen__preguntas {
   margin: 4px 0 18px;
 }
@@ -84,7 +39,7 @@
   min-width: 0;
   height: 38px;
   padding: 0 10px;
-  border: 1px solid #cfdbe7;
+  border: 1px solid var(--borde);
   border-radius: var(--radio);
   background: #fff;
   font-size: 14px;
@@ -100,7 +55,7 @@
   width: 64px;
   height: 38px;
   padding: 0 8px;
-  border: 1px solid #cfdbe7;
+  border: 1px solid var(--borde);
   border-radius: var(--radio);
   background: #fff;
   font-size: 14px;
@@ -119,7 +74,7 @@
 }
 .nuevo-examen__encabezado > button:hover {
   background: #fef3f2;
-  color: #d92d20;
+  color: var(--peligro);
 }
 .nuevo-examen__opcion button:hover:not(:disabled) {
   background: var(--acento-suave);
@@ -137,7 +92,7 @@
   width: 100%;
   min-height: 64px;
   padding: 10px 12px;
-  border: 1px solid #cfdbe7;
+  border: 1px solid var(--borde);
   border-radius: var(--radio);
   background: #fff;
   font: inherit;
@@ -168,7 +123,7 @@
   min-width: 0;
   height: 38px;
   padding: 0 12px;
-  border: 1px solid #cfdbe7;
+  border: 1px solid var(--borde);
   border-radius: var(--radio);
   background: #fff;
   font-size: 14px;
@@ -203,10 +158,10 @@
   gap: 10px;
 }
 @media (max-width: 600px) {
-  .nuevo-examen__modos {
-    grid-template-columns: 1fr;
-  }
   .nuevo-examen__encabezado {
     flex-wrap: wrap;
   }
+}
+.nuevo-examen__encabezado select:hover {
+  border-color: #8c8c8c;
 }

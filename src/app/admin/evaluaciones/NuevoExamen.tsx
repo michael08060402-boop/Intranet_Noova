@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { FileText, Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import type { Curso } from "@/firebase/cursos";
 import { guardarExamen, leerClaves, NOTA_MAXIMA, type Claves, type Examen, type Pregunta, type TipoPregunta } from "@/firebase/evaluaciones";
@@ -25,6 +25,7 @@ export default function NuevoExamen({ examen, cursos, alCerrar }: { examen: Exam
   const [duracionMin, setDuracionMin] = useState(examen?.duracionMin ?? 30);
   const [notaMinima, setNotaMinima] = useState(examen?.notaMinima ?? 16);
   const [publicado, setPublicado] = useState(examen?.publicado ?? false);
+  const [herramientas, setHerramientas] = useState(examen?.herramientas ?? true);
   const [preguntas, setPreguntas] = useState<PreguntaEditable[]>(() => examen?.preguntas.map((pregunta) => ({ ...pregunta, correcta: -1 })) ?? [nuevaPregunta("opcion")]);
   const [cargandoClaves, setCargandoClaves] = useState(!!examen);
   const [guardando, setGuardando] = useState(false);
@@ -80,7 +81,7 @@ export default function NuevoExamen({ examen, cursos, alCerrar }: { examen: Exam
       if (pregunta.tipo === "opcion") claves[pregunta.id] = correcta;
       return { ...pregunta, enunciado: pregunta.enunciado.trim(), opciones: pregunta.opciones.map((opcion) => opcion.trim()) };
     });
-    const datos = { cursoId, nombre: nombre.trim(), descripcion: descripcion.trim(), modo: "manual" as const, duracionMin, notaMinima, publicado, preguntas: listaPreguntas };
+    const datos = { cursoId, nombre: nombre.trim(), descripcion: descripcion.trim(), modo: "manual" as const, duracionMin, notaMinima, publicado, herramientas, preguntas: listaPreguntas };
     try {
       await guardarExamen(examen?.id ?? null, datos, claves, usuario.uid);
       dialogo.current?.close();
@@ -117,13 +118,6 @@ export default function NuevoExamen({ examen, cursos, alCerrar }: { examen: Exam
           <textarea value={descripcion} onChange={(evento) => setDescripcion(evento.target.value)} placeholder="Indicaciones para el alumno (opcional)" maxLength={2000} />
         </label>
 
-        <div className="nuevo-curso__field">
-          <span>Modalidad</span>
-          <div className="nuevo-examen__modos">
-            <label className="is-activo"><input type="radio" name="modo" checked readOnly /><span>Crear manualmente<small>Escribe las preguntas aquí mismo.</small></span></label>
-            <label className="is-deshabilitado"><input type="radio" name="modo" disabled /><span><FileText />Subir PDF o Word<small>Disponible cuando se conecte el almacenamiento de archivos.</small></span></label>
-          </div>
-        </div>
 
         <div className="nuevo-curso__row">
           <label className="nuevo-curso__field">
@@ -139,9 +133,14 @@ export default function NuevoExamen({ examen, cursos, alCerrar }: { examen: Exam
         </div>
 
         <fieldset className="nuevo-curso__states">
+          <legend>Calculadoras</legend>
+          <label><input type="checkbox" checked={herramientas} onChange={(evento) => setHerramientas(evento.target.checked)} /><span>Permitirlas durante el examen<small>El alumno las abre desde un panel dentro del examen. Úsalo cuando las preguntas pidan calcular.</small></span></label>
+        </fieldset>
+
+        <fieldset className="nuevo-curso__states">
           <legend>Estado</legend>
-          <label><input type="radio" name="estado" checked={!publicado} onChange={() => setPublicado(false)} /><span>Borrador<small>Los alumnos no lo ven.</small></span></label>
-          <label><input type="radio" name="estado" checked={publicado} onChange={() => setPublicado(true)} /><span>Publicado<small>Los alumnos del curso pueden rendirlo.</small></span></label>
+          <label><input type="radio" name="estado" checked={!publicado} onChange={() => setPublicado(false)} /><span>Borrador</span></label>
+          <label><input type="radio" name="estado" checked={publicado} onChange={() => setPublicado(true)} /><span>Publicado</span></label>
         </fieldset>
 
         <section className="nuevo-examen__preguntas" aria-label="Preguntas">
@@ -179,7 +178,7 @@ export default function NuevoExamen({ examen, cursos, alCerrar }: { examen: Exam
                   ))}
                   {pregunta.opciones.length < 6 && <button type="button" className="nuevo-examen__agregar-opcion" onClick={() => cambiar(pregunta.id, { opciones: [...pregunta.opciones, ""] })}><Plus />Agregar opción</button>}
                 </div>
-              ) : <p className="nuevo-curso__notice">El alumno escribe su respuesta y tú la calificas después.</p>}
+              ) : null}
             </div>
           ))}
           <div className="nuevo-examen__nuevas">

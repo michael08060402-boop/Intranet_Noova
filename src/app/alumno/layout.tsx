@@ -14,6 +14,8 @@ import PiePagina from "@/components/alumno/PiePagina";
 import { auth } from "@/firebase/config";
 import { escucharNotificaciones, marcarLeidas, type Notificacion } from "@/firebase/notificaciones";
 import { capitalizarNombre } from "@/firebase/perfiles";
+import { escucharTicketsDe } from "@/firebase/tickets";
+import { herramientas } from "./herramientas/lista";
 import "./AlumnoLayout.css";
 
 const enlaces = [
@@ -21,7 +23,6 @@ const enlaces = [
   { href: "/alumno/cursos", etiqueta: "Mis cursos", Icono: BookOpen },
   { href: "/alumno/evaluaciones", etiqueta: "Evaluaciones", Icono: ClipboardCheck },
   { href: "/alumno/explorar", etiqueta: "Explorar", Icono: Compass },
-  { href: "/alumno/herramientas", etiqueta: "Herramientas", Icono: Calculator },
 ];
 
 const opcionesCuenta = [
@@ -37,12 +38,26 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
   const confirmarSalida = useRef<HTMLDialogElement>(null);
   const panelAvisos = useRef<HTMLDivElement>(null);
   const menuCuenta = useRef<HTMLDivElement>(null);
+  const menuHerramientas = useRef<HTMLDivElement>(null);
+  const botonHerramientas = useRef<HTMLButtonElement>(null);
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [avisos, setAvisos] = useState<Notificacion[]>([]);
+  const [respuestasNuevas, setRespuestasNuevas] = useState(0);
   const uid = usuario?.uid;
   const sinLeer = avisos.filter((aviso) => !aviso.leida);
 
   useEffect(() => (uid ? escucharNotificaciones(uid, setAvisos, () => setAvisos([])) : undefined), [uid]);
+  useEffect(() => (uid ? escucharTicketsDe(uid, (tickets) => setRespuestasNuevas(tickets.filter((ticket) => ticket.sinLeer).length), () => setRespuestasNuevas(0)) : undefined), [uid]);
+
+  const enHerramientas = ruta.startsWith("/alumno/herramientas");
+
+  function ubicarMenuHerramientas() {
+    const boton = botonHerramientas.current?.getBoundingClientRect();
+    const menu = menuHerramientas.current;
+    if (!boton || !menu) return;
+    menu.style.top = `${boton.bottom + 8}px`;
+    menu.style.left = `${Math.max(8, Math.min(boton.left, window.innerWidth - 308))}px`;
+  }
 
   const nombre = capitalizarNombre(perfil?.nombre.split(" ")[0] || "Estudiante");
 
@@ -71,6 +86,17 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
                 </Link>
               );
             })}
+            <button
+              ref={botonHerramientas}
+              type="button"
+              className={enHerramientas ? "is-activo" : ""}
+              popoverTarget="alumno-menu-herramientas"
+              aria-current={enHerramientas ? "page" : undefined}
+            >
+              <Calculator />
+              Herramientas
+              <ChevronDown className="alumno-nav__flecha" />
+            </button>
           </nav>
           <div className="alumno-account">
             <button
@@ -84,7 +110,7 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
               {sinLeer.length > 0 && <span>{sinLeer.length > 9 ? "9+" : sinLeer.length}</span>}
             </button>
             <button type="button" className="alumno-cuenta" popoverTarget="alumno-menu-cuenta" aria-label="Abrir menú de la cuenta">
-              <span className="alumno-avatar">{nombre.charAt(0).toUpperCase()}</span>
+              <span className="alumno-avatar">{perfil?.foto ? <Image src={perfil.foto} alt="" width={34} height={34} unoptimized /> : nombre.charAt(0).toUpperCase()}</span>
               <span className="alumno-account__name">
                 {nombre}
                 <small className="alumno-account__plan">
@@ -130,6 +156,21 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
             </ul>
           )}
         </div>
+        <div
+          id="alumno-menu-herramientas"
+          ref={menuHerramientas}
+          popover="auto"
+          className="alumno-menu-herramientas"
+          aria-label="Herramientas"
+          onBeforeToggle={(evento) => { if (evento.newState === "open") ubicarMenuHerramientas(); }}
+        >
+          {herramientas.map(({ href, nombre: titulo, Icono }) => (
+            <Link key={href} href={href} aria-current={ruta === href ? "page" : undefined} onClick={() => { menuHerramientas.current?.hidePopover(); setMenuAbierto(false); }}>
+              <Icono />
+              {titulo}
+            </Link>
+          ))}
+        </div>
         <div id="alumno-menu-cuenta" ref={menuCuenta} popover="auto" className="alumno-menu-cuenta" aria-label="Menú de la cuenta">
           <div className="alumno-menu-cuenta__datos">
             <strong>{capitalizarNombre(perfil?.nombre ?? nombre)}</strong>
@@ -155,7 +196,6 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
         </div>
         <dialog ref={confirmarSalida} className="alumno-logout" aria-labelledby="alumno-logout-title">
           <h2 id="alumno-logout-title">¿Cerrar sesión?</h2>
-          <p>Tendrás que volver a ingresar para continuar aprendiendo.</p>
           <div className="alumno-logout__actions">
             <button type="button" onClick={() => confirmarSalida.current?.close()}>
               Cancelar
@@ -166,7 +206,7 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
           </div>
         </dialog>
         {children}
-        {ruta === "/alumno" && <PiePagina />}
+        {ruta === "/alumno" && <PiePagina respuestasNuevas={respuestasNuevas} />}
       </div>
     </AccesoPorRol>
   );

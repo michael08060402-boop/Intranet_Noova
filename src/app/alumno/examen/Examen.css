@@ -45,7 +45,7 @@
 }
 .alumno-examen__instrucciones {
   margin-bottom: 18px;
-  color: #3d5872;
+  color: #4a4a4a;
   font-size: 15px;
   line-height: 1.6;
   white-space: pre-wrap;
@@ -102,8 +102,8 @@
   margin: 0 0 14px;
   padding: 10px 14px;
   border-radius: var(--radio);
-  background: #fdecea;
-  color: #b42318;
+  background: var(--peligro-suave);
+  color: var(--peligro);
   font-size: 14px;
 }
 .alumno-examen__resultado {
@@ -142,16 +142,16 @@
   margin: 4px 0 0;
   padding: 10px 14px;
   border-left: 3px solid var(--acento);
-  background: #f3f6f9;
+  background: #f4f4f4;
   font-size: 14px;
   line-height: 1.5;
   white-space: pre-wrap;
 }
 .alumno-examen__resultado .is-aprobado {
-  color: #176f42;
+  color: #000;
 }
 .alumno-examen__resultado .is-desaprobado {
-  color: #b42318;
+  color: var(--peligro);
 }
 .alumno-examen__badge {
   padding: 4px 12px;
@@ -163,7 +163,7 @@
   background: #e6f6ee;
 }
 .alumno-examen__badge.is-desaprobado {
-  background: #fdecea;
+  background: var(--peligro-suave);
 }
 
 .alumno-examen__barra {
@@ -179,7 +179,6 @@
   border: 1px solid var(--borde);
   border-radius: var(--radio-grande);
   background: #fff;
-  box-shadow: 0 6px 20px rgb(29 73 109 / 8%);
 }
 .alumno-examen__barra strong {
   display: block;
@@ -188,6 +187,37 @@
 .alumno-examen__barra small {
   color: var(--texto-suave);
   font-size: 12px;
+}
+.alumno-examen__lado {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 16px;
+}
+.alumno-examen__herramientas {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1.5px solid #000;
+  border-radius: 10px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.alumno-examen__herramientas:hover,
+.alumno-examen__herramientas[aria-expanded="true"] {
+  background: #000;
+  color: #fff;
+}
+.alumno-examen__herramientas:focus-visible {
+  outline: 3px solid #000;
+  outline-offset: 2px;
+}
+.alumno-examen__herramientas svg {
+  width: 18px;
+  height: 18px;
 }
 .alumno-examen__reloj {
   display: flex;
@@ -206,7 +236,7 @@
   border-color: #f0a19a;
 }
 .alumno-examen__barra.is-urgente .alumno-examen__reloj {
-  color: #b42318;
+  color: var(--peligro);
 }
 .alumno-examen__preguntas {
   display: flex;
@@ -310,7 +340,6 @@
   border-radius: var(--radio-grande);
   background: #fff;
   color: var(--texto);
-  box-shadow: 0 20px 50px rgb(3 35 55 / 25%);
 }
 .alumno-examen__dialogo::backdrop {
   background: rgb(3 35 55 / 45%);
@@ -353,5 +382,17 @@
   }
   .alumno-examen__pregunta header {
     flex-wrap: wrap;
+  }
+}
+
+@media (min-width: 901px) {
+  .alumno-examen--con-panel {
+    width: min(860px, calc(100vw - 440px - 48px));
+    margin-left: 24px;
+  }
+}
+@media (max-width: 900px) {
+  .alumno-examen--con-panel {
+    padding-bottom: 62svh;
   }
 }

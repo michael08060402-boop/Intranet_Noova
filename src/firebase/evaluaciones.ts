@@ -34,6 +34,7 @@ export type Examen = {
   duracionMin: number;
   notaMinima: number;
   publicado: boolean;
+  herramientas: boolean;
   preguntas: Pregunta[];
   creadoEn: number;
 };
@@ -69,6 +70,7 @@ function leerExamen(id: string, datos: DocumentData): Examen {
     duracionMin: datos.duracionMin,
     notaMinima: datos.notaMinima,
     publicado: datos.publicado,
+    herramientas: datos.herramientas === true,
     preguntas: datos.preguntas ?? [],
     creadoEn: datos.creadoEn?.toMillis() ?? Date.now(),
   };

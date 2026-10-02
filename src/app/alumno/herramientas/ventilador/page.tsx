@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CampoNumero, FilaResultado, ListaResultado, PaginaHerramienta, PanelResultado, Seccion } from "@/components/herramientas/PiezasHerramienta";
+import { CampoNumero, Curva, paleta, FilaResultado, ListaResultado, PaginaHerramienta, PanelResultado, Paso } from "@/components/herramientas/PiezasHerramienta";
 import { formatoCifras, formatoNumero, leerNumero } from "../numeros";
 import { calcularVentilador } from "../ventilacion";
 
@@ -22,20 +22,22 @@ export default function PresionVentilador() {
 
   return (
     <PaginaHerramienta
+      conDatos={JSON.stringify(datos) !== JSON.stringify(inicial)}
+      alEjemplo={() => setDatos({ friccion: "0.012", longitud: "800", perimetro: "14", area: "12", caudal: "3000", eficiencia: "70" })}
+      alLimpiar={() => setDatos(inicial)}
       titulo="Presión del ventilador"
-      descripcion="Caída de presión de una galería y potencia del ventilador, con la fórmula de Atkinson."
       formulario={
         <>
-          <Seccion numero={1} titulo="Galería" formula="R = k × L × P / A³" abierta>
+          <Paso color={paleta.azul} titulo="Galería" formula="R = k × L × P / A³">
             <CampoNumero nombre="Factor de fricción (k)" unidad="kg/m³" {...campo("friccion")} />
             <CampoNumero nombre="Longitud (L)" unidad="m" {...campo("longitud")} />
             <CampoNumero nombre="Perímetro (P)" unidad="m" {...campo("perimetro")} />
             <CampoNumero nombre="Área (A)" unidad="m²" {...campo("area")} />
-          </Seccion>
-          <Seccion numero={2} titulo="Ventilador" formula="Pv = Q × h / η" abierta>
+          </Paso>
+          <Paso color={paleta.acero} titulo="Ventilador" formula="h = R × Q²  ·  Pv = Q × h / η">
             <CampoNumero nombre="Caudal (Q)" unidad="m³/min" {...campo("caudal")} />
             <CampoNumero nombre="Eficiencia (η)" unidad="%" maximo={100} {...campo("eficiencia")} />
-          </Seccion>
+          </Paso>
         </>
       }
       resultado={
@@ -44,14 +46,27 @@ export default function PresionVentilador() {
           valor={resultado ? formatoNumero.format(resultado.caida) : undefined}
           unidad="Pa"
           error={error}
-          alLimpiar={() => setDatos(inicial)}
         >
           {resultado && (
+            <>
+            <Curva
+              titulo="Caída de presión según el caudal"
+              puntos={Array.from({ length: 13 }, (_, i) => {
+                const q = (numeros.caudal * 1.5 * i) / 12;
+                return [q, calcularVentilador({ ...numeros, caudal: q })?.caida ?? 0] as [number, number];
+              })}
+              actual={[numeros.caudal, resultado.caida]}
+              etiquetaX="m³/min"
+              etiquetaY="Pa"
+              formato={formatoNumero.format}
+              color={paleta.azul}
+            />
             <ListaResultado>
               <FilaResultado nombre="Resistencia (R)" valor={`${formatoCifras.format(resultado.resistencia)} N·s²/m⁸`} />
               <FilaResultado nombre="Potencia del aire" valor={`${formatoNumero.format(resultado.potenciaAire)} kW`} />
               <FilaResultado nombre="Potencia del ventilador" valor={`${formatoNumero.format(resultado.potenciaVentilador)} kW`} />
             </ListaResultado>
+            </>
           )}
         </PanelResultado>
       }

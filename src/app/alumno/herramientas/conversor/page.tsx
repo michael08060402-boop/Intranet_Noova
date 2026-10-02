@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CampoNumero, FilaResultado, ListaResultado, PaginaHerramienta, PanelResultado, Seccion, SelectorUnidad } from "@/components/herramientas/PiezasHerramienta";
+import { Copy } from "lucide-react";
+import { CampoNumero, FilaResultado, ListaResultado, PaginaHerramienta, PanelResultado, Paso, SelectorUnidad } from "@/components/herramientas/PiezasHerramienta";
 import { convertir, magnitudes } from "../conversiones";
 import { formatoCifras, leerNumero } from "../numeros";
 
@@ -24,10 +25,12 @@ export default function Conversor() {
 
   return (
     <PaginaHerramienta
+      conDatos={valor !== ""}
+      alEjemplo={() => { setNombreMagnitud(magnitudes[0].nombre); setDesde(magnitudes[0].unidades[0].nombre); setValor("1200"); }}
+      alLimpiar={() => setValor("")}
       titulo="Conversor de unidades"
-      descripcion="Caudal, presión, potencia y longitud, las unidades que mezclan Ventsim y los equipos."
       formulario={
-        <Seccion numero={1} titulo="Valor a convertir" abierta>
+        <Paso titulo="Valor a convertir">
           <SelectorUnidad claro etiqueta="Magnitud" opciones={magnitudes.map((item) => item.nombre)} valor={nombreMagnitud} alCambiar={cambiarMagnitud} />
           <CampoNumero nombre="Valor" valor={valor} alCambiar={setValor} />
           <label className="campo">
@@ -40,7 +43,7 @@ export default function Conversor() {
               </select>
             </span>
           </label>
-        </Seccion>
+        </Paso>
       }
       resultado={
         <PanelResultado
@@ -48,12 +51,20 @@ export default function Conversor() {
           valor={hayValor ? formatoCifras.format(numero) : undefined}
           unidad={desde}
           error={error}
-          alLimpiar={() => setValor("")}
         >
           {hayValor && (
             <ListaResultado>
               {magnitud.unidades.filter((unidad) => unidad !== unidadOrigen).map((unidad) => (
-                <FilaResultado key={unidad.nombre} nombre={unidad.nombre} valor={formatoCifras.format(convertir(numero, unidadOrigen, unidad))} />
+                <FilaResultado
+                  key={unidad.nombre}
+                  nombre={unidad.nombre}
+                  valor={formatoCifras.format(convertir(numero, unidadOrigen, unidad))}
+                  accion={
+                    <button type="button" className="copiar" aria-label={`Copiar ${unidad.nombre}`} onClick={() => navigator.clipboard?.writeText(String(convertir(numero, unidadOrigen, unidad)))}>
+                      <Copy aria-hidden="true" size={16} />
+                    </button>
+                  }
+                />
               ))}
             </ListaResultado>
           )}

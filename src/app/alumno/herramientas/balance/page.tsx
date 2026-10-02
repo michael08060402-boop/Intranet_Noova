@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CampoNumero, FilaResultado, ListaResultado, PaginaHerramienta, PanelResultado, Seccion, SelectorUnidad } from "@/components/herramientas/PiezasHerramienta";
+import { Barras, CampoNumero, FilaResultado, ListaResultado, Medidor, PaginaHerramienta, PanelResultado, Paso, SelectorUnidad, paleta } from "@/components/herramientas/PiezasHerramienta";
 import { aCfm } from "../conversiones";
 import { formatoNumero, leerNumero } from "../numeros";
 import { calcularBalance } from "../ventilacion";
@@ -29,30 +29,36 @@ export default function BalanceVentilacion() {
 
   return (
     <PaginaHerramienta
+      conDatos={JSON.stringify(datos) !== JSON.stringify(inicial)}
+      alEjemplo={() => setDatos({ requerido: "1200", ingreso: "1000", salida: "1050" })}
+      alLimpiar={() => setDatos(inicial)}
       titulo="Balance de ventilación"
-      descripcion="Compara el aire que ingresa y sale de la mina con el caudal requerido."
       formulario={
-        <Seccion numero={1} titulo="Caudales medidos" abierta>
+        <Paso titulo="Caudales medidos" formula="Cobertura = Qi / Qr">
           <CampoNumero nombre="Requerido (Qr)" unidad="m³/min" {...campo("requerido")} />
           <CampoNumero nombre="Ingreso (Qi)" unidad="m³/min" {...campo("ingreso")} />
           <CampoNumero nombre="Salida (Qs)" unidad="m³/min" {...campo("salida")} />
-        </Seccion>
+        </Paso>
       }
       resultado={
         <PanelResultado
           titulo={resultado ? (resultado.superavit >= 0 ? "Superávit de aire" : "Déficit de aire") : "Balance"}
           valor={resultado ? mostrar(Math.abs(resultado.superavit)) : undefined}
+          estado={resultado ? { tono: resultado.superavit >= 0 ? "ok" : "alerta", texto: resultado.superavit >= 0 ? "Ingresa más aire del requerido" : "Falta aire para cubrir lo requerido" } : undefined}
           unidad={unidad}
           error={error}
           cabecera={<SelectorUnidad opciones={unidades} valor={unidad} alCambiar={setUnidad} />}
-          alLimpiar={() => setDatos(inicial)}
         >
           {resultado && (
+            <>
+            <Medidor porcentaje={resultado.cobertura * 100} alerta={resultado.cobertura < 1} etiqueta="de cobertura" />
+            <Barras formato={mostrar} filas={[{ nombre: "Requerido", valor: requerido, color: paleta.acero }, { nombre: "Ingreso", valor: ingreso, color: paleta.azul }, { nombre: "Salida", valor: salida, color: paleta.agua }]} />
             <ListaResultado>
-              <FilaResultado nombre="Cobertura (Qi / Qr)" valor={formatoNumero.format(resultado.cobertura)} />
+              <FilaResultado nombre="Cobertura (Qi / Qr)" valor={`${formatoNumero.format(resultado.cobertura * 100)} %`} />
               <FilaResultado nombre="Balance (Qs − Qi)" valor={mostrar(resultado.balance)} />
               <FilaResultado nombre="Diferencia ingreso-salida" valor={`${formatoNumero.format(resultado.diferencia)} %`} />
             </ListaResultado>
+            </>
           )}
         </PanelResultado>
       }
