@@ -9,7 +9,7 @@ Estado actual: funcionan el acceso, la gestión de cursos y categorías, los ex�
 - Next.js 16 (App Router) con TypeScript, exportado como sitio estático (`output: "export"`).
 - Firebase: Authentication (correo y Google), Firestore y Hosting.
 - Iconos con `lucide-react`. Estilos en CSS junto a cada página o componente.
-- Videos de las clases: SharePoint (Microsoft Graph) detrás de una Cloud Function de Firebase; ver `docs/VIDEOS_SHAREPOINT.md`. Cloudflare R2 (portadas, fotos y documentos; `docs/FIREBASE_R2_SETUP.md`) y Culqi (pagos) están planificados.
+- Videos de las clases: SharePoint (Microsoft Graph) detrás de una Cloud Function de Firebase; ver `docs/VIDEOS_SHAREPOINT.md`. Portadas, fotos y documentos irán a la misma nube de Noova (SharePoint). Culqi (pagos) está planificado; la guía de Firebase está en `docs/FIREBASE_SETUP.md`.
 
 ## Puesta en marcha
 
@@ -40,12 +40,14 @@ src/
 │   ├── acceso/             sesión, guardia por rol y formulario de acceso
 │   ├── admin/              encabezado y listado compartido del panel
 │   ├── alumno/             encabezado y selectores de la vista de alumno
-│   └── herramientas/       piezas de las calculadoras (campos, secciones, panel de resultado)
+│   └── herramientas/       piezas de las calculadoras (pasos, campos, barra y panel de resultado)
 ├── firebase/             Conexión y acceso a datos (perfiles, cursos, evaluaciones, notificaciones)
 └── assets/               Imágenes importadas desde el código (marca y fondos)
 ```
 
-Las calculadoras (`src/app/alumno/herramientas/`) separan las fórmulas (`ventilacion.ts`, `bombeo.ts`, `conversiones.ts`) de las pantallas. Las razones técnicas del proyecto están en [`docs/DECISIONES_TECNICAS.md`](docs/DECISIONES_TECNICAS.md).
+Las calculadoras (`src/app/alumno/herramientas/`) se abren desde el menú Herramientas del encabezado, no tienen página de inicio propia, y separan las fórmulas (`ventilacion.ts`, `bombeo.ts`, `conversiones.ts`) de las pantallas. Las razones técnicas del proyecto están en [`docs/DECISIONES_TECNICAS.md`](docs/DECISIONES_TECNICAS.md).
+
+El manual de uso de las calculadoras es [`public/manual-herramientas.pdf`](public/manual-herramientas.pdf); se abre desde el menú Herramientas y desde el botón "Manual de uso" de cada herramienta.
 
 Fuera de `src/`, `functions/` contiene la Cloud Function que entrega los videos de las clases (necesita Node 22 y el plan Blaze de Firebase).
 

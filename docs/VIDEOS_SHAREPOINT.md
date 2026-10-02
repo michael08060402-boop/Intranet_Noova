@@ -76,7 +76,7 @@ firebase deploy --only functions,firestore:rules --project noova-intranet
 
 - El enlace de Microsoft caduca en poco tiempo (alrededor de una hora). Si el alumno deja la pausa mucho rato, aparece "No se pudo cargar el video" con el botón Reintentar.
 - No hay botón de descarga ni menú del clic derecho, pero un alumno con conocimientos puede grabar la pantalla o sacar el enlace temporal del navegador. Lo que sí se evita es compartir un enlace permanente.
-- Graph tiene límites de uso. Con muchos alumnos viendo a la vez puede responder con errores temporales; si pasa de forma habitual, conviene pasar a Cloudflare R2 (`docs/FIREBASE_R2_SETUP.md`) cambiando solo la parte de `functions/src/index.ts` que pide el archivo.
+- Graph tiene límites de uso. Con muchos alumnos viendo a la vez puede responder con errores temporales; si pasa de forma habitual, conviene repartir los videos en otra biblioteca o solicitar a Microsoft más cuota. Solo cambia la parte de `functions/src/index.ts` que pide el archivo.
 - El administrador no puede ver el video desde el panel todavía; solo los alumnos.
 
 ## Si un video no carga

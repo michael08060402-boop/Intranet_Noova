@@ -4,13 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, BookOpen, ChartNoAxesColumn, CircleCheck, CirclePlay, ClipboardCheck, Crown, Lock, Play, PlusCircle, Tag } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
-import { escucharClases, escucharInscripciones, escucharProgreso, inscribirse, nombresNivel, type Clase, type Curso, type Progreso } from "@/firebase/cursos";
+import { escucharClases, escucharProgreso, inscribirse, nombresNivel, type Clase, type Curso, type Progreso } from "@/firebase/cursos";
 import { escucharExamenesDeCurso, escucharIntentosAlumno, estadoExamen, type Examen, type Intento } from "@/firebase/evaluaciones";
 
-export default function CursoDetalle({ curso, categoria, bloqueado, alVolver }: { curso: Curso; categoria: string; bloqueado: boolean; alVolver: () => void }) {
+export default function CursoDetalle({ curso, categoria, bloqueado, inscrito, alVolver }: { curso: Curso; categoria: string; bloqueado: boolean; inscrito: boolean; alVolver: () => void }) {
   const { usuario } = useSesion();
   const [clases, setClases] = useState<Clase[]>([]);
-  const [inscrito, setInscrito] = useState(false);
   const [progreso, setProgreso] = useState<Progreso[]>([]);
   const [cargando, setCargando] = useState(true);
   const [inscribiendo, setInscribiendo] = useState(false);
@@ -29,10 +28,7 @@ export default function CursoDetalle({ curso, categoria, bloqueado, alVolver }: 
 
   useEffect(() => {
     if (!usuario) return;
-    const fallo = () => setError("No se pudo consultar tu inscripción.");
-    const dejarInscripciones = escucharInscripciones(usuario.uid, (ids) => setInscrito(ids.includes(curso.id)), fallo);
-    const dejarProgreso = escucharProgreso(usuario.uid, (lista) => setProgreso(lista.filter((item) => item.cursoId === curso.id && item.completado)), fallo);
-    return () => { dejarInscripciones(); dejarProgreso(); };
+    return escucharProgreso(usuario.uid, (lista) => setProgreso(lista.filter((item) => item.cursoId === curso.id && item.completado)), () => setError("No se pudo consultar tu progreso."));
   }, [usuario, curso.id]);
 
   async function inscribir() {

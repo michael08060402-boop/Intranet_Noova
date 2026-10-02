@@ -31,11 +31,12 @@ Lo que falta, ordenado por lo que lo desbloquea. Más detalle técnico en `DECIS
 
 - **Bloqueo de clases:** no abrir una clase hasta terminar la anterior y, si se decide, pedir todas vistas para el examen final.
 - **Duración de las clases** (se guarda cuando los videos estén en SharePoint).
-- **Exámenes en PDF o Word** y **foto de perfil:** requieren definir dónde se guardan archivos pequeños (SharePoint por la misma función, o R2).
+- **Exámenes en PDF o Word** y **foto de perfil:** requieren definir dónde se guardan archivos pequeños (SharePoint, por la misma función de Firebase).
 - **Calificación inmediata** con una Cloud Function que lea la clave al entregar.
 - **Correos:** las notificaciones son solo dentro de la plataforma; enviar correo requiere backend.
 - **Subida de videos desde el panel** (sesión de subida de Graph) y vista previa del video para el administrador.
 - **Asignación de cursos** a alumnos o empresas (hoy todos ven lo publicado según su plan).
+- **Herramientas por curso:** hoy el administrador solo activa o desactiva las calculadoras por examen; se puede elegir cuáles.
 - **Más herramientas:** cálculo de PUMA, fajas transportadoras y otras que pida el curso.
 - **Culqi:** integración real con función de servidor, campo `premiumHasta` en el perfil y colección `pagos`.
 - Nombre y apellidos separados (requiere agregar el campo a las reglas).
