@@ -7,16 +7,19 @@ export type Perfil = {
   correo: string;
   rol: "alumno" | "admin";
   plan: "gratis" | "premium";
+  estado: "activo" | "suspendido";
   foto?: string;
 };
 
-export type Alumno = { id: string; nombre: string; correo: string; plan: Perfil["plan"]; creadoEn: number };
+export type Alumno = { id: string; nombre: string; correo: string; plan: Perfil["plan"]; estado: Perfil["estado"]; creadoEn: number };
+
+const leerEstado = (estado: unknown): Perfil["estado"] => (estado === "suspendido" ? "suspendido" : "activo");
 
 export function escucharAlumnos(alCambiar: (alumnos: Alumno[]) => void, alFallar: () => void) {
   return onSnapshot(query(collection(db, "usuarios"), where("rol", "==", "alumno")), (resultado) => {
     const alumnos = resultado.docs.map((documento) => {
       const datos = documento.data();
-      return { id: documento.id, nombre: datos.nombre, correo: datos.correo, plan: datos.plan, creadoEn: datos.creadoEn?.toMillis() ?? 0 };
+      return { id: documento.id, nombre: datos.nombre, correo: datos.correo, plan: datos.plan, estado: leerEstado(datos.estado), creadoEn: datos.creadoEn?.toMillis() ?? 0 };
     });
     alCambiar(alumnos.sort((a, b) => b.creadoEn - a.creadoEn));
   }, alFallar);
@@ -36,7 +39,7 @@ export function leerPerfil(datos: Record<string, unknown> | undefined): Perfil |
   if (datos.rol !== "alumno" && datos.rol !== "admin") return null;
   if (datos.plan !== "gratis" && datos.plan !== "premium") return null;
   const foto = typeof datos.foto === "string" ? datos.foto : undefined;
-  return { nombre: datos.nombre, correo: datos.correo, rol: datos.rol, plan: datos.plan, foto };
+  return { nombre: datos.nombre, correo: datos.correo, rol: datos.rol, plan: datos.plan, estado: leerEstado(datos.estado), foto };
 }
 
 export async function asegurarPerfil(usuario: User) {
@@ -60,6 +63,14 @@ export async function asegurarPerfil(usuario: User) {
 
 export function actualizarNombre(uid: string, nombre: string) {
   return updateDoc(doc(db, "usuarios", uid), { nombre: capitalizarNombre(nombre).slice(0, 120) });
+}
+
+export function cambiarPlan(uid: string, plan: Perfil["plan"]) {
+  return updateDoc(doc(db, "usuarios", uid), { plan });
+}
+
+export function cambiarEstado(uid: string, estado: Perfil["estado"]) {
+  return updateDoc(doc(db, "usuarios", uid), { estado });
 }
 
 export function actualizarFoto(uid: string, foto: string | null) {

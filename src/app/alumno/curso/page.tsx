@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import type { FunctionsError } from "firebase/functions";
-import { ChevronRight, Circle, CircleCheck } from "lucide-react";
+import { ChevronRight, Circle, CircleCheck, Trophy } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { escucharClases, escucharCurso, escucharInscripciones, escucharProgreso, marcarClase, pedirVideo, type Clase, type Curso, type Progreso } from "@/firebase/cursos";
+import { escucharExamenesDeCurso, type Examen } from "@/firebase/evaluaciones";
 import "./Clase.css";
 
 export default function ClasePage() {
@@ -29,6 +30,7 @@ function ClaseCurso() {
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
   const [pestana, setPestana] = useState<"descripcion" | "recursos">("descripcion");
+  const [examenes, setExamenes] = useState<Examen[]>([]);
 
   useEffect(() => {
     if (!cursoId) return;
@@ -45,6 +47,8 @@ function ClaseCurso() {
     const dejarProgreso = escucharProgreso(usuario.uid, (lista) => setProgreso(lista.filter((item) => item.cursoId === cursoId && item.completado)), fallo);
     return () => { dejarInscripciones(); dejarProgreso(); };
   }, [usuario, cursoId]);
+
+  useEffect(() => (cursoId ? escucharExamenesDeCurso(cursoId, setExamenes, () => setExamenes([])) : undefined), [cursoId]);
 
   if (!cursoId || curso === null) {
     return (
@@ -72,6 +76,8 @@ function ClaseCurso() {
   const indice = Math.max(0, clases.findIndex((clase) => claseId ? clase.id === claseId : !completada(clase)));
   const actual = clases[indice];
   const enlace = (clase: Clase) => `/alumno/curso?id=${curso.id}&clase=${clase.id}`;
+  const cursoCompleto = clases.length > 0 && clases.every(completada);
+  const evaluacion = examenes.find((examen) => examen.modo === "manual");
 
   async function cambiarEstado() {
     if (!usuario || !actual) return;
@@ -100,6 +106,19 @@ function ClaseCurso() {
             </button>
           </header>
           {error && <p className="clase-page__error" role="alert">{error}</p>}
+
+          {cursoCompleto && (
+            <section className="clase-page__completo" role="status">
+              <span className="clase-page__completo-icono"><Trophy /></span>
+              <div>
+                <strong>¡Curso completado!</strong>
+                <p>{evaluacion ? "Terminaste todas las clases. Ya puedes rendir la evaluación del curso." : "Terminaste todas las clases de este curso."}</p>
+              </div>
+              {evaluacion
+                ? <Link href={`/alumno/examen?id=${evaluacion.id}`} className="clase-page__enlace">Ir a la evaluación</Link>
+                : <Link href="/alumno/cursos" className="clase-page__enlace">Ver mis cursos</Link>}
+            </section>
+          )}
 
           <div className="clase-page__layout">
             <section>

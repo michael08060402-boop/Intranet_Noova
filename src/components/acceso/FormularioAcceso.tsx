@@ -141,10 +141,6 @@ export default function FormularioAcceso() {
 
         {modo === "entrar" && (
           <div className="acceso-options">
-            <label className="acceso-remember">
-              <input type="checkbox" />
-              Recordarme
-            </label>
             <button className="acceso-text-button" type="button" onClick={() => cambiarModo("recuperar")}>
               ¿Olvidaste tu contraseña?
             </button>

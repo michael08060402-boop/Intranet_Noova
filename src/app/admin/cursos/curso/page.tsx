@@ -8,19 +8,22 @@ import { useSesion } from "@/components/acceso/SesionProvider";
 import {
   actualizarClase,
   contarDocumentos,
-  contarInscritos,
   crearClase,
   eliminarClase,
   escucharClases,
   escucharCurso,
   guardarVideoClase,
   leerVideoClase,
+  listarInscritos,
   type Acceso,
   type Clase,
   type Curso,
+  type Inscrito,
   type VideoClase,
 } from "@/firebase/cursos";
 import "./CursoAdmin.css";
+
+const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short", year: "numeric" });
 
 type DatosFormulario = { nombre: string; descripcion: string; publicado: boolean };
 
@@ -38,7 +41,7 @@ function CursoAdmin() {
   const [curso, setCurso] = useState<Curso | null | undefined>(undefined);
   const [clases, setClases] = useState<Clase[]>([]);
   const [videos, setVideos] = useState<Record<string, number>>({});
-  const [inscritos, setInscritos] = useState<number | null | undefined>(undefined);
+  const [inscritos, setInscritos] = useState<Inscrito[] | null | undefined>(undefined);
   const [error, setError] = useState("");
   const [editando, setEditando] = useState<Clase | null | undefined>(undefined);
   const [eliminando, setEliminando] = useState<Clase | null>(null);
@@ -54,7 +57,7 @@ function CursoAdmin() {
   }, [id]);
 
   useEffect(() => {
-    if (id) contarInscritos(id).then(setInscritos).catch(() => setInscritos(null));
+    if (id) listarInscritos(id).then(setInscritos).catch(() => setInscritos(null));
   }, [id]);
 
   useEffect(() => {
@@ -75,6 +78,8 @@ function CursoAdmin() {
   if (!curso) {
     return <main className="curso-admin"><p className="curso-admin__estado">{error || "Cargando curso…"}</p></main>;
   }
+
+  const publicadas = clases.filter((clase) => clase.publicado).length;
 
   async function guardarClase(datos: DatosFormulario, video: VideoClase | null) {
     if (!usuario) return;
@@ -119,7 +124,7 @@ function CursoAdmin() {
           <span className={`curso-admin__estado-badge ${curso.publicado ? "is-publicado" : "is-borrador"}`}>{curso.publicado ? "Publicado" : "Borrador"}</span>
           <span className="curso-admin__inscritos" title="Alumnos inscritos en este curso">
             <Users />
-            {inscritos === undefined ? "…" : inscritos === null ? "—" : `${inscritos} ${inscritos === 1 ? "inscrito" : "inscritos"}`}
+            {inscritos === undefined ? "…" : inscritos === null ? "—" : `${inscritos.length} ${inscritos.length === 1 ? "inscrito" : "inscritos"}`}
           </span>
         </header>
         {error && <p className="curso-admin__error" role="alert">{error}</p>}
@@ -174,6 +179,52 @@ function CursoAdmin() {
                 {clases.length === 0 && (
                   <tr><td colSpan={4} className="curso-admin__vacio">Este curso aún no tiene clases. Crea la primera con “Nueva clase”.</td></tr>
                 )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="curso-admin__panel" aria-labelledby="inscritos-titulo">
+          <div className="curso-admin__panel-heading">
+            <h2 id="inscritos-titulo">Alumnos inscritos</h2>
+          </div>
+          <div className="curso-admin__tabla-wrap">
+            <table className="curso-admin__tabla curso-admin__tabla--inscritos">
+              <thead>
+                <tr>
+                  <th scope="col">Alumno</th>
+                  <th scope="col">Inscrito el</th>
+                  <th scope="col">Avance</th>
+                  <th scope="col">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inscritos?.map((inscrito) => {
+                  const hechas = Math.min(inscrito.completadas, publicadas);
+                  const avance = publicadas ? Math.round((hechas / publicadas) * 100) : 0;
+                  const estado = avance === 100 ? "Completado" : hechas > 0 ? "En progreso" : "Sin empezar";
+                  return (
+                    <tr key={inscrito.uid}>
+                      <td>
+                        <div className="curso-admin__alumno">
+                          <span className="curso-admin__inicial">{inscrito.nombre.charAt(0).toUpperCase()}</span>
+                          <strong>{inscrito.nombre}</strong>
+                        </div>
+                      </td>
+                      <td>{inscrito.inscritoEn ? formatoFecha.format(inscrito.inscritoEn) : "—"}</td>
+                      <td>
+                        <div className="curso-admin__avance">
+                          <span className="curso-admin__barra"><span style={{ width: `${avance}%` }} /></span>
+                          <small>{avance}% · {hechas} de {publicadas}</small>
+                        </div>
+                      </td>
+                      <td><span className={`curso-admin__progreso ${avance === 100 ? "is-completado" : ""}`}>{estado}</span></td>
+                    </tr>
+                  );
+                })}
+                {inscritos?.length === 0 && <tr><td colSpan={4} className="curso-admin__vacio">Aún no hay alumnos inscritos en este curso.</td></tr>}
+                {inscritos === undefined && <tr><td colSpan={4} className="curso-admin__vacio">Cargando inscritos…</td></tr>}
+                {inscritos === null && <tr><td colSpan={4} className="curso-admin__vacio">No se pudieron cargar los inscritos. Revisa que las reglas e índices estén desplegados.</td></tr>}
               </tbody>
             </table>
           </div>

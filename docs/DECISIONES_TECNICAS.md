@@ -10,8 +10,9 @@ El código no lleva comentarios; las razones que no se ven leyéndolo están aqu
 - **Claves de examen aparte.** El índice de la opción correcta vive en `examenes/{id}/claves`, que el alumno no puede leer. Examen y clave se guardan en el mismo lote, así nunca hay un examen publicado sin corrección.
 - **Notas de 0 a 20** y nota mínima de 16 por defecto (editable por examen). Un solo intento por alumno; el administrador lo reinicia desde Entregas.
 - **Calificación por lotes de 200 entregas** (2 escrituras cada una) por el límite de 500 escrituras de Firestore.
-- **Inscripciones dentro del alumno** (`usuarios/{uid}/inscripciones`). Se cuentan con una consulta de grupo, que usa el índice de `firestore.indexes.json`. El documento de progreso se llama `cursoId_claseId`, como exigen las reglas.
-- **Perfil.** Las reglas solo dejan al alumno cambiar su `nombre`; plan y estado los gestiona el administrador. Nombre y apellidos se guardan juntos: la primera palabra se muestra como nombre.
+- **Inscripciones dentro del alumno** (`usuarios/{uid}/inscripciones`). En Administrar curso se listan con una consulta de grupo, que usa el índice de `firestore.indexes.json`; por cada inscrito se lee su perfil y se cuentan sus clases completadas, y el avance se calcula sobre las clases publicadas. El documento de progreso se llama `cursoId_claseId`, como exigen las reglas.
+- **Perfil.** Las reglas solo dejan al alumno cambiar su `nombre`; plan y estado los gestiona el administrador desde Alumnos, siempre con confirmación. Nombre y apellidos se guardan juntos: la primera palabra se muestra como nombre.
+- **Cuenta suspendida.** Las reglas ya le niegan todo salvo leer su propio perfil, así que `AccesoPorRol` no abre el panel: muestra un aviso con el correo de soporte y el botón de cerrar sesión. Los perfiles sin `estado` se tratan como activos. Suspender no borra avance, inscripciones ni notas.
 - **`serverTimestamp()` llega como `null`** mientras la escritura local no se confirma; los listeners lo toleran.
 
 ## Videos

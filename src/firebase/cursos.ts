@@ -6,6 +6,7 @@ import {
   doc,
   getCountFromServer,
   getDoc,
+  getDocs,
   onSnapshot,
   query,
   serverTimestamp,
@@ -188,9 +189,24 @@ export async function contarDocumentos(ruta: string) {
   return resultado.data().count;
 }
 
-export async function contarInscritos(cursoId: string) {
-  const resultado = await getCountFromServer(query(collectionGroup(db, "inscripciones"), where("cursoId", "==", cursoId)));
-  return resultado.data().count;
+export type Inscrito = { uid: string; nombre: string; inscritoEn: number; completadas: number };
+
+export async function listarInscritos(cursoId: string): Promise<Inscrito[]> {
+  const inscripciones = await getDocs(query(collectionGroup(db, "inscripciones"), where("cursoId", "==", cursoId)));
+  const inscritos = await Promise.all(inscripciones.docs.map(async (inscripcion) => {
+    const uid = inscripcion.ref.parent.parent?.id ?? "";
+    const [perfil, completadas] = await Promise.all([
+      getDoc(doc(db, "usuarios", uid)),
+      getCountFromServer(query(collection(db, "usuarios", uid, "progreso"), where("cursoId", "==", cursoId), where("completado", "==", true))),
+    ]);
+    return {
+      uid,
+      nombre: perfil.data()?.nombre ?? "Alumno",
+      inscritoEn: inscripcion.data().inscritoEn?.toMillis() ?? 0,
+      completadas: completadas.data().count,
+    };
+  }));
+  return inscritos.sort((a, b) => b.inscritoEn - a.inscritoEn);
 }
 
 export async function contarClasesPublicadas(cursoId: string) {

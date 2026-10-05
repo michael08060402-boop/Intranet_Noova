@@ -177,6 +177,62 @@
   background: #fff4d1;
   color: #8a6400;
 }
+.alumnos-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.alumnos-estado {
+  font-size: 13px;
+  font-weight: 600;
+}
+.alumnos-estado--activo {
+  color: var(--texto-suave);
+}
+.alumnos-estado--suspendido {
+  color: var(--peligro);
+}
+.alumnos-accion {
+  text-align: right;
+  white-space: nowrap;
+}
+.alumnos-accion .alumnos-cambiar + .alumnos-cambiar {
+  margin-left: 8px;
+}
+.alumnos-cambiar {
+  padding: 8px 14px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: #fff;
+  color: var(--acento-oscuro);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.alumnos-cambiar:hover {
+  border-color: var(--acento);
+  background: var(--acento-suave);
+}
+.alumnos-cambiar:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 2px;
+}
+.admin-confirmar__acciones .alumnos-confirmar {
+  border-color: var(--acento);
+  background: var(--acento);
+  color: #fff;
+}
+.admin-confirmar__acciones .alumnos-confirmar:hover {
+  background: var(--acento-oscuro);
+}
+.admin-confirmar__acciones button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
 
 .alumnos-empty {
   display: flex;

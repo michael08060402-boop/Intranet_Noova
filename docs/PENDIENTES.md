@@ -13,7 +13,7 @@ Lo que falta, ordenado por lo que lo desbloquea. Más detalle técnico en `DECIS
 
 ## 2. Se puede hacer ahora, sin esperar nada
 
-- **Gestión de alumnos desde el admin (RF-13):** cambiar plan, estado y rol. Las reglas ya lo permiten al administrador.
+- **Gestión de alumnos desde el admin (RF-13):** el plan y el estado (activa/suspendida) ya se cambian desde Alumnos, con confirmación. Falta el rol, que hoy las reglas no dejan cambiar desde la app.
 - **Reportes de avance por curso y por clase** con `usuarios/{uid}/progreso` e `inscripciones`.
 - **Pruebas de las reglas en el emulador** (`firebase emulators:start`): el alumno no lee `claves`, no edita su nota, no entrega fuera de tiempo, no lee `contenidos`.
 - **Casos de prueba CP-01 a CP-07** del documento de requisitos, ejecutados y registrados.

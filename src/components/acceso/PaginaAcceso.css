@@ -153,25 +153,7 @@
 
 .acceso-options {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.acceso-remember {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #60758a;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.acceso-remember input {
-  width: 17px;
-  height: 17px;
-  accent-color: var(--acceso-link);
+  justify-content: flex-end;
 }
 
 .acceso-text-button,

@@ -84,6 +84,42 @@
   color: var(--peligro);
   font-size: 13px;
 }
+.clase-page__completo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: var(--acento-suave);
+}
+.clase-page__completo-icono {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--acento);
+}
+.clase-page .clase-page__completo-icono svg {
+  width: 24px;
+  height: 24px;
+}
+.clase-page__completo > div {
+  flex: 1;
+  min-width: 200px;
+}
+.clase-page__completo strong {
+  font-size: 17px;
+}
+.clase-page__completo p {
+  color: var(--texto-suave);
+  font-size: 14px;
+}
 .clase-page__layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;

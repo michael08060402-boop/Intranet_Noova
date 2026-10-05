@@ -128,6 +128,74 @@
   border-radius: var(--radio-grande);
   background: #fff;
 }
+.curso-admin__panel + .curso-admin__panel {
+  margin-top: 20px;
+}
+.curso-admin__tabla--inscritos thead th:first-child,
+.curso-admin__tabla--inscritos thead th:last-child {
+  width: auto;
+  text-align: left;
+}
+.curso-admin__tabla--inscritos tbody td:first-child {
+  width: 36%;
+  text-align: left;
+}
+.curso-admin__tabla--inscritos tbody td {
+  font-size: 14px;
+  white-space: nowrap;
+}
+.curso-admin__alumno {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.curso-admin__inicial {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--acento-suave);
+  color: var(--acento-oscuro);
+  font-weight: 700;
+}
+.curso-admin__alumno strong {
+  overflow: hidden;
+  font-size: 15px;
+  text-overflow: ellipsis;
+}
+.curso-admin__avance {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 200px;
+}
+.curso-admin__progreso {
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 600;
+}
+.curso-admin__progreso.is-completado {
+  color: var(--acento);
+}
+.curso-admin__barra {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e6edf3;
+}
+.curso-admin__barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--acento);
+}
+.curso-admin__avance small {
+  color: var(--texto-suave);
+  font-size: 12px;
+}
 .curso-admin__panel-heading {
   display: flex;
   justify-content: space-between;
