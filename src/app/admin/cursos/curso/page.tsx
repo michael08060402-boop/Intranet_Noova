@@ -200,7 +200,7 @@ function CursoAdmin() {
               </thead>
               <tbody>
                 {inscritos?.map((inscrito) => {
-                  const hechas = Math.min(inscrito.completadas, publicadas);
+                  const hechas = clases.filter((clase) => clase.publicado && inscrito.completadas.includes(clase.id)).length;
                   const avance = publicadas ? Math.round((hechas / publicadas) * 100) : 0;
                   const estado = avance === 100 ? "Completado" : hechas > 0 ? "En progreso" : "Sin empezar";
                   return (

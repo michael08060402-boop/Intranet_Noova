@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { BookOpen, ClipboardCheck, Download, Search, Users } from "lucide-react";
-import { escucharCursos, type Curso } from "@/firebase/cursos";
+import { contarClasesPublicadas, escucharClases, escucharCursos, listarInscritos, type Clase, type Curso, type Inscrito } from "@/firebase/cursos";
 import { escucharExamenes, escucharIntentos, NOTA_MAXIMA, type Examen, type Intento } from "@/firebase/evaluaciones";
 import { escucharAlumnos, type Alumno } from "@/firebase/perfiles";
 import "../AdminPagina.css";
 import "./Reportes.css";
 
 type Celda = string | number;
+type AvanceCurso = { inscritos: Inscrito[]; publicadas: number };
 
 const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short", year: "numeric" });
 const promedio = (notas: number[]) => (notas.length > 0 ? Math.round((notas.reduce((suma, nota) => suma + nota, 0) / notas.length) * 10) / 10 : null);
@@ -26,6 +27,15 @@ function descargarCsv(archivo: string, filas: Celda[][]) {
   URL.revokeObjectURL(enlace.href);
 }
 
+function Avance({ valor }: { valor: number }) {
+  return (
+    <div className="reportes__avance">
+      <span className="reportes__barra"><span style={{ width: `${valor}%` }} /></span>
+      <small>{valor} %</small>
+    </div>
+  );
+}
+
 export default function ReportesPage() {
   const [alumnos, setAlumnos] = useState<Alumno[]>([]);
   const [cursos, setCursos] = useState<Curso[]>([]);
@@ -35,6 +45,9 @@ export default function ReportesPage() {
   const [error, setError] = useState("");
   const [filtro, setFiltro] = useState("todos");
   const [busqueda, setBusqueda] = useState("");
+  const [avance, setAvance] = useState<Record<string, AvanceCurso> | null>(null);
+  const [cursoAvance, setCursoAvance] = useState("todos");
+  const [clasesAvance, setClasesAvance] = useState<Clase[]>([]);
 
   useEffect(() => {
     const fallo = () => { setError("No se pudieron cargar todos los datos. Revisa tu conexión."); setCargando(false); };
@@ -45,6 +58,23 @@ export default function ReportesPage() {
     return () => { dejarAlumnos(); dejarCursos(); dejarExamenes(); dejarIntentos(); };
   }, []);
 
+  const idsPublicados = cursos.filter((curso) => curso.publicado).map((curso) => curso.id).join(",");
+
+  useEffect(() => {
+    if (!idsPublicados) return;
+    Promise.all(idsPublicados.split(",").map(async (id) => {
+      const [inscritos, publicadas] = await Promise.all([listarInscritos(id), contarClasesPublicadas(id)]);
+      return [id, { inscritos, publicadas }] as const;
+    }))
+      .then((lista) => setAvance(Object.fromEntries(lista)))
+      .catch(() => setError("No se pudo cargar el avance de los cursos."));
+  }, [idsPublicados]);
+
+  useEffect(() => {
+    if (cursoAvance === "todos") return;
+    return escucharClases(cursoAvance, true, setClasesAvance, () => setClasesAvance([]));
+  }, [cursoAvance]);
+
   const nombreCurso = (id: string) => cursos.find((curso) => curso.id === id)?.nombre ?? "Curso eliminado";
   const examenDe = (intento: Intento) => examenes.find((examen) => examen.id === intento.examenId);
   const aprobo = (intento: Intento) => intento.nota !== null && intento.nota >= (examenDe(intento)?.notaMinima ?? NOTA_MAXIMA + 1);
@@ -53,6 +83,10 @@ export default function ReportesPage() {
   const idsVisibles = new Set(examenesVisibles.map((examen) => examen.id));
   const intentosVisibles = intentos.filter((intento) => idsVisibles.has(intento.examenId));
   const entregados = (lista: Intento[]) => lista.filter((intento) => intento.estado !== "en_curso");
+
+  const cursosPublicados = cursos.filter((curso) => curso.publicado);
+  const inscritosDe = (cursoId: string) => avance?.[cursoId]?.inscritos ?? [];
+  const hechasDe = (inscrito: Inscrito, publicadas: number) => Math.min(inscrito.completadas.length, publicadas);
 
   const porCalificar = intentos.filter((intento) => intento.estado === "entregado").length;
   const premium = alumnos.filter((alumno) => alumno.plan === "premium").length;
@@ -117,6 +151,73 @@ export default function ReportesPage() {
         <div className="reportes__kpi">
           <span className="reportes__kpi-icono reportes__kpi-icono--aviso"><ClipboardCheck /></span>
           <div><p>Por calificar</p><strong>{porCalificar}</strong><small>de {intentos.length} {intentos.length === 1 ? "intento" : "intentos"}</small></div>
+        </div>
+      </section>
+
+      <section className="admin-panel" aria-label="Avance por curso">
+        <div className="admin-panel__titulo">
+          <h2>Avance por curso</h2>
+          <select className="admin-selector" aria-label="Ver avance por clase" value={cursoAvance} onChange={(evento) => { setClasesAvance([]); setCursoAvance(evento.target.value); }}>
+            <option value="todos">Todos los cursos</option>
+            {cursosPublicados.map((curso) => <option key={curso.id} value={curso.id}>{curso.nombre}</option>)}
+          </select>
+        </div>
+        <div className="admin-tabla-caja" tabIndex={0} role="region" aria-label="Tabla de avance">
+          {cursoAvance === "todos" ? (
+            <table className="admin-tabla">
+              <thead>
+                <tr>
+                  <th scope="col">Curso</th>
+                  <th scope="col">Inscritos</th>
+                  <th scope="col">Completaron</th>
+                  <th scope="col">Avance promedio</th>
+                </tr>
+              </thead>
+              <tbody>
+                {avance && cursosPublicados.map((curso) => {
+                  const inscritos = inscritosDe(curso.id);
+                  const publicadas = avance[curso.id]?.publicadas ?? 0;
+                  const completaron = publicadas > 0 ? inscritos.filter((inscrito) => hechasDe(inscrito, publicadas) === publicadas).length : 0;
+                  const media = inscritos.length > 0 && publicadas > 0
+                    ? Math.round((inscritos.reduce((suma, inscrito) => suma + hechasDe(inscrito, publicadas), 0) / (inscritos.length * publicadas)) * 100)
+                    : null;
+                  return (
+                    <tr key={curso.id}>
+                      <td><strong>{curso.nombre}</strong><small>{publicadas} {publicadas === 1 ? "clase publicada" : "clases publicadas"}</small></td>
+                      <td>{inscritos.length}</td>
+                      <td>{inscritos.length > 0 ? `${completaron} (${porcentaje(completaron, inscritos.length)})` : "—"}</td>
+                      <td>{media === null ? "—" : <Avance valor={media} />}</td>
+                    </tr>
+                  );
+                })}
+                {(!avance || cursosPublicados.length === 0) && <tr><td colSpan={4} className="admin-tabla__vacio">{cargando || (!avance && cursosPublicados.length > 0) ? "Cargando…" : "Aún no hay cursos publicados."}</td></tr>}
+              </tbody>
+            </table>
+          ) : (
+            <table className="admin-tabla">
+              <thead>
+                <tr>
+                  <th scope="col">Clase</th>
+                  <th scope="col">Completaron</th>
+                  <th scope="col">Avance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {clasesAvance.map((clase) => {
+                  const inscritos = inscritosDe(cursoAvance);
+                  const completaron = inscritos.filter((inscrito) => inscrito.completadas.includes(clase.id)).length;
+                  return (
+                    <tr key={clase.id}>
+                      <td><strong>{clase.nombre}</strong></td>
+                      <td>{completaron} de {inscritos.length}</td>
+                      <td>{inscritos.length > 0 ? <Avance valor={Math.round((completaron / inscritos.length) * 100)} /> : "—"}</td>
+                    </tr>
+                  );
+                })}
+                {clasesAvance.length === 0 && <tr><td colSpan={3} className="admin-tabla__vacio">Este curso no tiene clases publicadas.</td></tr>}
+              </tbody>
+            </table>
+          )}
         </div>
       </section>
 

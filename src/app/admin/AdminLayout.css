@@ -86,6 +86,58 @@
   padding: 6px;
   border-radius: var(--radio);
   color: #fff;
+  cursor: pointer;
+}
+.admin-pendientes {
+  inset: 64px 3% auto auto;
+  width: min(92%, 320px);
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  background: #fff;
+  color: var(--texto);
+}
+.admin-pendientes h2 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.admin-pendientes p {
+  padding: 8px 0 4px;
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+.admin-pendientes ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  list-style: none;
+}
+.admin-pendientes a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radio);
+  color: var(--texto);
+  font-size: 14px;
+}
+.admin-pendientes a:hover {
+  background: var(--acento-suave);
+}
+.admin-pendientes a span {
+  flex: 1;
+}
+.admin-pendientes svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--acento);
+}
+.admin-pendientes a:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: -2px;
 }
 .admin-header__campana:hover {
   background: rgb(255 255 255 / 12%);

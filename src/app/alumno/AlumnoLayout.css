@@ -188,10 +188,27 @@
   background: #fff;
   color: var(--texto);
 }
-.alumno-avisos h2 {
+.alumno-avisos__cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 10px;
+}
+.alumno-avisos h2 {
   font-size: 16px;
   font-weight: 700;
+}
+.alumno-avisos__cabecera button {
+  padding: 4px 8px;
+  border-radius: var(--radio);
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 600;
+}
+.alumno-avisos__cabecera button:hover {
+  background: var(--peligro-suave);
+  color: var(--peligro);
 }
 .alumno-avisos__vacio {
   padding: 14px 0 6px;
@@ -204,8 +221,15 @@
   gap: 6px;
   list-style: none;
 }
+.alumno-avisos li {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
 .alumno-avisos li a {
   display: block;
+  flex: 1;
+  min-width: 0;
   padding: 10px 12px;
   border-left: 3px solid transparent;
   border-radius: var(--radio);
@@ -232,6 +256,24 @@
   margin-top: 4px;
   color: var(--texto-suave);
   font-size: 12px;
+}
+.alumno-avisos__borrar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-top: 6px;
+  border-radius: var(--radio);
+  color: var(--texto-suave);
+}
+.alumno-avisos__borrar:hover {
+  background: var(--peligro-suave);
+  color: var(--peligro);
+}
+.alumno-avisos__borrar svg {
+  width: 16px;
+  height: 16px;
 }
 .alumno-menu-herramientas {
   inset: auto;
@@ -307,6 +349,17 @@
 .alumno-menu-cuenta a:hover {
   background: var(--acento-suave);
   color: var(--acento-oscuro);
+}
+.alumno-menu-cuenta__nuevas {
+  min-width: 20px;
+  margin-left: auto;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--premium);
+  color: var(--texto);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
 }
 .alumno-menu-cuenta__salir {
   display: flex;

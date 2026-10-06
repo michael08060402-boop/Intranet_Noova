@@ -189,7 +189,7 @@ export async function contarDocumentos(ruta: string) {
   return resultado.data().count;
 }
 
-export type Inscrito = { uid: string; nombre: string; inscritoEn: number; completadas: number };
+export type Inscrito = { uid: string; nombre: string; inscritoEn: number; completadas: string[] };
 
 export async function listarInscritos(cursoId: string): Promise<Inscrito[]> {
   const inscripciones = await getDocs(query(collectionGroup(db, "inscripciones"), where("cursoId", "==", cursoId)));
@@ -197,13 +197,13 @@ export async function listarInscritos(cursoId: string): Promise<Inscrito[]> {
     const uid = inscripcion.ref.parent.parent?.id ?? "";
     const [perfil, completadas] = await Promise.all([
       getDoc(doc(db, "usuarios", uid)),
-      getCountFromServer(query(collection(db, "usuarios", uid, "progreso"), where("cursoId", "==", cursoId), where("completado", "==", true))),
+      getDocs(query(collection(db, "usuarios", uid, "progreso"), where("cursoId", "==", cursoId), where("completado", "==", true))),
     ]);
     return {
       uid,
       nombre: perfil.data()?.nombre ?? "Alumno",
       inscritoEn: inscripcion.data().inscritoEn?.toMillis() ?? 0,
-      completadas: completadas.data().count,
+      completadas: completadas.docs.map((progreso) => progreso.data().claseId as string),
     };
   }));
   return inscritos.sort((a, b) => b.inscritoEn - a.inscritoEn);

@@ -32,3 +32,9 @@ export async function marcarLeidas(uid: string, ids: string[]) {
   ids.forEach((id) => lote.update(doc(db, "usuarios", uid, "notificaciones", id), { leida: true }));
   await lote.commit();
 }
+
+export async function borrarNotificaciones(uid: string, ids: string[]) {
+  const lote = writeBatch(db);
+  ids.forEach((id) => lote.delete(doc(db, "usuarios", uid, "notificaciones", id)));
+  await lote.commit();
+}

@@ -2,18 +2,20 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, LifeBuoy, Mail, Plus, Send } from "lucide-react";
+import { ArrowLeft, LifeBuoy, Lock, Mail, Plus, Send, Trash2 } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import {
   CORREO_SOPORTE,
   LIMITE_ASUNTO,
   LIMITE_MENSAJE,
-  cambiarEstadoTicket,
   categoriasTicket,
+  cerrarTicket,
   crearTicket,
+  eliminarTicket,
   escucharTickets,
   escucharTicketsDe,
   marcarTicketLeido,
+  reabrirTicket,
   responderComoSoporte,
   responderComoUsuario,
   type CategoriaTicket,
@@ -45,6 +47,7 @@ export default function PanelSoporte({ admin }: { admin: boolean }) {
   const [texto, setTexto] = useState("");
   const [respuesta, setRespuesta] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [confirmandoEliminar, setConfirmandoEliminar] = useState("");
 
   useEffect(() => {
     if (!uid) return;
@@ -54,7 +57,7 @@ export default function PanelSoporte({ admin }: { admin: boolean }) {
 
   const seleccionado = tickets?.find((ticket) => ticket.id === vista) ?? null;
   const esDelUsuario = seleccionado?.uid === uid;
-  const visibles = (tickets ?? []).filter((ticket) => filtro === "todos" || ticket.estado === filtro);
+  const visibles = (tickets ?? []).filter((ticket) => (filtro === "todos" ? ticket.estado !== "cerrado" : ticket.estado === filtro));
   const escribiendo = vista === "nuevo";
 
   useEffect(() => {
@@ -96,7 +99,17 @@ export default function PanelSoporte({ admin }: { admin: boolean }) {
     });
   }
 
-  const nuevoValido = asunto.trim().length >= 3 && texto.trim().length >= 5;
+  function eliminar() {
+    if (!seleccionado) return;
+    const id = seleccionado.id;
+    ejecutar(async () => {
+      await eliminarTicket(id);
+      setConfirmandoEliminar("");
+      setVista("");
+    });
+  }
+
+  const nuevoValido =asunto.trim().length >= 3 && texto.trim().length >= 5;
 
   return (
     <div className={`soporte ${vista ? "is-detalle" : ""}`}>
@@ -184,15 +197,31 @@ export default function PanelSoporte({ admin }: { admin: boolean }) {
             </ol>
             {seleccionado.estado === "cerrado" ? (
               <div className="soporte__cerrado">
-                <p>Este ticket está cerrado.</p>
-                {admin && <button type="button" disabled={enviando} onClick={() => ejecutar(() => cambiarEstadoTicket(seleccionado.id, "abierto"))}>Reabrir</button>}
+                <p>
+                  <Lock />
+                  {seleccionado.cerradoPor === "soporte" ? "Cerrado por soporte" : seleccionado.cerradoPor === "usuario" ? `Cerrado por ${admin ? seleccionado.nombre : "ti"}` : "Ticket cerrado"}
+                  {" · "}{formatoFecha.format(seleccionado.actualizadoEn)}
+                </p>
+                {admin && (confirmandoEliminar === seleccionado.id ? (
+                  <div className="soporte__confirmar">
+                    <span>¿Eliminar este ticket para siempre?</span>
+                    <button type="button" disabled={enviando} onClick={() => setConfirmandoEliminar("")}>No</button>
+                    <button type="button" className="soporte__eliminar" disabled={enviando} onClick={eliminar}>Sí, eliminar</button>
+                  </div>
+                ) : (
+                  <div className="soporte__confirmar">
+                    <button type="button" disabled={enviando} onClick={() => ejecutar(() => reabrirTicket(seleccionado.id))}>Reabrir</button>
+                    <button type="button" className="soporte__eliminar" disabled={enviando} onClick={() => setConfirmandoEliminar(seleccionado.id)}><Trash2 />Eliminar</button>
+                  </div>
+                ))}
+                {error && <p className="soporte__error" role="alert">{error}</p>}
               </div>
             ) : (
               <form className="soporte__responder" onSubmit={enviarRespuesta}>
                 <textarea aria-label="Respuesta" rows={3} placeholder={admin && !esDelUsuario ? "Escribe la respuesta" : "Escribe un mensaje"} value={respuesta} maxLength={LIMITE_MENSAJE} onChange={(evento) => setRespuesta(evento.target.value)} />
                 {error && <p className="soporte__error" role="alert">{error}</p>}
                 <div>
-                  <button type="button" className="soporte__cerrar" disabled={enviando} onClick={() => ejecutar(() => cambiarEstadoTicket(seleccionado.id, "cerrado"))}>Cerrar ticket</button>
+                  <button type="button" className="soporte__cerrar" disabled={enviando} onClick={() => ejecutar(() => cerrarTicket(seleccionado.id, admin ? "soporte" : "usuario"))}>Cerrar ticket</button>
                   <button type="submit" className="soporte__enviar" disabled={enviando || respuesta.trim().length === 0}><Send />{enviando ? "Enviando…" : "Responder"}</button>
                 </div>
               </form>

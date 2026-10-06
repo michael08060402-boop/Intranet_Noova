@@ -33,6 +33,13 @@ export function capitalizarNombre(nombre: string) {
     .join(" ");
 }
 
+export function validarNombre(nombre: string) {
+  const palabras = nombre.trim().split(/\s+/);
+  if (palabras.length < 2) return "Escribe tu nombre y apellido.";
+  if (!palabras.every((palabra) => /^[a-záéíóúüñ']{2,}$/iu.test(palabra))) return "Usa solo letras, con al menos 2 en cada palabra.";
+  return "";
+}
+
 export function leerPerfil(datos: Record<string, unknown> | undefined): Perfil | null {
   if (!datos || typeof datos.nombre !== "string" || !datos.nombre.trim()) return null;
   if (typeof datos.correo !== "string") return null;
@@ -75,9 +82,4 @@ export function cambiarEstado(uid: string, estado: Perfil["estado"]) {
 
 export function actualizarFoto(uid: string, foto: string | null) {
   return updateDoc(doc(db, "usuarios", uid), { foto: foto ?? deleteField() });
-}
-
-export async function guardarNombreRegistro(usuario: User, nombre: string) {
-  const referencia = await asegurarPerfil(usuario);
-  await updateDoc(referencia, { nombre: capitalizarNombre(nombre).slice(0, 120) });
 }

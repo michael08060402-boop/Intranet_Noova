@@ -16,7 +16,7 @@ export default function AccesoPorRol({ rol, children }: { rol: "alumno" | "admin
   useEffect(() => {
     if (cargando || error) return;
     if (!usuario?.emailVerified) router.replace("/");
-    else if (perfil && perfil.rol !== rol) router.replace(perfil.rol === "admin" ? "/admin" : "/alumno");
+    else if (perfil && perfil.rol !== rol) window.location.replace(perfil.rol === "admin" ? "/admin" : "/alumno");
   }, [usuario, perfil, cargando, error, rol, router]);
 
   async function salir() {
