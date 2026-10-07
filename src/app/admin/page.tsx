@@ -6,7 +6,7 @@ import { BookOpen, ChartColumn, ChevronRight, ClipboardCheck, Clock, FileText, L
 import { escucharCategorias, escucharCursos, type Categoria, type Curso } from "@/firebase/cursos";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { escucharAlumnos, type Alumno } from "@/firebase/perfiles";
-import { escucharTickets } from "@/firebase/tickets";
+import { escucharTickets, ticketPendiente } from "@/firebase/tickets";
 import "./PanelAdmin.css";
 
 const metricas = [
@@ -51,7 +51,7 @@ export default function PanelAdmin() {
   }, []);
 
   useEffect(() => escucharTickets(
-    (tickets) => setPorResponder(tickets.filter((ticket) => (ticket.uid === uid ? ticket.sinLeer : ticket.estado === "abierto")).length),
+    (tickets) => setPorResponder(tickets.filter((ticket) => ticketPendiente(ticket, uid)).length),
     () => setPorResponder(0),
   ), [uid]);
 

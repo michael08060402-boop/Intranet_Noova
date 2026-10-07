@@ -324,8 +324,9 @@ service cloud.firestore {
       allow get: if esPropietario(uid) || esAdministrador();
       allow list: if esAdministrador();
 
-      // El registro crea siempre un alumno gratis, incluso antes de verificar el correo.
+      // El perfil se crea como alumno gratis recién con el correo verificado.
       allow create: if esPropietario(uid)
+        && correoVerificado()
         && perfilValido(request.resource.data)
         && request.resource.data.correo == request.auth.token.email
         && request.resource.data.rol == 'alumno'
@@ -369,7 +370,7 @@ service cloud.firestore {
         allow delete: if false;
       }
 
-      // Las crea el administrador (por ejemplo, al publicar una nota); el alumno solo las marca como leídas.
+      // Las crea el administrador (por ejemplo, al publicar una nota); el alumno las marca como leídas o las borra.
       match /notificaciones/{notificacionId} {
         allow get, list: if esPropietario(uid) && esAlumnoVerificado();
 
@@ -380,7 +381,7 @@ service cloud.firestore {
           && request.resource.data.leida is bool
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['leida']);
 
-        allow delete: if false;
+        allow delete: if esPropietario(uid) && esAlumnoVerificado();
       }
 
       // Inscripción en un curso publicado; un curso premium exige el plan premium.
@@ -587,8 +588,9 @@ service cloud.firestore {
       allow update: if perfilActivo()
         && resource.data.uid == request.auth.uid
         && resource.data.estado != 'cerrado'
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'actualizadoEn'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'cerradoPor', 'actualizadoEn'])
         && request.resource.data.estado == 'cerrado'
+        && request.resource.data.cerradoPor == 'usuario'
         && request.resource.data.actualizadoEn == request.time;
 
       // Soporte responde (deja el ticket como respondido y avisa al dueño).
@@ -603,11 +605,12 @@ service cloud.firestore {
 
       // Soporte cierra o reabre.
       allow update: if esAdministrador()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'actualizadoEn'])
-        && request.resource.data.estado in ['abierto', 'cerrado']
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'cerradoPor', 'actualizadoEn'])
+        && ((request.resource.data.estado == 'cerrado' && request.resource.data.cerradoPor == 'soporte')
+          || (request.resource.data.estado == 'abierto' && !('cerradoPor' in request.resource.data)))
         && request.resource.data.actualizadoEn == request.time;
 
-      allow delete: if false;
+      allow delete: if esAdministrador() && resource.data.estado == 'cerrado';
     }
 
     match /{documento=**} {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { sendEmailVerification, signOut, type User } from "firebase/auth";
 import { auth } from "@/firebase/config";
@@ -11,6 +11,18 @@ export default function VerificacionCorreo({ usuario }: { usuario: User }) {
   const router = useRouter();
   const [aviso, setAviso] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const intervalo = setInterval(async () => {
+      try {
+        await usuario.reload();
+        if (!usuario.emailVerified) return;
+        clearInterval(intervalo);
+        await usuario.getIdToken(true);
+      } catch {}
+    }, 4000);
+    return () => clearInterval(intervalo);
+  }, [usuario]);
 
   async function reenviar() {
     setAviso("");

@@ -47,6 +47,31 @@
   color: var(--texto-suave);
   font-size: 12px;
 }
+.reportes__avance {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 160px;
+}
+.reportes__barra {
+  flex: 1;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e6edf3;
+}
+.reportes__barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--acento);
+}
+.reportes__avance small {
+  min-width: 40px;
+  color: var(--texto-suave);
+  font-size: 12px;
+  text-align: right;
+}
 @media (max-width: 1150px) {
   .reportes__kpis {
     grid-template-columns: repeat(2, minmax(0, 1fr));

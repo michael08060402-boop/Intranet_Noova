@@ -5,14 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "firebase/auth";
-import { Bell, BookOpen, Calculator, ChevronDown, ClipboardCheck, Compass, Crown, House, LogOut, Menu, UserRound, X } from "lucide-react";
+import { Bell, BookOpen, Calculator, ChevronDown, ClipboardCheck, Compass, Crown, House, LifeBuoy, LogOut, Menu, UserRound, X } from "lucide-react";
 import logoNoova from "@/assets/marca/noova.webp";
 import AccesoPorRol from "@/components/acceso/AccesoPorRol";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import Ondas from "@/components/alumno/Ondas";
 import PiePagina from "@/components/alumno/PiePagina";
 import { auth } from "@/firebase/config";
-import { escucharNotificaciones, marcarLeidas, type Notificacion } from "@/firebase/notificaciones";
+import { borrarNotificaciones, escucharNotificaciones, marcarLeidas, type Notificacion } from "@/firebase/notificaciones";
 import { capitalizarNombre } from "@/firebase/perfiles";
 import { escucharTicketsDe } from "@/firebase/tickets";
 import { herramientas } from "./herramientas/lista";
@@ -28,6 +28,7 @@ const enlaces = [
 const opcionesCuenta = [
   { href: "/alumno/perfil", etiqueta: "Mi perfil", Icono: UserRound },
   { href: "/alumno/premium", etiqueta: "Planes", Icono: Crown },
+  { href: "/alumno/soporte", etiqueta: "Soporte", Icono: LifeBuoy },
 ];
 
 const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
@@ -50,6 +51,10 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
   useEffect(() => (uid ? escucharTicketsDe(uid, (tickets) => setRespuestasNuevas(tickets.filter((ticket) => ticket.sinLeer).length), () => setRespuestasNuevas(0)) : undefined), [uid]);
 
   const enHerramientas = ruta.startsWith("/alumno/herramientas");
+
+  function borrar(ids: string[]) {
+    if (uid) borrarNotificaciones(uid, ids).catch(() => {});
+  }
 
   function ubicarMenuHerramientas() {
     const boton = botonHerramientas.current?.getBoundingClientRect();
@@ -141,7 +146,10 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
             if (evento.newState === "closed" && uid && sinLeer.length > 0) marcarLeidas(uid, sinLeer.map((aviso) => aviso.id)).catch(() => {});
           }}
         >
-          <h2>Notificaciones</h2>
+          <div className="alumno-avisos__cabecera">
+            <h2>Notificaciones</h2>
+            {avisos.length > 0 && <button type="button" onClick={() => borrar(avisos.map((aviso) => aviso.id))}>Borrar todas</button>}
+          </div>
           {avisos.length === 0 ? <p className="alumno-avisos__vacio">Aún no tienes notificaciones.</p> : (
             <ul>
               {avisos.map((aviso) => (
@@ -151,6 +159,9 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
                     {aviso.texto && <span>{aviso.texto}</span>}
                     <small>{formatoFecha.format(aviso.creadoEn)}</small>
                   </Link>
+                  <button type="button" className="alumno-avisos__borrar" aria-label={`Borrar notificación: ${aviso.titulo}`} title="Borrar" onClick={() => borrar([aviso.id])}>
+                    <X />
+                  </button>
                 </li>
               ))}
             </ul>
@@ -180,6 +191,7 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
             <Link key={href} href={href} onClick={() => menuCuenta.current?.hidePopover()}>
               <Icono />
               {etiqueta}
+              {href === "/alumno/soporte" && respuestasNuevas > 0 && <span className="alumno-menu-cuenta__nuevas" aria-label={`${respuestasNuevas} sin leer`}>{respuestasNuevas}</span>}
             </Link>
           ))}
           <button

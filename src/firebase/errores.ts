@@ -9,7 +9,9 @@ const mensajes: Record<string, string> = {
     "El navegador bloqueó la ventana de Google. Permite las ventanas emergentes e inténtalo de nuevo.",
   "auth/too-many-requests": "Hubo muchos intentos. Espera un momento y vuelve a probar.",
   "auth/unauthorized-domain": "Este dominio no está autorizado en Firebase Authentication.",
-  "auth/weak-password": "La contraseña debe tener al menos 6 caracteres.",
+  "auth/weak-password": "La contraseña no cumple los requisitos.",
+  "auth/password-does-not-meet-requirements":
+    "La contraseña debe tener al menos 6 caracteres, una mayúscula, un número y un carácter especial.",
 };
 
 export function mensajeDeError(error: unknown) {

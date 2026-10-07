@@ -5,14 +5,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { signOut } from "firebase/auth";
-import { Bell, BookOpen, ChartColumn, ClipboardCheck, LayoutDashboard, LogOut, Users } from "lucide-react";
+import { Bell, BookOpen, ChartColumn, ChevronRight, ClipboardCheck, LayoutDashboard, LifeBuoy, LogOut, Users } from "lucide-react";
 import logoNoova from "@/assets/marca/noova.webp";
 import AccesoPorRol from "@/components/acceso/AccesoPorRol";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { auth } from "@/firebase/config";
-import { escucharIntentos } from "@/firebase/evaluaciones";
+import { escucharIntentos, type Intento } from "@/firebase/evaluaciones";
 import { capitalizarNombre } from "@/firebase/perfiles";
+import { escucharTickets, ticketPendiente, type Ticket } from "@/firebase/tickets";
 import "./AdminLayout.css";
+
+const claveVisto = "admin-pendientes-vistos";
+
+function leerVisto() {
+  try { return Number(localStorage.getItem(claveVisto)) || 0; }
+  catch { return 0; }
+}
 
 const enlaces = [
   { href: "/admin", etiqueta: "Dashboard", Icono: LayoutDashboard },
@@ -24,12 +32,38 @@ const enlaces = [
 
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   const ruta = usePathname();
-  const { perfil } = useSesion();
+  const { perfil, usuario } = useSesion();
   const confirmarSalida = useRef<HTMLDialogElement>(null);
+  const panelPendientes = useRef<HTMLDivElement>(null);
   const nombre = capitalizarNombre(perfil?.nombre.split(" ")[0] || "Administrador");
-  const [porCalificar, setPorCalificar] = useState(0);
+  const uid = usuario?.uid;
+  const [entregas, setEntregas] = useState<Intento[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [vistoHasta, setVistoHasta] = useState(leerVisto);
 
-  useEffect(() => escucharIntentos("entregado", (intentos) => setPorCalificar(intentos.length), () => setPorCalificar(0)), []);
+  const esAdmin = perfil?.rol === "admin" && perfil.estado === "activo";
+
+  useEffect(() => (esAdmin ? escucharIntentos("entregado", setEntregas, () => setEntregas([])) : undefined), [esAdmin]);
+  useEffect(() => (esAdmin ? escucharTickets(
+    (lista) => setTickets(lista.filter((ticket) => ticketPendiente(ticket, uid))),
+    () => setTickets([]),
+  ) : undefined), [esAdmin, uid]);
+
+  const porCalificar = entregas.length;
+  const porResponder = tickets.length;
+  const nuevos = entregas.filter((intento) => (intento.fin ?? intento.inicio) > vistoHasta).length
+    + tickets.filter((ticket) => ticket.actualizadoEn > vistoHasta).length;
+
+  function marcarVisto() {
+    const ahora = Date.now();
+    setVistoHasta(ahora);
+    try { localStorage.setItem(claveVisto, String(ahora)); } catch {}
+  }
+
+  const avisos = [
+    { cantidad: porCalificar, texto: porCalificar === 1 ? "entrega por calificar" : "entregas por calificar", href: "/admin/evaluaciones", Icono: ClipboardCheck },
+    { cantidad: porResponder, texto: porResponder === 1 ? "ticket por responder" : "tickets por responder", href: "/admin/soporte", Icono: LifeBuoy },
+  ].filter((aviso) => aviso.cantidad > 0);
 
   return (
     <AccesoPorRol rol="admin">
@@ -60,15 +94,16 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
             })}
           </nav>
           <div className="admin-header__actions">
-            <Link
-              href="/admin/evaluaciones"
+            <button
+              type="button"
               className="admin-header__campana"
-              aria-label={porCalificar > 0 ? `${porCalificar} entregas por calificar` : "Notificaciones: no hay entregas por calificar"}
-              title={porCalificar > 0 ? `${porCalificar} entregas por calificar` : "No hay entregas por calificar"}
+              popoverTarget="admin-pendientes"
+              aria-label={nuevos > 0 ? `Pendientes: ${nuevos} nuevos` : "Pendientes"}
+              title="Pendientes"
             >
               <Bell />
-              {porCalificar > 0 && <span>{porCalificar > 99 ? "99+" : porCalificar}</span>}
-            </Link>
+              {nuevos > 0 && <span>{nuevos > 99 ? "99+" : nuevos}</span>}
+            </button>
             <span className="admin-header__avatar">{nombre.charAt(0).toUpperCase()}</span>
             <span className="admin-header__identity">
               {nombre}
@@ -83,6 +118,29 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
             >
               <LogOut />
             </button>
+          </div>
+          <div
+            id="admin-pendientes"
+            ref={panelPendientes}
+            popover="auto"
+            className="admin-pendientes"
+            aria-label="Pendientes"
+            onToggle={(evento) => { if (evento.newState === "open") marcarVisto(); }}
+          >
+            <h2>Pendientes</h2>
+            {avisos.length === 0 ? <p>No tienes pendientes.</p> : (
+              <ul>
+                {avisos.map(({ cantidad, texto, href, Icono }) => (
+                  <li key={href}>
+                    <Link href={href} onClick={() => panelPendientes.current?.hidePopover()}>
+                      <Icono />
+                      <span><strong>{cantidad}</strong> {texto}</span>
+                      <ChevronRight />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <dialog ref={confirmarSalida} className="admin-logout" aria-labelledby="admin-logout-title">
             <h2 id="admin-logout-title">¿Cerrar sesión?</h2>

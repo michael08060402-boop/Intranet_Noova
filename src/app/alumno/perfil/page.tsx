@@ -8,7 +8,7 @@ import { Camera, CircleCheck, Crown, KeyRound, ShieldCheck, Trash2, UserRound } 
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { TituloPagina } from "@/components/alumno/PiezasCatalogo";
 import { auth } from "@/firebase/config";
-import { actualizarFoto, actualizarNombre, capitalizarNombre } from "@/firebase/perfiles";
+import { actualizarFoto, actualizarNombre, capitalizarNombre, validarNombre } from "@/firebase/perfiles";
 import "./Perfil.css";
 
 const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "long", year: "numeric" });
@@ -60,7 +60,8 @@ export default function Perfil() {
   async function guardar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
     if (!usuario) return;
-    if (valorNombre.trim().length < 2) return setError("El nombre debe tener al menos 2 caracteres.");
+    const problemaNombre = validarNombre(`${valorNombre} ${valorApellidos}`);
+    if (problemaNombre) return setError(problemaNombre);
     setGuardando(true);
     setError("");
     setMensaje("");

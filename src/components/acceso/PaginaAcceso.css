@@ -151,6 +151,41 @@
   cursor: pointer;
 }
 
+.acceso-reglas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 12px;
+  margin-top: -4px;
+  list-style: none;
+}
+
+.acceso-reglas li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #60758a;
+  font-size: 12px;
+}
+
+.acceso-reglas li.is-cumplida {
+  color: #16734a;
+}
+
+.acceso-reglas svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.acceso-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .acceso-options {
   display: flex;
   justify-content: flex-end;
@@ -190,7 +225,7 @@
 
 .acceso-submit:disabled,
 .acceso-google:disabled {
-  cursor: wait;
+  cursor: not-allowed;
   opacity: 0.7;
 }
 
@@ -333,6 +368,10 @@
 
   .acceso-card {
     border-radius: 18px;
+  }
+
+  .acceso-reglas {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

@@ -35,8 +35,8 @@ export default function SesionProvider({ children }: { children: ReactNode }) {
       const actual = ++version;
       dejarPerfil?.();
       clearTimeout(espera);
-      setSesion({ usuario, perfil: null, cargando: !!usuario, error: "" });
-      if (!usuario) return;
+      setSesion({ usuario, perfil: null, cargando: !!usuario?.emailVerified, error: "" });
+      if (!usuario?.emailVerified) return;
       function fallo() {
         if (actual !== version) return;
         clearTimeout(espera);

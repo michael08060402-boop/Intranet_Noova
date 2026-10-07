@@ -11,11 +11,11 @@ import {
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
-import { Eye } from "lucide-react";
+import { Check, Circle, Eye } from "lucide-react";
 import iconoGoogle from "@/assets/marca/google.svg";
 import { auth } from "@/firebase/config";
 import { mensajeDeError } from "@/firebase/errores";
-import { guardarNombreRegistro } from "@/firebase/perfiles";
+import { validarNombre } from "@/firebase/perfiles";
 
 type Modo = "entrar" | "registrar" | "recuperar";
 
@@ -31,6 +31,13 @@ const textosBoton = {
   recuperar: "Enviar enlace",
 };
 
+const reglasClave = [
+  { texto: "Al menos 6 caracteres", cumple: (clave: string) => clave.length >= 6 },
+  { texto: "Una mayúscula", cumple: (clave: string) => /\p{Lu}/u.test(clave) },
+  { texto: "Un número", cumple: (clave: string) => /\d/.test(clave) },
+  { texto: "Un carácter especial (!@#$%…)", cumple: (clave: string) => /[^\p{L}\d\s]/u.test(clave) },
+];
+
 export default function FormularioAcceso() {
   const [modo, setModo] = useState<Modo>("entrar");
   const [enviando, setEnviando] = useState(false);
@@ -40,6 +47,7 @@ export default function FormularioAcceso() {
   const [clave, setClave] = useState("");
   const [error, setError] = useState("");
   const [aviso, setAviso] = useState("");
+  const claveSegura = reglasClave.every((regla) => regla.cumple(clave));
 
   function cambiarModo(nuevoModo: Modo) {
     setModo(nuevoModo);
@@ -51,6 +59,8 @@ export default function FormularioAcceso() {
     evento.preventDefault();
     setError("");
     setAviso("");
+    const problemaNombre = modo === "registrar" ? validarNombre(nombre) : "";
+    if (problemaNombre) return setError(problemaNombre);
     setEnviando(true);
 
     try {
@@ -61,7 +71,6 @@ export default function FormularioAcceso() {
         const credencial = await createUserWithEmailAndPassword(auth, correo.trim(), clave);
         await updateProfile(credencial.user, { displayName: nombre.trim() });
         await sendEmailVerification(credencial.user);
-        await guardarNombreRegistro(credencial.user, nombre);
       } else {
         await signInWithEmailAndPassword(auth, correo.trim(), clave);
       }
@@ -124,7 +133,8 @@ export default function FormularioAcceso() {
                 minLength={6}
                 value={clave}
                 onChange={(evento) => setClave(evento.target.value)}
-                placeholder={modo === "registrar" ? "Mínimo 6 caracteres" : "Ingresa tu contraseña"}
+                placeholder={modo === "registrar" ? "Crea una contraseña segura" : "Ingresa tu contraseña"}
+                aria-describedby={modo === "registrar" ? "acceso-reglas" : undefined}
                 required
               />
               <button
@@ -137,6 +147,20 @@ export default function FormularioAcceso() {
               </button>
             </span>
           </label>
+        )}
+        {modo === "registrar" && (
+          <ul id="acceso-reglas" className="acceso-reglas" aria-label="Requisitos de la contraseña">
+            {reglasClave.map(({ texto, cumple }) => {
+              const cumplida = cumple(clave);
+              return (
+                <li key={texto} className={cumplida ? "is-cumplida" : ""}>
+                  {cumplida ? <Check aria-hidden /> : <Circle aria-hidden />}
+                  {texto}
+                  {cumplida && <span className="acceso-oculto"> (cumplido)</span>}
+                </li>
+              );
+            })}
+          </ul>
         )}
 
         {modo === "entrar" && (
@@ -156,7 +180,7 @@ export default function FormularioAcceso() {
             {aviso}
           </p>
         )}
-        <button className="acceso-submit" type="submit" disabled={enviando}>
+        <button className="acceso-submit" type="submit" disabled={enviando || (modo === "registrar" && !claveSegura)}>
           {enviando ? "Un momento…" : textosBoton[modo]}
         </button>
       </form>

@@ -1,5 +1,5 @@
 import type { User } from "firebase/auth";
-import { arrayUnion, collection, doc, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where, writeBatch, type DocumentData } from "firebase/firestore";
+import { arrayUnion, collection, deleteDoc, deleteField, doc, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where, writeBatch, type DocumentData } from "firebase/firestore";
 import { db } from "./config";
 import { nuevaNotificacion } from "./notificaciones";
 import type { Perfil } from "./perfiles";
@@ -19,6 +19,7 @@ export type Ticket = {
   estado: EstadoTicket;
   mensajes: Mensaje[];
   sinLeer: boolean;
+  cerradoPor?: "usuario" | "soporte";
   creadoEn: number;
   actualizadoEn: number;
 };
@@ -39,10 +40,13 @@ function leerTicket(id: string, datos: DocumentData): Ticket {
     estado: datos.estado,
     mensajes: datos.mensajes,
     sinLeer: datos.sinLeer,
+    cerradoPor: datos.cerradoPor,
     creadoEn: datos.creadoEn?.toMillis() ?? Date.now(),
     actualizadoEn: datos.actualizadoEn?.toMillis() ?? Date.now(),
   };
 }
+
+export const ticketPendiente = (ticket: Ticket, uid: string | undefined) => ticket.estado === "abierto" || (ticket.uid === uid && ticket.sinLeer);
 
 function ordenar(tickets: Ticket[]) {
   return tickets.sort((a, b) => b.actualizadoEn - a.actualizadoEn);
@@ -102,8 +106,16 @@ export async function responderComoSoporte(ticket: Ticket, autor: string, texto:
   await lote.commit();
 }
 
-export function cambiarEstadoTicket(id: string, estado: "abierto" | "cerrado") {
-  return updateDoc(doc(db, "tickets", id), { estado, actualizadoEn: serverTimestamp() });
+export function cerrarTicket(id: string, por: "usuario" | "soporte") {
+  return updateDoc(doc(db, "tickets", id), { estado: "cerrado", cerradoPor: por, actualizadoEn: serverTimestamp() });
+}
+
+export function reabrirTicket(id: string) {
+  return updateDoc(doc(db, "tickets", id), { estado: "abierto", cerradoPor: deleteField(), actualizadoEn: serverTimestamp() });
+}
+
+export function eliminarTicket(id: string) {
+  return deleteDoc(doc(db, "tickets", id));
 }
 
 export function marcarTicketLeido(id: string) {
