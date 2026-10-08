@@ -3,6 +3,7 @@ import {
   collection,
   collectionGroup,
   deleteDoc,
+  deleteField,
   doc,
   getCountFromServer,
   getDoc,
@@ -16,7 +17,8 @@ import {
   type DocumentData,
 } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
-import { db, funciones } from "./config";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { db, funciones, almacenamiento } from "./config";
 
 export type Nivel = "basico" | "intermedio" | "avanzado";
 export type Acceso = "gratis" | "premium";
@@ -32,6 +34,7 @@ export type Curso = {
   acceso: Acceso;
   publicado: boolean;
   creadoEn: number;
+  portadaKey?: string;
 };
 
 export type Clase = { id: string; nombre: string; descripcion: string; orden: number; publicado: boolean };
@@ -52,6 +55,7 @@ function leerCurso(id: string, datos: DocumentData): Curso {
     acceso: datos.acceso,
     publicado: datos.publicado,
     creadoEn: datos.creadoEn?.toMillis() ?? Date.now(),
+    portadaKey: datos.portadaKey,
   };
 }
 
@@ -102,7 +106,7 @@ export function actualizarCurso(id: string, datos: Partial<DatosCurso>) {
 }
 
 export function eliminarCurso(id: string) {
-  return deleteDoc(doc(db, "cursos", id));
+  return httpsCallable<{ cursoId: string }, { eliminado: boolean }>(funciones, "eliminarContenidoAdmin")({ cursoId: id });
 }
 
 export function escucharClases(cursoId: string, soloPublicadas: boolean, alCambiar: (clases: Clase[]) => void, alFallar: () => void) {
@@ -126,10 +130,10 @@ export function actualizarClase(cursoId: string, claseId: string, datos: Partial
 }
 
 export function eliminarClase(cursoId: string, claseId: string) {
-  return deleteDoc(doc(db, "cursos", cursoId, "clases", claseId));
+  return httpsCallable<{ cursoId: string; claseId: string }, { eliminado: boolean }>(funciones, "eliminarContenidoAdmin")({ cursoId, claseId });
 }
 
-export type VideoClase = { ruta: string; acceso: Acceso };
+export type VideoClase = { ruta: string; acceso: Acceso; portadaKey?: string };
 
 function referenciaVideo(cursoId: string, claseId: string) {
   return doc(db, "cursos", cursoId, "clases", claseId, "contenidos", "video");
@@ -137,7 +141,7 @@ function referenciaVideo(cursoId: string, claseId: string) {
 
 export async function leerVideoClase(cursoId: string, claseId: string): Promise<VideoClase | null> {
   const documento = await getDoc(referenciaVideo(cursoId, claseId));
-  return documento.exists() ? { ruta: documento.data().ruta, acceso: documento.data().acceso } : null;
+  return documento.exists() ? { ruta: documento.data().ruta, acceso: documento.data().acceso, portadaKey: documento.data().portadaKey } : null;
 }
 
 export async function guardarVideoClase(cursoId: string, claseId: string, video: VideoClase | null) {
@@ -149,10 +153,16 @@ export async function guardarVideoClase(cursoId: string, claseId: string, video:
 }
 
 export async function pedirVideo(cursoId: string, claseId: string) {
-  const resultado = await httpsCallable<{ cursoId: string; claseId: string }, { url: string }>(funciones, "obtenerVideo")({ cursoId, claseId });
-  return resultado.data.url;
+  const resultado = await httpsCallable<{ cursoId: string; claseId: string }, { url: string; miniatura: string | null; portadaKey: string | null; portadaCursoKey: string | null }>(funciones, "obtenerVideo")({ cursoId, claseId });
+  const datos = resultado.data;
+  async function resolver(key: string | null) {
+    if (!key) return undefined;
+    try { return await obtenerPortadaCurso(key); } catch { return undefined; }
+  }
+  const respaldo = await resolver(datos.portadaCursoKey);
+  const poster = await resolver(datos.portadaKey) ?? datos.miniatura ?? respaldo;
+  return { url: datos.url, poster, respaldo, personalizada: Boolean(datos.portadaKey) };
 }
-
 export function escucharInscripciones(uid: string, alCambiar: (cursoIds: string[]) => void, alFallar: () => void) {
   return onSnapshot(collection(db, "usuarios", uid, "inscripciones"), (resultado) => {
     alCambiar(resultado.docs.map((documento) => documento.id));
@@ -212,4 +222,73 @@ export async function listarInscritos(cursoId: string): Promise<Inscrito[]> {
 export async function contarClasesPublicadas(cursoId: string) {
   const resultado = await getCountFromServer(query(collection(db, "cursos", cursoId, "clases"), where("publicado", "==", true)));
   return resultado.data().count;
+}
+
+export async function subirVideoClase(cursoId: string, claseId: string, archivo: File, acceso: Acceso, progreso: (porcentaje: number) => void) {
+  if (!/\.(mp4|webm)$/i.test(archivo.name) || archivo.size <= 0 || archivo.size > 10 * 1024 ** 3) throw new Error("Selecciona un video MP4 o WebM de hasta 10 GB.");
+  const iniciar = httpsCallable<{ cursoId: string; claseId: string; nombre: string; tamano: number; acceso: Acceso }, { subidaId: string; uploadUrl: string }>(funciones, "iniciarSubidaVideo");
+  const { data } = await iniciar({ cursoId, claseId, nombre: archivo.name, tamano: archivo.size, acceso });
+  const bloque = 10 * 320 * 1024;
+  for (let inicio = 0; inicio < archivo.size; inicio += bloque) {
+    const fin = Math.min(inicio + bloque, archivo.size);
+    // La URL de sesión ya autoriza la carga; no se envían tokens de Microsoft.
+    const respuesta = await fetch(data.uploadUrl, {
+      method: "PUT", headers: { "Content-Range": `bytes ${inicio}-${fin - 1}/${archivo.size}` }, body: archivo.slice(inicio, fin),
+    });
+    if (![200, 201, 202].includes(respuesta.status)) throw new Error("La subida se interrumpió. Guarda la clase y vuelve a seleccionar el video para reintentar.");
+    if (fin === archivo.size && respuesta.status === 202) throw new Error("Microsoft todavía no confirmó el archivo. Reintenta la subida.");
+    progreso(Math.round(fin / archivo.size * 100));
+  }
+  const confirmar = httpsCallable<{ subidaId: string }, { ruta: string }>(funciones, "confirmarSubidaVideo");
+  return (await confirmar({ subidaId: data.subidaId })).data.ruta;
+}
+
+export type ArchivoMicrosoft = { nombre: string; carpeta: boolean; ruta: string };
+export async function listarVideosMicrosoft(carpeta = "", pagina = "") {
+  const listar = httpsCallable<{ carpeta: string; pagina: string }, { elementos: ArchivoMicrosoft[]; siguiente: string | null }>(funciones, "listarVideosMicrosoft");
+  return (await listar({ carpeta, pagina })).data;
+}
+
+async function subirImagen(key: string, archivo: File, progreso?: (porcentaje: number) => void) {
+  if (!["image/jpeg", "image/png", "image/webp"].includes(archivo.type) || archivo.size <= 0 || archivo.size > 5 * 1024 ** 2) throw new Error("Selecciona una imagen JPG, PNG o WebP de hasta 5 MB.");
+  const portadaKey = key;
+  const tarea = uploadBytesResumable(ref(almacenamiento, portadaKey), archivo, { contentType: archivo.type });
+  await new Promise<void>((resolve, reject) => {
+    let vencida = false;
+    const limite = setTimeout(() => {
+      vencida = true;
+      tarea.cancel();
+      reject(new Error("La portada no pudo subir en 45 segundos. Revisa que Firebase Storage esté habilitado y sus reglas publicadas. El curso queda como borrador; puedes reintentar o guardar sin imagen."));
+    }, 45_000);
+    tarea.on("state_changed", (estado) => progreso?.(Math.round(estado.bytesTransferred / estado.totalBytes * 100)), (error) => {
+      clearTimeout(limite);
+      if (vencida) return;
+      const mensaje = error.code === "storage/unauthorized"
+        ? "No tienes permiso para subir la portada. Revisa las reglas de Firebase Storage."
+        : error.code === "storage/bucket-not-found"
+          ? "Firebase Storage no está habilitado en este proyecto."
+          : "No se pudo subir la portada. Revisa Storage y tu conexión; puedes guardar sin imagen.";
+      reject(new Error(mensaje));
+    }, () => { clearTimeout(limite); resolve(); });
+  });
+
+}
+export function obtenerPortadaCurso(portadaKey: string) {
+  return getDownloadURL(ref(almacenamiento, portadaKey));
+}
+export async function subirPortadaCurso(cursoId: string, archivo: File, progreso?: (porcentaje: number) => void) {
+  await subirImagen(`portadas/${cursoId}`, archivo, progreso);
+  await actualizarCurso(cursoId, { portadaKey: `portadas/${cursoId}` });
+}
+export async function subirPortadaVideo(cursoId: string, claseId: string, archivo: File) {
+  const portadaKey = `portadas-clases/${cursoId}/${claseId}`;
+  await subirImagen(portadaKey, archivo);
+  await updateDoc(referenciaVideo(cursoId, claseId), { portadaKey, actualizadoEn: serverTimestamp() });
+}
+export async function usarPortadaAutomatica(cursoId: string, claseId: string) {
+  await updateDoc(referenciaVideo(cursoId, claseId), { portadaKey: deleteField(), actualizadoEn: serverTimestamp() });
+}
+export async function previsualizarVideoMicrosoft(cursoId: string, ruta: string) {
+  const consultar = httpsCallable<{ cursoId: string; ruta: string }, { url: string }>(funciones, "previsualizarVideoMicrosoft");
+  return (await consultar({ cursoId, ruta })).data.url;
 }

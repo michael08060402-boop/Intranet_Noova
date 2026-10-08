@@ -4,10 +4,10 @@ Lo que falta, ordenado por lo que lo desbloquea. Más detalle técnico en `DECIS
 
 ## 1. Lo que impide avanzar (depende de Luis o de Noova)
 
-1. **Activar el plan Blaze de Firebase** y poner una alerta de presupuesto en Google Cloud. Sin Blaze no se puede publicar la función de videos.
-2. **Entra y SharePoint:** crear (o reutilizar la del ERP) la aplicación, conceder `Sites.Selected` sobre la biblioteca y obtener los ids. Pasos en `VIDEOS_SHAREPOINT.md`.
-3. **Desplegar:** `firebase deploy --only functions,firestore:rules,firestore:indexes --project noova-intranet`. Sin las reglas e índices nuevos no funcionan la inscripción, el avance ni la lista de inscritos de cada curso.
-4. **Probar un video real** de punta a punta (subir MP4 720p, asignarlo a una clase, verlo como alumno gratis y premium).
+1. **Habilitar permisos en noova-intranet:** Storage debe poder consultar Firestore y la cuenta de servicio de Functions debe leer MICROSOFT_CLIENT_SECRET. Ver [ENTREGA_PROPIETARIO.md](ENTREGA_PROPIETARIO.md).
+2. **Confirmar facturación y permisos de publicación:** la aplicación de Entra compartida con el ERP y los IDs ya están identificados; no crear otra integración ni modificar el ERP.
+3. **Publicar la intranet:** reglas actuales, tres funciones del flujo de videos y Hosting, siguiendo la guía de entrega. El propietario habilita IAM; quien tenga permisos puede publicar.
+4. **Prueba completa en web.app:** portada de curso, explorador, previsualización, fotograma y reproducción como alumno. Lectura de Microsoft y selección local ya confirmadas; no equivale a producción validada.
 5. **Decisión de pagos:** Culqi real o plan manual en esta versión (conversar con el Ing. Alfredo).
 6. **Certificados:** Luis consulta si Noova puede emitirlos. Si se aprueba, definir quién firma, vencimiento, formato (PDF con código de verificación) y nota mínima.
 
@@ -35,7 +35,7 @@ Lo que falta, ordenado por lo que lo desbloquea. Más detalle técnico en `DECIS
 - **Exámenes en PDF o Word:** requieren definir dónde se guardan los archivos (SharePoint, por la misma función de Firebase).
 - **Calificación inmediata** con una Cloud Function que lea la clave al entregar.
 - **Correos:** las notificaciones son solo dentro de la plataforma; enviar correo requiere backend.
-- **Subida de videos desde el panel** (sesión de subida de Graph) y vista previa del video para el administrador.
+- **Subida de videos desde el equipo:** backend de sesiones preparado, fuera del flujo actual. El explorador de videos existentes y la previsualización del administrador ya están implementados.
 - **Asignación de cursos** a alumnos o empresas (hoy todos ven lo publicado según su plan).
 - **Herramientas por curso:** hoy el administrador solo activa o desactiva las calculadoras por examen; se puede elegir cuáles.
 - **Más herramientas:** cálculo de PUMA, fajas transportadoras y otras que pida el curso.

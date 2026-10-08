@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "emulador:videos": "npm --prefix functions run build && firebase emulators:start --only functions --project noova-intranet",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

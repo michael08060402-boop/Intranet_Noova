@@ -2,14 +2,14 @@
 
 Intranet de capacitación minera de Contratistas Generales Noova S.A.C. (Noova Consulting). Alumnos y administradores acceden con correo o Google; los cursos se gestionan desde el panel de administración.
 
-Estado actual: funcionan el acceso, la gestión de cursos y categorías, los exámenes (creación, rendición y calificación), los reportes del administrador, las notificaciones dentro de la plataforma y las calculadoras de ventilación. Lo que falta (conectar los videos con SharePoint, pagos, bloqueo de clases, certificados, correos) está en [`docs/PENDIENTES.md`](docs/PENDIENTES.md).
+Estado actual: funcionan el acceso, la gestión de cursos y categorías, los exámenes (creación, rendición y calificación), los reportes del administrador, las notificaciones dentro de la plataforma y las calculadoras de ventilación. La selección de videos de Microsoft está conectada en local; falta habilitar permisos y publicar la integración. La guía para el propietario está en [`docs/ENTREGA_PROPIETARIO.md`](docs/ENTREGA_PROPIETARIO.md). Lo que falta (publicación, pagos, bloqueo de clases, certificados, correos) está en [`docs/PENDIENTES.md`](docs/PENDIENTES.md).
 
 ## Tecnologías
 
 - Next.js 16 (App Router) con TypeScript, exportado como sitio estático (`output: "export"`).
-- Firebase: Authentication (correo y Google), Firestore y Hosting.
+- Firebase: Authentication (correo y Google), Firestore, Storage, Functions y Hosting.
 - Iconos con `lucide-react`. Estilos en CSS junto a cada página o componente.
-- Videos de las clases: SharePoint (Microsoft Graph) detrás de una Cloud Function de Firebase; ver `docs/VIDEOS_SHAREPOINT.md`. Portadas, fotos y documentos irán a la misma nube de Noova (SharePoint). Culqi (pagos) está planificado; la guía de Firebase está en `docs/FIREBASE_SETUP.md`.
+- Videos de las clases: SharePoint (Microsoft Graph) detrás de una Cloud Function de Firebase; ver `docs/VIDEOS_SHAREPOINT.md`. Las portadas de cursos se guardan en Firebase Storage y sus referencias en Firestore. Culqi (pagos) está planificado; la guía de Firebase está en `docs/FIREBASE_SETUP.md`.
 
 ## Puesta en marcha
 

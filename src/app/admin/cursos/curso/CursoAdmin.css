@@ -526,3 +526,24 @@
 .clase-modal select:hover {
   border-color: #8c8c8c;
 }
+
+.videos-microsoft { display: grid; gap: 10px; margin-block: 16px; }
+.videos-microsoft p { margin: 0; overflow-wrap: anywhere; }
+.videos-microsoft button { padding: 10px 12px; border: 1px solid #d6d6d6; border-radius: 8px; background: white; color: #222; cursor: pointer; text-align: left; }
+.videos-microsoft button:disabled { opacity: .6; cursor: wait; }
+.videos-microsoft__explorador { padding: 12px; border: 1px solid #ddd; border-radius: 10px; max-height: 320px; overflow-y: auto; display: grid; gap: 10px; }
+.videos-microsoft__explorador ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.videos-microsoft__explorador li button { width: 100%; overflow-wrap: anywhere; }
+
+.clase-modal { max-height: 92dvh; overflow-y: auto; }
+.clase-modal--con-video { width: min(96vw, 1200px); }
+.clase-modal__layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 18px; }
+.clase-modal--con-video .clase-modal__layout { grid-template-columns: minmax(280px, .85fr) minmax(0, 1.35fr); align-items: start; }
+.clase-modal__layout form { min-width: 0; }
+.clase-modal__preview { min-width: 0; position: sticky; top: 0; padding: 18px; border-radius: 14px; background: #f3f6f8; }
+.clase-modal__preview .videos-microsoft { margin: 0; }
+.clase-modal__preview video { display: block; }
+@media (max-width: 760px) {
+  .clase-modal--con-video .clase-modal__layout { grid-template-columns: minmax(0, 1fr); }
+  .clase-modal__preview { position: static; padding: 12px; }
+}

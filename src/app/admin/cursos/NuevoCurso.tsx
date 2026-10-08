@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { X } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
-import { actualizarCurso, crearCurso, nombresNivel, type Acceso, type Categoria, type Curso, type Nivel } from "@/firebase/cursos";
+import { actualizarCurso, crearCurso, subirPortadaCurso, obtenerPortadaCurso, nombresNivel, type Acceso, type Categoria, type Curso, type Nivel } from "@/firebase/cursos";
 import "./NuevoCurso.css";
 
 export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Curso | null; categorias: Categoria[]; alCerrar: () => void }) {
@@ -17,11 +17,26 @@ export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Cur
   const [nivel, setNivel] = useState<Nivel>(curso?.nivel ?? "basico");
   const [acceso, setAcceso] = useState<Acceso>(curso?.acceso ?? "gratis");
   const [publicado, setPublicado] = useState(curso?.publicado ?? false);
+  const [estadoGuardado, setEstadoGuardado] = useState("");
   const [guardando, setGuardando] = useState(false);
+  const cursoPendiente = useRef<string | null>(null);
+  const [imagen, setImagen] = useState<File | null>(null);
+  const [vistaPrevia, setVistaPrevia] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => { dialogo.current?.showModal(); }, []);
 
+  useEffect(() => {
+    let activo = true;
+    if (imagen) {
+      const url = URL.createObjectURL(imagen);
+      Promise.resolve().then(() => { if (activo) setVistaPrevia(url); });
+      return () => { activo = false; URL.revokeObjectURL(url); };
+    }
+    if (curso?.portadaKey) obtenerPortadaCurso(curso.portadaKey).then((url) => { if (activo) setVistaPrevia(url); }).catch(() => { if (activo) setVistaPrevia(""); });
+    else Promise.resolve().then(() => { if (activo) setVistaPrevia(""); });
+    return () => { activo = false; };
+  }, [imagen, curso?.portadaKey]);
   async function guardar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
     if (!usuario) return;
@@ -30,32 +45,54 @@ export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Cur
     if (!valida) return setError("Selecciona una categoría activa.");
 
     setGuardando(true);
+    setEstadoGuardado("Guardando datos del curso…");
     setError("");
     const datos = { nombre: nombre.trim(), descripcion: descripcion.trim(), categoriaId: categoriaElegida, nivel, acceso, publicado };
     try {
-      if (curso) await actualizarCurso(curso.id, datos);
-      else await crearCurso(datos, usuario.uid);
+      let cursoId = curso?.id ?? cursoPendiente.current;
+      if (!cursoId) {
+        const nuevo = await crearCurso({ ...datos, publicado: false }, usuario.uid);
+        cursoId = nuevo.id; cursoPendiente.current = cursoId;
+      }
+      if (imagen) {
+        setEstadoGuardado("Subiendo portada: 0%");
+        await subirPortadaCurso(cursoId, imagen, (porcentaje) => setEstadoGuardado(`Subiendo portada: ${porcentaje}%`));
+      }
+      setEstadoGuardado("Guardando cambios…");
+      await actualizarCurso(cursoId, datos);
       dialogo.current?.close();
-    } catch {
-      setError("No se pudo guardar el curso. Revisa tu conexión y que tu cuenta sea administradora.");
+    } catch (fallo) {
+      setError(fallo instanceof Error ? fallo.message : "No se pudo guardar el curso. Inténtalo de nuevo.");
+    } finally {
       setGuardando(false);
     }
   }
 
   return (
-    <dialog ref={dialogo} className="nuevo-curso" aria-labelledby="nuevo-curso-titulo" onClose={alCerrar} onClick={(evento) => {
+    <dialog ref={dialogo} className="nuevo-curso" aria-labelledby="nuevo-curso-titulo" onClose={alCerrar} onCancel={(evento) => { if (guardando) evento.preventDefault(); }} onClick={(evento) => {
       if (evento.target !== evento.currentTarget) return;
       const rect = evento.currentTarget.getBoundingClientRect();
       const fuera = evento.clientX < rect.left || evento.clientX > rect.right || evento.clientY < rect.top || evento.clientY > rect.bottom;
-      if (fuera) dialogo.current?.close();
+      if (fuera && !guardando) dialogo.current?.close();
     }}>
       <header className="nuevo-curso__heading">
         <h2 id="nuevo-curso-titulo">{curso ? "Editar curso" : "Crear nuevo curso"}</h2>
-        <button type="button" aria-label="Cerrar modal" onClick={() => dialogo.current?.close()}>
+        <button type="button" disabled={guardando} aria-label="Cerrar modal" onClick={() => dialogo.current?.close()}>
           <X />
         </button>
       </header>
       <form onSubmit={guardar}>
+        <fieldset disabled={guardando} style={{ border: 0, padding: 0, margin: 0, display: "contents" }}>
+        <label className="nuevo-curso__field">
+          <span>Imagen de portada</span>
+          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(evento) => {
+            const archivo = evento.target.files?.[0] ?? null;
+            if (archivo && (!["image/jpeg", "image/png", "image/webp"].includes(archivo.type) || archivo.size > 5 * 1024 ** 2)) { setError("Selecciona JPG, PNG o WebP de hasta 5 MB."); evento.target.value = ""; return; }
+            setImagen(archivo); setError("");
+          }} />
+          <small>JPG, PNG o WebP. Máximo 5 MB.</small>
+          {vistaPrevia && <div style={{ aspectRatio: "16 / 9", borderRadius: 10, background: `url(${JSON.stringify(vistaPrevia)}) center / cover` }} role="img" aria-label="Vista previa de la portada" />}
+        </label>
         <label className="nuevo-curso__field">
           <span>Nombre del curso</span>
           <input value={nombre} onChange={(evento) => setNombre(evento.target.value)} placeholder="Ej. VentSim" required minLength={2} maxLength={120} autoFocus />
@@ -101,11 +138,13 @@ export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Cur
           <label><input type="radio" name="estado" checked={!publicado} onChange={() => setPublicado(false)} /><span>Borrador</span></label>
           <label><input type="radio" name="estado" checked={publicado} onChange={() => setPublicado(true)} /><span>Publicado</span></label>
         </fieldset>
+        {guardando && <p role="status">{estadoGuardado}</p>}
         {error && <p className="nuevo-curso__error" role="alert">{error}</p>}
         <footer className="nuevo-curso__footer">
           <button type="button" onClick={() => dialogo.current?.close()}>Cancelar</button>
           <button type="submit" className="nuevo-curso__submit" disabled={guardando || !categoriaElegida}>{guardando ? "Guardando…" : curso ? "Guardar cambios" : "Crear curso"}</button>
         </footer>
+        </fieldset>
       </form>
     </dialog>
   );

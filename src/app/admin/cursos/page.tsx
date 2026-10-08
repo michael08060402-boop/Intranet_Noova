@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { BookOpen, ChevronsUpDown, Layers, Pencil, Plus, Search, Settings, Trash2 } from "lucide-react";
-import { contarDocumentos, eliminarCurso, escucharCategorias, escucharCursos, nombresNivel, type Categoria, type Curso } from "@/firebase/cursos";
+import { obtenerPortadaCurso, contarDocumentos, eliminarCurso, escucharCategorias, escucharCursos, nombresNivel, type Categoria, type Curso } from "@/firebase/cursos";
 import Categorias from "./Categorias";
 import NuevoCurso from "./NuevoCurso";
 import "./CursosPage.css";
@@ -141,11 +141,12 @@ function Cursos() {
             </thead>
             <tbody>
               {visibles.map((curso) => {
-                const conClases = (clases[curso.id] ?? 1) > 0;
+
                 return (
                   <tr key={curso.id}>
                     <td>
                       <div className="cursos-curso">
+                        <PortadaCursoAdmin curso={curso} />
                         <div>
                           <strong className="cursos-nombre">{curso.nombre}</strong>
                           {curso.descripcion && <small className="cursos-descripcion">{curso.descripcion}</small>}
@@ -161,8 +162,8 @@ function Cursos() {
                       <div className="cursos-acciones">
                         <Link href={`/admin/cursos/curso?id=${curso.id}`} className="cursos-administrar"><Settings />Administrar curso</Link>
                         <button type="button" className="cursos-icono" onClick={() => setEditando(curso)} aria-label={`Editar ${curso.nombre}`} title="Editar"><Pencil /></button>
-                        <button type="button" className="cursos-icono cursos-icono--peligro" onClick={() => pedirEliminar(curso)} disabled={conClases}
-                          aria-label={`Eliminar ${curso.nombre}`} title={conClases ? "Solo se pueden eliminar cursos sin clases. Pásalo a borrador para ocultarlo." : "Eliminar"}>
+                        <button type="button" className="cursos-icono cursos-icono--peligro" onClick={() => pedirEliminar(curso)}
+                          aria-label={`Eliminar ${curso.nombre}`} title="Eliminar curso">
                           <Trash2 />
                         </button>
                       </div>
@@ -192,7 +193,7 @@ function Cursos() {
 
       <dialog ref={confirmar} className="cursos-confirmar" aria-labelledby="cursos-confirmar-titulo" onClose={() => setEliminando(null)}>
         <h2 id="cursos-confirmar-titulo">¿Eliminar curso?</h2>
-        <p>Se eliminará <strong>{eliminando?.nombre}</strong> de forma permanente. Esta acción no se puede deshacer.</p>
+        <p>Se eliminará <strong>{eliminando?.nombre}</strong> de forma permanente. También se eliminarán sus clases y referencias de contenido. Los archivos originales de Microsoft se conservarán. Esta acción no se puede deshacer.</p>
         <div className="cursos-confirmar__acciones">
           <button type="button" onClick={() => confirmar.current?.close()}>Cancelar</button>
           <button type="button" className="cursos-confirmar__eliminar" onClick={eliminar}>Eliminar</button>
@@ -208,4 +209,16 @@ function Cursos() {
       }} />}
     </main>
   );
+}
+
+function PortadaCursoAdmin({ curso }: { curso: Curso }) {
+  const [imagen, setImagen] = useState<{ key: string; url: string } | null>(null);
+  useEffect(() => {
+    let activo = true;
+    const key = curso.portadaKey;
+    if (key) obtenerPortadaCurso(key).then((url) => { if (activo) setImagen({ key, url }); }).catch(() => {});
+    return () => { activo = false; };
+  }, [curso.portadaKey]);
+  const url = imagen?.key === curso.portadaKey ? imagen?.url : undefined;
+  return <span className="cursos-portada" role="img" aria-label={url ? `Portada de ${curso.nombre}` : "Curso sin portada disponible"} style={url ? { backgroundImage: `url(${JSON.stringify(url)})` } : undefined}>{!url && <BookOpen aria-hidden="true" />}</span>;
 }

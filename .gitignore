@@ -50,3 +50,6 @@ firebase-debug.log
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Secreto local del emulador de Functions
+/functions/.secret.local

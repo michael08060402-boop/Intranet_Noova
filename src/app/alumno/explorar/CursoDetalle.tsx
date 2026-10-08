@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import MiniaturaClase from "@/components/alumno/MiniaturaClase";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, BookOpen, ChartNoAxesColumn, CircleCheck, CirclePlay, ClipboardCheck, Crown, Lock, Play, PlusCircle, Tag } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
@@ -105,7 +106,7 @@ export default function CursoDetalle({ curso, categoria, bloqueado, inscrito, al
                 return (
                   <li key={clase.id}>
                     <span className="alumno-curso__numero">{String(indice + 1).padStart(2, "0")}</span>
-                    <span className="alumno-curso__miniatura">{inscrito ? <CirclePlay /> : <Lock />}</span>
+                    <MiniaturaClase cursoId={curso.id} claseId={clase.id} className="alumno-curso__miniatura" habilitada={inscrito && !bloqueado}>{inscrito ? <CirclePlay /> : <Lock />}</MiniaturaClase>
                     <div>
                       <strong>{clase.nombre}</strong>
                       {clase.descripcion && <small>{clase.descripcion}</small>}

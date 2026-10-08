@@ -44,7 +44,7 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [avisos, setAvisos] = useState<Notificacion[]>([]);
   const [respuestasNuevas, setRespuestasNuevas] = useState(0);
-  const uid = usuario?.uid;
+  const uid = perfil?.rol === "alumno" && perfil.estado === "activo" ? usuario?.uid : undefined;
   const sinLeer = avisos.filter((aviso) => !aviso.leida);
 
   useEffect(() => (uid ? escucharNotificaciones(uid, setAvisos, () => setAvisos([])) : undefined), [uid]);

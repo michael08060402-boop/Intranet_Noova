@@ -1,5 +1,6 @@
 "use client";
 
+import MiniaturaClase from "@/components/alumno/MiniaturaClase";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -146,7 +147,7 @@ function ClaseCurso() {
                 {clases.map((clase, posicion) => (
                   <li key={clase.id}>
                     <Link href={enlace(clase)} className={clase === actual ? "is-actual" : ""} aria-current={clase === actual ? "page" : undefined}>
-                      <span className="clase-page__miniatura">{completada(clase) && <CircleCheck aria-label="Completada" />}</span>
+                      <MiniaturaClase cursoId={cursoId} claseId={clase.id} className="clase-page__miniatura">{completada(clase) && <CircleCheck aria-label="Completada" />}</MiniaturaClase>
                       <span className="clase-page__numero">{posicion + 1}</span>
                       <span>{clase.nombre}</span>
                     </Link>
@@ -162,7 +163,7 @@ function ClaseCurso() {
 }
 
 type Problema = "sinVideo" | "premium" | "fallo";
-type Video = { claseId: string; url: string } | { claseId: string; problema: Problema };
+type Video = { claseId: string; url: string; poster?: string; respaldo?: string } | { claseId: string; problema: Problema };
 
 function problemaDe(error: unknown): Problema {
   const { code, details } = error as FunctionsError;
@@ -178,7 +179,7 @@ function ReproductorClase({ cursoId, claseId }: { cursoId: string; claseId: stri
   useEffect(() => {
     let vigente = true;
     pedirVideo(cursoId, claseId)
-      .then((url) => vigente && setVideo({ claseId, url }))
+      .then((datos) => vigente && setVideo({ claseId, ...datos }))
       .catch((error) => vigente && setVideo({ claseId, problema: problemaDe(error) }));
     return () => { vigente = false; };
   }, [cursoId, claseId, intento]);
@@ -194,7 +195,7 @@ function ReproductorClase({ cursoId, claseId }: { cursoId: string; claseId: stri
     <div className="clase-page__video">
       {!actual && <p>Cargando video…</p>}
       {actual && "url" in actual && (
-        <video src={actual.url} controls controlsList="nodownload" disablePictureInPicture playsInline preload="metadata"
+        <video src={actual.url} poster={actual.poster} controls controlsList="nodownload" disablePictureInPicture playsInline preload="metadata"
           onContextMenu={(evento) => evento.preventDefault()} onError={() => setVideo({ claseId, problema: "fallo" })} />
       )}
       {actual && "problema" in actual && (
