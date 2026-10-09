@@ -7,6 +7,7 @@ import { ArrowRight, BookOpen, Crown } from "lucide-react";
 import heroAlumno from "@/assets/fondos/hero-alumno.webp";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import TarjetaCurso from "@/components/alumno/TarjetaCurso";
+import PortadaCurso from "@/components/alumno/PortadaCurso";
 import { contarClasesPublicadas, escucharCategorias, escucharCursos, escucharInscripciones, escucharProgreso, type Categoria, type Curso, type Progreso } from "@/firebase/cursos";
 import { capitalizarNombre } from "@/firebase/perfiles";
 import "./InicioAlumno.css";
@@ -111,7 +112,7 @@ export default function InicioAlumno() {
               const valor = porcentaje(curso);
               return (
                 <article key={curso.id} className="alumno-continuar__curso">
-                  <div className="alumno-continuar__portada" />
+                  <PortadaCurso className="alumno-continuar__portada" portadaKey={curso.portadaKey} nombre={curso.nombre} />
                   <div className="alumno-continuar__cuerpo">
                     <h3>{curso.nombre}</h3>
                     <small>{valor}% completado</small>
