@@ -87,14 +87,14 @@ function RendirExamen() {
     <main className="alumno-examen">
       {volver}
       <section className="alumno-examen__tarjeta">
-        <span className="alumno-examen__eyebrow">{curso.nombre}</span>
+        <span className="alumno-examen__antetitulo">{curso.nombre}</span>
         <h1>{examen.nombre}</h1>
         {examen.descripcion && <p className="alumno-examen__instrucciones">{examen.descripcion}</p>}
 
         {intento?.estado === "calificado" && intento.nota !== null ? (
           <div className="alumno-examen__resultado" role="status">
             <strong className={intento.nota >= examen.notaMinima ? "is-aprobado" : "is-desaprobado"}>{intento.nota}<small> / {NOTA_MAXIMA}</small></strong>
-            <span className={`alumno-examen__badge ${intento.nota >= examen.notaMinima ? "is-aprobado" : "is-desaprobado"}`}>{intento.nota >= examen.notaMinima ? "Aprobado" : "Desaprobado"}</span>
+            <span className={`alumno-examen__insignia ${intento.nota >= examen.notaMinima ? "is-aprobado" : "is-desaprobado"}`}>{intento.nota >= examen.notaMinima ? "Aprobado" : "Desaprobado"}</span>
             <p>Nota mínima para aprobar: {examen.notaMinima}.{intento.calificadoEn && " "}{intento.calificadoEn && `Calificado el ${formatoFecha.format(intento.calificadoEn)}`}</p>
             {intento.comentario && <blockquote>{intento.comentario}</blockquote>}
           </div>

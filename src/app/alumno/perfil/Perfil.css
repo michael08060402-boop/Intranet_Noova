@@ -1,4 +1,4 @@
-.perfil-page {
+.perfil-pagina {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   align-items: start;
@@ -7,28 +7,28 @@
   margin: 0 auto;
   padding: 24px 0 28px;
 }
-.perfil-page__heading {
+.perfil-pagina__titulo {
   grid-column: 1 / -1;
   margin-bottom: 4px;
   text-align: center;
 }
-.perfil-page__tarjeta--datos {
+.perfil-pagina__tarjeta--datos {
   grid-row: span 2;
   align-self: stretch;
   display: flex;
   flex-direction: column;
 }
-.perfil-page__tarjeta--datos .perfil-page__formulario {
+.perfil-pagina__tarjeta--datos .perfil-pagina__formulario {
   flex: 1;
   grid-template-rows: auto auto 1fr;
 }
-.perfil-page__tarjeta {
+.perfil-pagina__tarjeta {
   padding: 20px 24px;
   border: 1px solid var(--borde);
   border-radius: 16px;
   background: #fff;
 }
-.perfil-page__tarjeta h2 {
+.perfil-pagina__tarjeta h2 {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -36,19 +36,19 @@
   font-size: 18px;
   font-weight: 700;
 }
-.perfil-page .perfil-page__tarjeta h2 svg {
+.perfil-pagina .perfil-pagina__tarjeta h2 svg {
   width: 20px;
   height: 20px;
   color: var(--acento);
 }
 
-.perfil-page__foto {
+.perfil-pagina__foto {
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 18px;
 }
-.perfil-page__avatar {
+.perfil-pagina__avatar {
   display: grid;
   place-items: center;
   width: 60px;
@@ -61,13 +61,13 @@
   font-size: 24px;
   font-weight: 700;
 }
-.perfil-page__foto div {
+.perfil-pagina__foto div {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
 }
-.perfil-page__foto button {
+.perfil-pagina__foto button {
   display: inline-flex;
   cursor: pointer;
   align-items: center;
@@ -79,48 +79,48 @@
   font-size: 13px;
   font-weight: 600;
 }
-.perfil-page__foto button:hover:not(:disabled) {
+.perfil-pagina__foto button:hover:not(:disabled) {
   background: var(--acento-suave);
   color: var(--texto);
 }
-.perfil-page__foto .perfil-page__botones-foto {
+.perfil-pagina__foto .perfil-pagina__botones-foto {
   flex-direction: row;
   gap: 8px;
 }
-.perfil-page__avatar img {
+.perfil-pagina__avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.perfil-page__foto button:disabled {
+.perfil-pagina__foto button:disabled {
   cursor: wait;
   opacity: 0.7;
 }
-.perfil-page small {
+.perfil-pagina small {
   color: var(--texto-suave);
   font-size: 13px;
 }
-.perfil-page .perfil-page__foto svg {
+.perfil-pagina .perfil-pagina__foto svg {
   width: 16px;
   height: 16px;
 }
 
-.perfil-page__formulario {
+.perfil-pagina__formulario {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 14px;
 }
-.perfil-page__formulario label {
+.perfil-pagina__formulario label {
   display: flex;
   flex-direction: column;
   gap: 6px;
   font-size: 13px;
   font-weight: 600;
 }
-.perfil-page__completo {
+.perfil-pagina__completo {
   grid-column: 1 / -1;
 }
-.perfil-page__formulario input {
+.perfil-pagina__formulario input {
   padding: 10px 13px;
   border: 1px solid var(--borde);
   border-radius: 10px;
@@ -129,19 +129,19 @@
   font-size: 15px;
   font-weight: 400;
 }
-.perfil-page__formulario input:focus {
+.perfil-pagina__formulario input:focus {
   border-color: var(--acento);
   outline: 2px solid var(--acento);
   outline-offset: 1px;
 }
-.perfil-page__formulario input:read-only {
+.perfil-pagina__formulario input:read-only {
   background: #f4f4f4;
   color: var(--texto-suave);
 }
-.perfil-page__formulario label small {
+.perfil-pagina__formulario label small {
   font-weight: 400;
 }
-.perfil-page__acciones {
+.perfil-pagina__acciones {
   grid-column: 1 / -1;
   align-self: end;
   display: flex;
@@ -149,7 +149,7 @@
   align-items: center;
   gap: 14px;
 }
-.perfil-page__acciones button {
+.perfil-pagina__acciones button {
   padding: 12px 22px;
   border-radius: 10px;
   background: var(--acento);
@@ -158,26 +158,26 @@
   font-weight: 700;
   cursor: pointer;
 }
-.perfil-page__acciones button:hover:not(:disabled) {
+.perfil-pagina__acciones button:hover:not(:disabled) {
   background: var(--acento-oscuro);
 }
-.perfil-page__acciones button:disabled {
+.perfil-pagina__acciones button:disabled {
   opacity: 0.5;
   cursor: default;
 }
-.perfil-page__mensaje,
-.perfil-page__error {
+.perfil-pagina__mensaje,
+.perfil-pagina__error {
   color: #000;
   font-size: 13px;
 }
-.perfil-page__error {
+.perfil-pagina__error {
   color: var(--peligro);
 }
-.perfil-page__tarjeta > .perfil-page__mensaje {
+.perfil-pagina__tarjeta > .perfil-pagina__mensaje {
   margin-top: 10px;
 }
 
-.perfil-page__fila {
+.perfil-pagina__fila {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -186,21 +186,21 @@
   padding: 12px 0;
   border-top: 1px solid var(--borde);
 }
-.perfil-page__fila:first-of-type {
+.perfil-pagina__fila:first-of-type {
   padding-top: 0;
   border-top: 0;
 }
-.perfil-page__fila strong {
+.perfil-pagina__fila strong {
   display: block;
   margin-bottom: 2px;
   font-size: 14px;
 }
-.perfil-page__etiquetas {
+.perfil-pagina__etiquetas {
   display: flex;
   align-items: center;
   gap: 14px;
 }
-.perfil-page__secundario {
+.perfil-pagina__secundario {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -212,20 +212,20 @@
   font-weight: 700;
   cursor: pointer;
 }
-.perfil-page__secundario:hover:not(:disabled) {
+.perfil-pagina__secundario:hover:not(:disabled) {
   background: var(--acento-suave);
 }
-.perfil-page__secundario:disabled {
+.perfil-pagina__secundario:disabled {
   border-color: var(--borde);
   color: var(--texto-suave);
   cursor: not-allowed;
 }
-.perfil-page .perfil-page__secundario svg {
+.perfil-pagina .perfil-pagina__secundario svg {
   width: 16px;
   height: 16px;
 }
-.perfil-page__estado,
-.perfil-page__plan {
+.perfil-pagina__estado,
+.perfil-pagina__plan {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -233,20 +233,20 @@
   font-size: 13px;
   font-weight: 700;
 }
-.perfil-page__estado {
+.perfil-pagina__estado {
   color: var(--exito);
 }
-.perfil-page__plan {
+.perfil-pagina__plan {
   padding: 4px 12px;
   border-radius: 999px;
   background: var(--acento-suave);
 }
-.perfil-page .perfil-page__estado svg,
-.perfil-page .perfil-page__plan svg {
+.perfil-pagina .perfil-pagina__estado svg,
+.perfil-pagina .perfil-pagina__plan svg {
   width: 14px;
   height: 14px;
 }
-.perfil-page__premium {
+.perfil-pagina__premium {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -256,7 +256,7 @@
   border-radius: 12px;
   background: #fffaf0;
 }
-.perfil-page__corona {
+.perfil-pagina__corona {
   display: grid;
   flex: none;
   place-items: center;
@@ -266,24 +266,24 @@
   background: var(--dorado);
   color: #3b2a05;
 }
-.perfil-page .perfil-page__corona svg {
+.perfil-pagina .perfil-pagina__corona svg {
   width: 20px;
   height: 20px;
 }
-.perfil-page__premium div {
+.perfil-pagina__premium div {
   display: grid;
   flex: 1;
   gap: 2px;
   min-width: 0;
 }
-.perfil-page__premium strong {
+.perfil-pagina__premium strong {
   font-size: 15px;
 }
-.perfil-page__premium small {
+.perfil-pagina__premium small {
   color: var(--texto-suave);
   font-size: 13px;
 }
-.perfil-page__premium-boton {
+.perfil-pagina__premium-boton {
   flex: none;
   padding: 11px 20px;
   border-radius: 10px;
@@ -291,38 +291,38 @@
   font-weight: 700;
   white-space: nowrap;
 }
-.perfil-page a:focus-visible,
-.perfil-page button:focus-visible {
+.perfil-pagina a:focus-visible,
+.perfil-pagina button:focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 3px;
 }
 @media (max-width: 960px) {
-  .perfil-page {
+  .perfil-pagina {
     grid-template-columns: minmax(0, 1fr);
     width: min(92%, 720px);
   }
-  .perfil-page__tarjeta--datos {
+  .perfil-pagina__tarjeta--datos {
     grid-row: auto;
   }
-  .perfil-page__tarjeta--datos .perfil-page__formulario {
+  .perfil-pagina__tarjeta--datos .perfil-pagina__formulario {
     grid-template-rows: none;
   }
 }
 @media (max-width: 560px) {
-  .perfil-page__tarjeta {
+  .perfil-pagina__tarjeta {
     padding: 18px;
   }
-  .perfil-page__formulario {
+  .perfil-pagina__formulario {
     grid-template-columns: minmax(0, 1fr);
   }
-  .perfil-page__premium {
+  .perfil-pagina__premium {
     flex-wrap: wrap;
   }
-  .perfil-page__premium-boton {
+  .perfil-pagina__premium-boton {
     width: 100%;
     text-align: center;
   }
-  .perfil-page__acciones {
+  .perfil-pagina__acciones {
     flex-direction: column-reverse;
     align-items: stretch;
   }

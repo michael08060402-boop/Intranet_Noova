@@ -13,13 +13,10 @@ service firebase.storage {
         && firestore.exists(/databases/(default)/documents/cursos/$(cursoId));
       allow delete: if admin();
     }
+    // Miniaturas de clases: solo las escribe la función actualizarMiniaturaClase.
     match /portadas-clases/{cursoId}/{claseId} {
       allow read: if admin() || (request.auth != null && firestore.get(/databases/(default)/documents/cursos/$(cursoId)).data.publicado == true);
-      allow create, update: if admin() && request.resource.size > 0 && request.resource.size <= 5 * 1024 * 1024
-        && request.resource.contentType in ['image/jpeg', 'image/png', 'image/webp']
-        && firestore.exists(/databases/(default)/documents/cursos/$(cursoId)/clases/$(claseId));
-      allow delete: if admin();
     }
     match /{archivo=**} { allow read, write: if false; }
   }
-}
+}

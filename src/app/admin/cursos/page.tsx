@@ -24,7 +24,7 @@ const ordenNivel = { basico: 0, intermedio: 1, avanzado: 2 };
 
 export default function CursosPage() {
   return (
-    <Suspense fallback={<main className="cursos-page" />}>
+    <Suspense fallback={<main className="cursos-pagina" />}>
       <Cursos />
     </Suspense>
   );
@@ -98,37 +98,37 @@ function Cursos() {
     });
 
   return (
-    <main className="cursos-page">
-      <header className="cursos-heading">
+    <main className="cursos-pagina">
+      <header className="cursos-titulo">
         <div>
           <h1>Cursos</h1>
         </div>
-        <div className="cursos-heading__acciones">
+        <div className="cursos-titulo__acciones">
           <button className="cursos-secundario" type="button" onClick={() => setGestionandoCategorias(true)}><Layers />Categorías</button>
-          <button className="cursos-create" type="button" onClick={() => setEditando(null)}><Plus />Nuevo curso</button>
+          <button className="cursos-crear" type="button" onClick={() => setEditando(null)}><Plus />Nuevo curso</button>
         </div>
       </header>
 
       <section className="cursos-panel" aria-label="Listado de cursos">
-        <div className="cursos-panel-heading">
-          <span className="cursos-panel-icon"><BookOpen /></span>
+        <div className="cursos-panel-titulo">
+          <span className="cursos-panel-icono"><BookOpen /></span>
           <h2>Catálogo de cursos</h2>
-          <span className="cursos-count">{cursos.length} {cursos.length === 1 ? "curso" : "cursos"}</span>
+          <span className="cursos-contador">{cursos.length} {cursos.length === 1 ? "curso" : "cursos"}</span>
         </div>
-        <div className="cursos-toolbar">
-          <label className="cursos-search">
+        <div className="cursos-controles">
+          <label className="cursos-buscador">
             <Search />
             <input type="search" value={busqueda} onChange={(evento) => setBusqueda(evento.target.value)} placeholder="Buscar curso..." aria-label="Buscar curso" />
           </label>
-          <select className="cursos-category" aria-label="Filtrar por categoría" value={filtro} onChange={(evento) => setFiltro(evento.target.value)}>
+          <select className="cursos-categoria" aria-label="Filtrar por categoría" value={filtro} onChange={(evento) => setFiltro(evento.target.value)}>
             <option value="todas">Todas las categorías</option>
             {categorias.map((categoria) => <option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>)}
           </select>
         </div>
         {error && <p className="cursos-error" role="alert">{error}</p>}
 
-        <div className="cursos-table-wrap">
-          <table className="cursos-table">
+        <div className="cursos-tabla-caja">
+          <table className="cursos-tabla">
             <thead>
               <tr>
                 {columnas.map(({ clave, titulo }) => (
@@ -155,8 +155,8 @@ function Cursos() {
                     </td>
                     <td>{nombreCategoria(curso.categoriaId)}</td>
                     <td>{nombresNivel[curso.nivel]}</td>
-                    <td><span className={`cursos-badge cursos-badge--${curso.acceso}`}>{curso.acceso === "premium" ? "Premium" : "Gratis"}</span></td>
-                    <td><span className={`cursos-badge ${curso.publicado ? "cursos-badge--publicado" : "cursos-badge--borrador"}`}>{curso.publicado ? "Publicado" : "Borrador"}</span></td>
+                    <td><span className={`cursos-insignia cursos-insignia--${curso.acceso}`}>{curso.acceso === "premium" ? "Premium" : "Gratis"}</span></td>
+                    <td><span className={`cursos-insignia ${curso.publicado ? "cursos-insignia--publicado" : "cursos-insignia--borrador"}`}>{curso.publicado ? "Publicado" : "Borrador"}</span></td>
                     <td className="cursos-centro">{clases[curso.id] ?? "…"}</td>
                     <td>
                       <div className="cursos-acciones">
@@ -174,12 +174,12 @@ function Cursos() {
               {visibles.length === 0 && (
                 <tr>
                   <td colSpan={7}>
-                    <div className="cursos-empty">
-                      <div className="cursos-empty__illustration"><BookOpen /><span /></div>
+                    <div className="cursos-vacio">
+                      <div className="cursos-vacio__ilustracion"><BookOpen /><span /></div>
                       {cargando ? <h2>Cargando cursos…</h2> : cursos.length > 0 ? <h2>Ningún curso coincide con la búsqueda</h2> : (
                         <>
                           <h2>Aún no hay cursos registrados</h2>
-                          <p>Comienza creando tu primer curso para poder gestionar sus clases<br className="cursos-empty__break" /> y contenidos desde aquí.</p>
+                          <p>Comienza creando tu primer curso para poder gestionar sus clases<br className="cursos-vacio__corte" /> y contenidos desde aquí.</p>
                         </>
                       )}
                     </div>
@@ -221,4 +221,4 @@ function PortadaCursoAdmin({ curso }: { curso: Curso }) {
   }, [curso.portadaKey]);
   const url = imagen?.key === curso.portadaKey ? imagen?.url : undefined;
   return <span className="cursos-portada" role="img" aria-label={url ? `Portada de ${curso.nombre}` : "Curso sin portada disponible"} style={url ? { backgroundImage: `url(${JSON.stringify(url)})` } : undefined}>{!url && <BookOpen aria-hidden="true" />}</span>;
-}
+}

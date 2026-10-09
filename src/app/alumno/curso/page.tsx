@@ -3,7 +3,7 @@
 import MiniaturaClase from "@/components/alumno/MiniaturaClase";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import type { FunctionsError } from "firebase/functions";
 import { ChevronRight, Circle, CircleCheck, Trophy } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
@@ -13,7 +13,7 @@ import "./Clase.css";
 
 export default function ClasePage() {
   return (
-    <Suspense fallback={<main className="clase-page alumno-fondo"><p className="clase-page__estado">Cargando clase…</p></main>}>
+    <Suspense fallback={<main className="clase-pagina alumno-fondo"><p className="clase-pagina__estado">Cargando clase…</p></main>}>
       <ClaseCurso />
     </Suspense>
   );
@@ -25,9 +25,10 @@ function ClaseCurso() {
   const claseId = parametros.get("clase");
   const { usuario } = useSesion();
   const [curso, setCurso] = useState<Curso | null | undefined>(undefined);
-  const [clases, setClases] = useState<Clase[]>([]);
+  const [clases, setClases] = useState<Clase[] | null>(null);
   const [inscrito, setInscrito] = useState<boolean | undefined>(undefined);
-  const [progreso, setProgreso] = useState<Progreso[]>([]);
+  // Se espera el avance antes de elegir la clase: sin él se abriría la clase 1 y luego saltaría a la pendiente.
+  const [progreso, setProgreso] = useState<Progreso[] | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
   const [pestana, setPestana] = useState<"descripcion" | "recursos">("descripcion");
@@ -43,7 +44,7 @@ function ClaseCurso() {
 
   useEffect(() => {
     if (!usuario || !cursoId) return;
-    const fallo = () => setError("No se pudo consultar tu avance.");
+    const fallo = () => { setError("No se pudo consultar tu avance."); setProgreso([]); };
     const dejarInscripciones = escucharInscripciones(usuario.uid, (ids) => setInscrito(ids.includes(cursoId)), fallo);
     const dejarProgreso = escucharProgreso(usuario.uid, (lista) => setProgreso(lista.filter((item) => item.cursoId === cursoId && item.completado)), fallo);
     return () => { dejarInscripciones(); dejarProgreso(); };
@@ -53,22 +54,22 @@ function ClaseCurso() {
 
   if (!cursoId || curso === null) {
     return (
-      <main className="clase-page alumno-fondo">
-        <p className="clase-page__estado">Este curso no existe o ya no está disponible.</p>
-        <Link href="/alumno/explorar" className="clase-page__enlace">Volver a Explorar</Link>
+      <main className="clase-pagina alumno-fondo">
+        <p className="clase-pagina__estado">Este curso no existe o ya no está disponible.</p>
+        <Link href="/alumno/explorar" className="clase-pagina__enlace">Volver a Explorar</Link>
       </main>
     );
   }
 
-  if (curso === undefined || inscrito === undefined) {
-    return <main className="clase-page alumno-fondo"><p className="clase-page__estado">Cargando clase…</p></main>;
+  if (curso === undefined || inscrito === undefined || clases === null || progreso === null) {
+    return <main className="clase-pagina alumno-fondo"><p className="clase-pagina__estado">Cargando clase…</p></main>;
   }
 
   if (!inscrito) {
     return (
-      <main className="clase-page alumno-fondo">
-        <p className="clase-page__estado">Inscríbete en <strong>{curso.nombre}</strong> para acceder a sus clases.</p>
-        <Link href={`/alumno/explorar?curso=${curso.id}`} className="clase-page__enlace">Ir al curso</Link>
+      <main className="clase-pagina alumno-fondo">
+        <p className="clase-pagina__estado">Inscríbete en <strong>{curso.nombre}</strong> para acceder a sus clases.</p>
+        <Link href={`/alumno/explorar?curso=${curso.id}`} className="clase-pagina__enlace">Ir al curso</Link>
       </main>
     );
   }
@@ -90,42 +91,42 @@ function ClaseCurso() {
   }
 
   return (
-    <main className="clase-page alumno-fondo">
-      <nav className="clase-page__ruta" aria-label="Ruta">
+    <main className="clase-pagina alumno-fondo">
+      <nav className="clase-pagina__ruta" aria-label="Ruta">
         <Link href="/alumno/cursos">Mis cursos</Link>
         <ChevronRight />
         <Link href={`/alumno/explorar?curso=${curso.id}`}>{curso.nombre}</Link>
         {actual && <><ChevronRight /><span>Clase {indice + 1}</span></>}
       </nav>
 
-      {!actual ? <p className="clase-page__estado">Este curso aún no tiene clases publicadas.</p> : (
+      {!actual ? <p className="clase-pagina__estado">Este curso aún no tiene clases publicadas.</p> : (
         <>
-          <header className="clase-page__encabezado">
+          <header className="clase-pagina__encabezado">
             <h1>{actual.nombre}</h1>
-            <button type="button" className={`clase-page__completar ${completada(actual) ? "is-completada" : ""}`} onClick={cambiarEstado} disabled={guardando}>
+            <button type="button" className={`clase-pagina__completar ${completada(actual) ? "is-completada" : ""}`} onClick={cambiarEstado} disabled={guardando}>
               {completada(actual) ? <><CircleCheck />Completada</> : <><Circle />Marcar como completada</>}
             </button>
           </header>
-          {error && <p className="clase-page__error" role="alert">{error}</p>}
+          {error && <p className="clase-pagina__error" role="alert">{error}</p>}
 
           {cursoCompleto && (
-            <section className="clase-page__completo" role="status">
-              <span className="clase-page__completo-icono"><Trophy /></span>
+            <section className="clase-pagina__completo" role="status">
+              <span className="clase-pagina__completo-icono"><Trophy /></span>
               <div>
                 <strong>¡Curso completado!</strong>
                 <p>{evaluacion ? "Terminaste todas las clases. Ya puedes rendir la evaluación del curso." : "Terminaste todas las clases de este curso."}</p>
               </div>
               {evaluacion
-                ? <Link href={`/alumno/examen?id=${evaluacion.id}`} className="clase-page__enlace">Ir a la evaluación</Link>
-                : <Link href="/alumno/cursos" className="clase-page__enlace">Ver mis cursos</Link>}
+                ? <Link href={`/alumno/examen?id=${evaluacion.id}`} className="clase-pagina__enlace">Ir a la evaluación</Link>
+                : <Link href="/alumno/cursos" className="clase-pagina__enlace">Ver mis cursos</Link>}
             </section>
           )}
 
-          <div className="clase-page__layout">
+          <div className="clase-pagina__distribucion">
             <section>
-              <ReproductorClase cursoId={curso.id} claseId={actual.id} />
-              <div className="clase-page__detalle">
-                <div className="clase-page__pestanas" role="tablist">
+              <ReproductorClase cursoId={curso.id} claseId={actual.id} poster={actual.miniatura} />
+              <div className="clase-pagina__detalle">
+                <div className="clase-pagina__pestanas" role="tablist">
                   <button type="button" role="tab" aria-selected={pestana === "descripcion"} onClick={() => setPestana("descripcion")}>Descripción</button>
                   <button type="button" role="tab" aria-selected={pestana === "recursos"} onClick={() => setPestana("recursos")}>Recursos</button>
                 </div>
@@ -138,8 +139,8 @@ function ClaseCurso() {
               </div>
             </section>
 
-            <aside className="clase-page__lateral" aria-labelledby="clase-page-lista">
-              <div className="clase-page__lateral-titulo">
+            <aside className="clase-pagina__lateral" aria-labelledby="clase-page-lista">
+              <div className="clase-pagina__lateral-titulo">
                 <h2 id="clase-page-lista">Clases del curso</h2>
                 <small>{clases.length} {clases.length === 1 ? "clase" : "clases"}</small>
               </div>
@@ -147,8 +148,8 @@ function ClaseCurso() {
                 {clases.map((clase, posicion) => (
                   <li key={clase.id}>
                     <Link href={enlace(clase)} className={clase === actual ? "is-actual" : ""} aria-current={clase === actual ? "page" : undefined}>
-                      <MiniaturaClase cursoId={cursoId} claseId={clase.id} className="clase-page__miniatura">{completada(clase) && <CircleCheck aria-label="Completada" />}</MiniaturaClase>
-                      <span className="clase-page__numero">{posicion + 1}</span>
+                      <MiniaturaClase miniatura={clase.miniatura} className="clase-pagina__miniatura">{completada(clase) && <CircleCheck aria-label="Completada" />}</MiniaturaClase>
+                      <span className="clase-pagina__numero">{posicion + 1}</span>
                       <span>{clase.nombre}</span>
                     </Link>
                   </li>
@@ -163,7 +164,7 @@ function ClaseCurso() {
 }
 
 type Problema = "sinVideo" | "premium" | "fallo";
-type Video = { claseId: string; url: string; poster?: string; respaldo?: string } | { claseId: string; problema: Problema };
+type Video = { claseId: string; url: string } | { claseId: string; problema: Problema };
 
 function problemaDe(error: unknown): Problema {
   const { code, details } = error as FunctionsError;
@@ -172,17 +173,21 @@ function problemaDe(error: unknown): Problema {
   return "fallo";
 }
 
-function ReproductorClase({ cursoId, claseId }: { cursoId: string; claseId: string }) {
+function ReproductorClase({ cursoId, claseId, poster }: { cursoId: string; claseId: string; poster?: string }) {
   const [video, setVideo] = useState<Video | null>(null);
   const [intento, setIntento] = useState(0);
+  const reanudarEn = useRef(0);
+  const renovado = useRef(false);
 
   useEffect(() => {
     let vigente = true;
     pedirVideo(cursoId, claseId)
-      .then((datos) => vigente && setVideo({ claseId, ...datos }))
+      .then((url) => vigente && setVideo({ claseId, url }))
       .catch((error) => vigente && setVideo({ claseId, problema: problemaDe(error) }));
     return () => { vigente = false; };
   }, [cursoId, claseId, intento]);
+
+  useEffect(() => { renovado.current = false; reanudarEn.current = 0; }, [claseId]);
 
   const actual = video?.claseId === claseId ? video : null;
 
@@ -191,20 +196,30 @@ function ReproductorClase({ cursoId, claseId }: { cursoId: string; claseId: stri
     setIntento((anterior) => anterior + 1);
   }
 
+  // El enlace de Microsoft vence en cerca de una hora: se pide uno nuevo una vez y se continúa donde iba.
+  function alFallar(elemento: HTMLVideoElement) {
+    if (renovado.current) return setVideo({ claseId, problema: "fallo" });
+    renovado.current = true;
+    reanudarEn.current = elemento.currentTime;
+    reintentar();
+  }
+
   return (
-    <div className="clase-page__video">
+    <div className="clase-pagina__video">
       {!actual && <p>Cargando video…</p>}
       {actual && "url" in actual && (
-        <video src={actual.url} poster={actual.poster} controls controlsList="nodownload" disablePictureInPicture playsInline preload="metadata"
-          onContextMenu={(evento) => evento.preventDefault()} onError={() => setVideo({ claseId, problema: "fallo" })} />
+        <video src={actual.url} poster={poster} controls controlsList="nodownload" disablePictureInPicture playsInline preload="metadata"
+          onContextMenu={(evento) => evento.preventDefault()} onError={(evento) => alFallar(evento.currentTarget)}
+          onLoadedMetadata={(evento) => { if (reanudarEn.current > 0) evento.currentTarget.currentTime = reanudarEn.current; }}
+          onPlaying={() => { renovado.current = false; reanudarEn.current = 0; }} />
       )}
       {actual && "problema" in actual && (
-        <div className="clase-page__video-aviso">
+        <div className="clase-pagina__video-aviso">
           {actual.problema === "sinVideo" && <p>Esta clase aún no tiene video.</p>}
           {actual.problema === "premium" && (
             <>
               <p>Este video es parte del plan Premium.</p>
-              <Link href="/alumno/premium" className="clase-page__enlace alumno-dorado">Conocer Premium</Link>
+              <Link href="/alumno/premium" className="clase-pagina__enlace alumno-dorado">Conocer Premium</Link>
             </>
           )}
           {actual.problema === "fallo" && (

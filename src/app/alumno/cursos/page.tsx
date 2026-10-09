@@ -57,10 +57,10 @@ export default function MisCursos() {
     .sort((a, b) => orden === "nombre" ? a.nombre.localeCompare(b.nombre) : orden === "antiguos" ? a.creadoEn - b.creadoEn : b.creadoEn - a.creadoEn);
 
   return (
-    <main className="my-courses alumno-fondo">
-      <TituloPagina className="my-courses__heading" titulo="Mis cursos" />
-      <div className="my-courses__toolbar">
-        <div className="my-courses__filters" aria-label="Filtrar cursos por progreso">
+    <main className="mis-cursos alumno-fondo">
+      <TituloPagina className="mis-cursos__titulo" titulo="Mis cursos" />
+      <div className="mis-cursos__controles">
+        <div className="mis-cursos__filtros" aria-label="Filtrar cursos por progreso">
           {filtros.map((nombre) => (
             <button key={nombre} type="button" aria-pressed={filtro === nombre} className={filtro === nombre ? "is-activo" : ""} onClick={() => setFiltro(nombre)}>
               {nombre}
@@ -71,34 +71,34 @@ export default function MisCursos() {
         <SelectorOrden orden={orden} alCambiar={setOrden} />
       </div>
 
-      {error && <p className="my-courses__error" role="alert">{error}</p>}
-      {cargando ? <p className="my-courses__estado">Cargando tus cursos…</p>
+      {error && <p className="mis-cursos__error" role="alert">{error}</p>}
+      {cargando ? <p className="mis-cursos__estado">Cargando tus cursos…</p>
         : visibles.length === 0 ? (
           <EstadoVacio
-            className="my-courses__vacio"
+            className="mis-cursos__vacio"
             titulo={filtro === "Todos" ? "Aún no tienes cursos" : `No tienes cursos ${filtro.toLowerCase()}`}
           >
-            <Link href="/alumno/explorar" className="my-courses__explorar">Explorar cursos</Link>
+            <Link href="/alumno/explorar" className="mis-cursos__explorar">Explorar cursos</Link>
           </EstadoVacio>
         ) : (
-          <ul className="my-courses__lista">
+          <ul className="mis-cursos__lista">
             {visibles.map((curso) => {
               const valor = porcentaje(curso);
               const total = totales[curso.id] ?? 0;
               return (
-                <li key={curso.id} className="my-courses__curso">
-                  <Link href={`/alumno/explorar?curso=${curso.id}`} className="my-courses__portada" aria-label={`Ver ${curso.nombre}`}>
-                    <PortadaCurso className="my-courses__imagen" portadaKey={curso.portadaKey} nombre={curso.nombre} />
+                <li key={curso.id} className="mis-cursos__curso">
+                  <Link href={`/alumno/explorar?curso=${curso.id}`} className="mis-cursos__portada" aria-label={`Ver ${curso.nombre}`}>
+                    <PortadaCurso className="mis-cursos__imagen" portadaKey={curso.portadaKey} nombre={curso.nombre} />
                   </Link>
-                  <div className="my-courses__info">
+                  <div className="mis-cursos__info">
                     <h2>{curso.nombre}</h2>
                     {curso.descripcion && <p>{curso.descripcion}</p>}
                     <small>{nombresNivel[curso.nivel]} · {total} {total === 1 ? "clase" : "clases"}</small>
                   </div>
-                  <div className="my-courses__avance">
+                  <div className="mis-cursos__avance">
                     <span>{valor}% completado</span>
-                    <span className="my-courses__barra"><span style={{ width: `${valor}%` }} /></span>
-                    <Link href={`/alumno/curso?id=${curso.id}`} className="my-courses__continuar">
+                    <span className="mis-cursos__barra"><span style={{ width: `${valor}%` }} /></span>
+                    <Link href={`/alumno/curso?id=${curso.id}`} className="mis-cursos__continuar">
                       <Play />{valor === 0 ? "Comenzar curso" : valor === 100 ? "Repasar curso" : "Continuar curso"}
                     </Link>
                   </div>

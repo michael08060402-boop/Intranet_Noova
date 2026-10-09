@@ -52,7 +52,7 @@ export default function CursoDetalle({ curso, categoria, bloqueado, inscrito, al
     <main className="alumno-explorar">
       <button type="button" className="alumno-explorar__volver" onClick={alVolver}><ArrowLeft />Volver al catálogo</button>
       <section className="alumno-curso" aria-labelledby="alumno-curso-titulo">
-        <PortadaCurso className="alumno-curso__cover" portadaKey={curso.portadaKey} nombre={curso.nombre} />
+        <PortadaCurso className="alumno-curso__portada" portadaKey={curso.portadaKey} nombre={curso.nombre} />
         <div className="alumno-curso__info">
           <small className="alumno-curso__categoria">{categoria}</small>
           <h1 id="alumno-curso-titulo">{curso.nombre}</h1>
@@ -107,7 +107,7 @@ export default function CursoDetalle({ curso, categoria, bloqueado, inscrito, al
                 return (
                   <li key={clase.id}>
                     <span className="alumno-curso__numero">{String(indice + 1).padStart(2, "0")}</span>
-                    <MiniaturaClase cursoId={curso.id} claseId={clase.id} className="alumno-curso__miniatura" habilitada={inscrito && !bloqueado}>{inscrito ? <CirclePlay /> : <Lock />}</MiniaturaClase>
+                    <MiniaturaClase miniatura={clase.miniatura} className="alumno-curso__miniatura">{inscrito ? <CirclePlay /> : <Lock />}</MiniaturaClase>
                     <div>
                       <strong>{clase.nombre}</strong>
                       {clase.descripcion && <small>{clase.descripcion}</small>}

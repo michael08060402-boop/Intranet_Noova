@@ -44,24 +44,24 @@ export default function Categorias({ categorias, cursos, alCerrar }: { categoria
   }
 
   return (
-    <dialog ref={dialogo} className="nuevo-curso categorias" aria-labelledby="categorias-titulo" onClose={alCerrar}>
-      <header className="nuevo-curso__heading">
+    <dialog ref={dialogo} className="nuevo-curso" aria-labelledby="categorias-titulo" onClose={alCerrar}>
+      <header className="nuevo-curso__titulo">
         <h2 id="categorias-titulo">Categorías</h2>
         <button type="button" aria-label="Cerrar modal" onClick={() => dialogo.current?.close()}>
           <X />
         </button>
       </header>
       <form className="categorias__formulario" onSubmit={guardar}>
-        <label className="nuevo-curso__field">
+        <label className="nuevo-curso__campo">
           <span>{editando ? "Nuevo nombre" : "Nueva categoría"}</span>
           <input value={nombre} onChange={(evento) => setNombre(evento.target.value)} placeholder="Ej. Ventilación" required minLength={2} maxLength={80} autoFocus />
         </label>
-        <button type="submit" className="nuevo-curso__submit" disabled={guardando}>{editando ? "Guardar" : "Agregar"}</button>
+        <button type="submit" className="nuevo-curso__enviar" disabled={guardando}>{editando ? "Guardar" : "Agregar"}</button>
         {editando && <button type="button" onClick={() => { setEditando(null); setNombre(""); }}>Cancelar</button>}
       </form>
       {error && <p className="nuevo-curso__error" role="alert">{error}</p>}
 
-      {categorias.length === 0 ? <p className="nuevo-curso__notice">Aún no hay categorías. Crea la primera para poder registrar cursos.</p> : (
+      {categorias.length === 0 ? <p className="nuevo-curso__aviso">Aún no hay categorías. Crea la primera para poder registrar cursos.</p> : (
         <ul className="categorias__lista">
           {categorias.map((categoria) => {
             const cursosUsados = usos(categoria.id);
@@ -95,7 +95,7 @@ export default function Categorias({ categorias, cursos, alCerrar }: { categoria
           })}
         </ul>
       )}
-      <footer className="nuevo-curso__footer">
+      <footer className="nuevo-curso__pie">
         <button type="button" onClick={() => dialogo.current?.close()}>Cerrar</button>
       </footer>
     </dialog>

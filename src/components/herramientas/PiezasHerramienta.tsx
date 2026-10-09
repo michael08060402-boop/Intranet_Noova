@@ -2,6 +2,7 @@
 
 import { createContext, useContext, type CSSProperties, type ReactNode } from "react";
 import { BookOpen, FlaskConical, RotateCcw, X } from "lucide-react";
+import { leerNumero } from "@/app/alumno/herramientas/numeros";
 import "./PiezasHerramienta.css";
 
 export const ContextoCompacto = createContext(false);
@@ -250,6 +251,7 @@ export function CampoNumero({
           step={entero ? 1 : "any"}
           placeholder="0"
           value={valor}
+          aria-invalid={Number.isNaN(leerNumero(valor)) || undefined}
           onChange={(evento) => alCambiar(evento.target.value)}
         />
         {unidad && <span className="campo__unidad">{unidad}</span>}

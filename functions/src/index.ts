@@ -1,5 +1,7 @@
 import { initializeApp } from "firebase-admin/app";
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
+import { getDownloadURL, getStorage } from "firebase-admin/storage";
+import { randomUUID } from "node:crypto";
 import { logger } from "firebase-functions";
 import { defineSecret, defineString } from "firebase-functions/params";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
@@ -14,10 +16,21 @@ const idCliente = defineString("MS_CLIENT_ID");
 const usuarioVideos = defineString("MS_VIDEO_USER", { default: "contactos@noovasac.com" });
 const secretoCliente = defineSecret("MICROSOFT_CLIENT_SECRET");
 
-let tokenGuardado: { valor: string; vence: number } | null = null;
+// Se guarda la promesa y no el resultado: las peticiones simultáneas comparten una sola consulta a Microsoft.
+// El token dura al menos 60 minutos y se renueva a los 50; los enlaces de descarga duran cerca de una hora y se reutilizan 30 minutos.
+let tokenGuardado: { promesa: Promise<string>; vence: number } | null = null;
+const enlacesGuardados = new Map<string, { promesa: Promise<{ url: string; itemId: string } | null>; vence: number }>();
 
-async function tokenMicrosoft() {
-  if (tokenGuardado && tokenGuardado.vence > Date.now()) return tokenGuardado.valor;
+function tokenMicrosoft() {
+  if (!tokenGuardado || tokenGuardado.vence < Date.now()) {
+    const promesa = pedirToken();
+    tokenGuardado = { promesa, vence: Date.now() + 50 * 60 * 1000 };
+    promesa.catch(() => { tokenGuardado = null; });
+  }
+  return tokenGuardado.promesa;
+}
+
+async function pedirToken() {
   const respuesta = await fetch(`https://login.microsoftonline.com/${idInquilino.value()}/oauth2/v2.0/token`, {
     method: "POST",
     body: new URLSearchParams({
@@ -28,12 +41,19 @@ async function tokenMicrosoft() {
     }),
   });
   if (!respuesta.ok) throw new Error(`Microsoft respondió ${respuesta.status} al pedir el token`);
-  const datos = (await respuesta.json()) as { access_token: string; expires_in: number };
-  tokenGuardado = { valor: datos.access_token, vence: Date.now() + (datos.expires_in - 60) * 1000 };
-  return tokenGuardado.valor;
+  return ((await respuesta.json()) as { access_token: string }).access_token;
 }
 
-async function enlaceDelVideo(ruta: string) {
+function enlaceDelVideo(ruta: string) {
+  const guardado = enlacesGuardados.get(ruta);
+  if (guardado && guardado.vence > Date.now()) return guardado.promesa;
+  const promesa = buscarVideo(ruta);
+  enlacesGuardados.set(ruta, { promesa, vence: Date.now() + 30 * 60 * 1000 });
+  promesa.then((archivo) => { if (!archivo) enlacesGuardados.delete(ruta); }, () => enlacesGuardados.delete(ruta));
+  return promesa;
+}
+
+async function buscarVideo(ruta: string) {
   const camino = ruta.split("/").map(encodeURIComponent).join("/");
   const usuario = encodeURIComponent(usuarioVideos.value());
   const respuesta = await fetch(`https://graph.microsoft.com/v1.0/users/${usuario}/drive/root:/${camino}`, {
@@ -89,15 +109,8 @@ export const obtenerVideo = onCall({ secrets: [secretoCliente] }, async (peticio
 
   const ruta = video.data()?.ruta;
   try {
-    const url = rutaValida(ruta) ? await enlaceDelVideo(ruta) : null;
-    if (url) {
-      let miniatura: string | null = null;
-      try {
-        const datosMiniatura = await consultarGraph(`/items/${encodeURIComponent(url.itemId)}/thumbnails`);
-        miniatura = datosMiniatura.value?.[0]?.large?.url ?? datosMiniatura.value?.[0]?.medium?.url ?? null;
-      } catch { logger.warn("Miniatura de Microsoft no disponible", { cursoId, claseId }); }
-      return { url: url.url, miniatura, portadaKey: null, portadaCursoKey: curso.data()?.portadaKey ?? null };
-    }
+    const archivo = rutaValida(ruta) ? await enlaceDelVideo(ruta) : null;
+    if (archivo) return { url: archivo.url };
     logger.warn("No se encontró el video en SharePoint", { cursoId, claseId, ruta });
   } catch (error) {
     logger.error("Falló la consulta a Microsoft Graph", error);
@@ -172,7 +185,7 @@ export const confirmarSubidaVideo = onCall({ secrets: [secretoCliente] }, async 
     if (!clase.exists) throw new HttpsError("not-found", "La clase fue eliminada.");
     if (actual.data()?.confirmada) return;
     transaccion.set(db.doc(`cursos/${datos.cursoId}/clases/${datos.claseId}/contenidos/video`), {
-      nombre: "Video de la clase", tipo: "video", orden: 0, ruta: datos.ruta, acceso: datos.acceso, microsoftItemId: archivo.id, actualizadoEn: FieldValue.serverTimestamp(),
+      nombre: "Video de la clase", tipo: "video", orden: 0, ruta: datos.ruta, acceso: datos.acceso, creadoEn: FieldValue.serverTimestamp(), actualizadoEn: FieldValue.serverTimestamp(),
     });
     transaccion.update(referencia, { confirmada: true });
   });
@@ -207,6 +220,37 @@ export const previsualizarVideoMicrosoft = onCall({ secrets: [secretoCliente] },
   const archivo = await enlaceDelVideo(ruta);
   if (!archivo) throw new HttpsError("not-found", "No se encontró el video seleccionado.");
   return { url: archivo.url };
+});
+
+// La miniatura se guarda una sola vez en Storage para que las listas de clases no abran cada video.
+export const actualizarMiniaturaClase = onCall({ secrets: [secretoCliente] }, async (peticion) => {
+  await exigirAdmin(peticion.auth?.uid, peticion.auth?.token.email_verified);
+  const { cursoId, claseId } = peticion.data ?? {};
+  if (!idValido(cursoId) || !idValido(claseId)) throw new HttpsError("invalid-argument", "La clase indicada no es válida.");
+  const clase = db.doc(`cursos/${cursoId}/clases/${claseId}`);
+  const [datosClase, video] = await Promise.all([clase.get(), clase.collection("contenidos").doc("video").get()]);
+  if (!datosClase.exists) throw new HttpsError("not-found", "La clase ya no existe.");
+  const archivo = getStorage().bucket().file(`portadas-clases/${cursoId}/${claseId}`);
+  const ruta = video.data()?.ruta;
+  const item = rutaValida(ruta) ? await enlaceDelVideo(ruta) : null;
+  const miniaturas = item ? await consultarGraph(`/items/${encodeURIComponent(item.itemId)}/thumbnails`) : null;
+  const origen: string | undefined = miniaturas?.value?.[0]?.large?.url ?? miniaturas?.value?.[0]?.medium?.url;
+  if (!origen) {
+    // Sin video, o Microsoft todavía no generó la miniatura de un archivo recién subido.
+    await archivo.delete({ ignoreNotFound: true });
+    await clase.update({ miniatura: FieldValue.delete() });
+    return { miniatura: null };
+  }
+  const imagen = await fetch(origen);
+  if (!imagen.ok) throw new HttpsError("unavailable", "No se pudo descargar la miniatura de Microsoft.");
+  // Un token nuevo cambia la URL, así el navegador no muestra una miniatura anterior guardada en caché.
+  await archivo.save(Buffer.from(await imagen.arrayBuffer()), {
+    contentType: imagen.headers.get("content-type") ?? "image/jpeg",
+    metadata: { cacheControl: "public, max-age=31536000", metadata: { firebaseStorageDownloadTokens: randomUUID() } },
+  });
+  const miniatura = await getDownloadURL(archivo);
+  await clase.update({ miniatura });
+  return { miniatura };
 });
 
 export const eliminarContenidoAdmin = onCall(async (peticion) => {

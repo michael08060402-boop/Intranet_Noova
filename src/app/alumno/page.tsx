@@ -53,28 +53,28 @@ export default function InicioAlumno() {
   const enCurso = misCursos.filter((curso) => porcentaje(curso) < 100).sort((a, b) => porcentaje(b) - porcentaje(a)).slice(0, 3);
 
   return (
-    <main className="alumno-main">
-      <section className="alumno-welcome">
+    <main className="alumno-principal">
+      <section className="alumno-bienvenida">
         <h1>
           {primeraVez ? "¡Te damos la bienvenida, " : "¡Hola de nuevo, "}
-          <span className="alumno-welcome__nombre">{nombre}</span>!
+          <span className="alumno-bienvenida__nombre">{nombre}</span>!
         </h1>
       </section>
 
       <section className="alumno-portada" aria-labelledby="alumno-portada-title">
-        <div className="alumno-portada__copy">
+        <div className="alumno-portada__texto">
           <h2 id="alumno-portada-title">Sigue desarrollando tus habilidades en minería</h2>
           <p>Cursos, exámenes y calculadoras de ventilación y bombeo en un solo lugar.</p>
-          <div className="alumno-portada__actions">
+          <div className="alumno-portada__acciones">
             <Link href="/alumno/explorar" className="alumno-portada__principal">Explorar cursos</Link>
             {perfil?.plan === "gratis" && <Link href="/alumno/premium" className="alumno-portada__secundario"><Crown />Conocer Premium</Link>}
           </div>
         </div>
-        <Image className="alumno-portada__image" src={heroAlumno} alt="Profesionales de Noova trabajando en una mina subterránea" sizes="(max-width: 760px) 100vw, 50vw" preload />
+        <Image className="alumno-portada__imagen" src={heroAlumno} alt="Profesionales de Noova trabajando en una mina subterránea" sizes="(max-width: 760px) 100vw, 50vw" preload />
       </section>
 
-      <section className="alumno-courses" aria-labelledby="alumno-featured-title">
-        <div className="alumno-section-heading">
+      <section className="alumno-cursos" aria-labelledby="alumno-featured-title">
+        <div className="alumno-seccion-titulo">
           <h2 id="alumno-featured-title">Cursos destacados</h2>
           <Link href="/alumno/explorar">Ver todos<ArrowRight /></Link>
         </div>
@@ -92,7 +92,7 @@ export default function InicioAlumno() {
             ))}
           </div>
         ) : (
-          <div className="alumno-empty">
+          <div className="alumno-inicio-vacio">
             <span><BookOpen /></span>
             <div>
               <h3>{cargando ? "Cargando cursos…" : "Aún no hay cursos destacados"}</h3>
@@ -101,8 +101,8 @@ export default function InicioAlumno() {
         )}
       </section>
 
-      <section className="alumno-courses" aria-labelledby="alumno-learning-title">
-        <div className="alumno-section-heading">
+      <section className="alumno-cursos" aria-labelledby="alumno-learning-title">
+        <div className="alumno-seccion-titulo">
           <h2 id="alumno-learning-title">Continúa aprendiendo</h2>
           <Link href="/alumno/cursos">Ver mis cursos<ArrowRight /></Link>
         </div>
@@ -124,7 +124,7 @@ export default function InicioAlumno() {
             })}
           </div>
         ) : (
-          <div className="alumno-empty alumno-empty--centrado">
+          <div className="alumno-inicio-vacio alumno-inicio-vacio--centrado">
             <div>
               <h3>Aún no tienes cursos en progreso</h3>
             </div>

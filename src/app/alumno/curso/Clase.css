@@ -1,15 +1,15 @@
-.clase-page {
+.clase-pagina {
   --alto-fondo: 340px;
   width: min(92%, 1240px);
   margin: 0 auto;
   padding: 18px 0 48px;
 }
-.clase-page__estado {
+.clase-pagina__estado {
   margin-bottom: 14px;
   color: var(--texto-suave);
   font-size: 15px;
 }
-.clase-page__enlace {
+.clase-pagina__enlace {
   display: inline-flex;
   padding: 11px 20px;
   border-radius: 10px;
@@ -18,7 +18,7 @@
   font-size: 14px;
   font-weight: 700;
 }
-.clase-page__ruta {
+.clase-pagina__ruta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -27,19 +27,19 @@
   color: var(--texto-suave);
   font-size: 13px;
 }
-.clase-page__ruta a:hover {
+.clase-pagina__ruta a:hover {
   color: var(--acento-oscuro);
   text-decoration: underline;
 }
-.clase-page__ruta a:last-of-type {
+.clase-pagina__ruta a:last-of-type {
   color: var(--texto);
   font-weight: 600;
 }
-.clase-page .clase-page__ruta svg {
+.clase-pagina .clase-pagina__ruta svg {
   width: 14px;
   height: 14px;
 }
-.clase-page__encabezado {
+.clase-pagina__encabezado {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -47,10 +47,10 @@
   gap: 16px;
   margin-bottom: 24px;
 }
-.clase-page__encabezado h1 {
+.clase-pagina__encabezado h1 {
   font-size: clamp(24px, 2.4vw, 32px);
 }
-.clase-page__completar {
+.clase-pagina__completar {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -63,28 +63,28 @@
   font-weight: 700;
   cursor: pointer;
 }
-.clase-page__completar:hover:not(:disabled) {
+.clase-pagina__completar:hover:not(:disabled) {
   background: var(--acento-suave);
 }
-.clase-page__completar.is-completada {
+.clase-pagina__completar.is-completada {
   border-color: #000;
   background: #e6f6ee;
   color: #000;
 }
-.clase-page__completar:disabled {
+.clase-pagina__completar:disabled {
   opacity: 0.6;
   cursor: wait;
 }
-.clase-page .clase-page__completar svg {
+.clase-pagina .clase-pagina__completar svg {
   width: 18px;
   height: 18px;
 }
-.clase-page__error {
+.clase-pagina__error {
   margin: -12px 0 16px;
   color: var(--peligro);
   font-size: 13px;
 }
-.clase-page__completo {
+.clase-pagina__completo {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -95,7 +95,7 @@
   border-radius: 14px;
   background: var(--acento-suave);
 }
-.clase-page__completo-icono {
+.clase-pagina__completo-icono {
   display: grid;
   place-items: center;
   width: 48px;
@@ -105,29 +105,29 @@
   background: #fff;
   color: var(--acento);
 }
-.clase-page .clase-page__completo-icono svg {
+.clase-pagina .clase-pagina__completo-icono svg {
   width: 24px;
   height: 24px;
 }
-.clase-page__completo > div {
+.clase-pagina__completo > div {
   flex: 1;
   min-width: 200px;
 }
-.clase-page__completo strong {
+.clase-pagina__completo strong {
   font-size: 17px;
 }
-.clase-page__completo p {
+.clase-pagina__completo p {
   color: var(--texto-suave);
   font-size: 14px;
 }
-.clase-page__layout {
+.clase-pagina__distribucion {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;
   align-items: start;
   gap: 26px;
 }
 
-.clase-page__video {
+.clase-pagina__video {
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -137,19 +137,19 @@
   color: #fff;
   font-size: 15px;
 }
-.clase-page__video video {
+.clase-pagina__video video {
   width: 100%;
   height: 100%;
   background: #000;
 }
-.clase-page__video-aviso {
+.clase-pagina__video-aviso {
   display: grid;
   justify-items: center;
   gap: 14px;
   padding: 20px;
   text-align: center;
 }
-.clase-page__video-aviso button {
+.clase-pagina__video-aviso button {
   padding: 11px 20px;
   border: 0;
   border-radius: 10px;
@@ -159,20 +159,20 @@
   font-weight: 700;
   cursor: pointer;
 }
-.clase-page__detalle {
+.clase-pagina__detalle {
   margin-top: 20px;
   padding: 8px 26px 26px;
   border: 1px solid var(--borde);
   border-radius: 14px;
   background: #fff;
 }
-.clase-page__pestanas {
+.clase-pagina__pestanas {
   display: flex;
   gap: 28px;
   margin-bottom: 20px;
   border-bottom: 1px solid var(--borde);
 }
-.clase-page__pestanas button {
+.clase-pagina__pestanas button {
   padding: 16px 0 12px;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
@@ -181,25 +181,25 @@
   font-weight: 600;
   cursor: pointer;
 }
-.clase-page__pestanas button:hover:not([aria-selected="true"]) {
+.clase-pagina__pestanas button:hover:not([aria-selected="true"]) {
   color: var(--texto);
 }
-.clase-page__pestanas button[aria-selected="true"] {
+.clase-pagina__pestanas button[aria-selected="true"] {
   border-bottom-color: var(--acento);
   color: var(--acento-oscuro);
 }
-.clase-page__detalle h2 {
+.clase-pagina__detalle h2 {
   margin-bottom: 8px;
   font-size: 16px;
   font-weight: 700;
 }
-.clase-page__detalle p {
+.clase-pagina__detalle p {
   color: #3d5872;
   font-size: 14px;
   line-height: 1.6;
 }
 
-.clase-page__lateral {
+.clase-pagina__lateral {
   position: sticky;
   top: 20px;
   padding: 20px 18px;
@@ -207,27 +207,28 @@
   border-radius: 14px;
   background: #fff;
 }
-.clase-page__lateral-titulo {
+.clase-pagina__lateral-titulo {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
   margin: 0 6px 14px;
 }
-.clase-page__lateral h2 {
+.clase-pagina__lateral h2 {
   font-size: 16px;
   font-weight: 700;
 }
-.clase-page__lateral-titulo small {
+.clase-pagina__lateral-titulo small {
   color: var(--texto-suave);
   font-size: 12px;
 }
-.clase-page__lateral ol {
+.clase-pagina__lateral ol {
+  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.clase-page__lateral li a {
+.clase-pagina__lateral li a {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -237,14 +238,14 @@
   font-size: 14px;
   font-weight: 600;
 }
-.clase-page__lateral li a:hover {
+.clase-pagina__lateral li a:hover {
   background: #f3f7fa;
 }
-.clase-page__lateral li a.is-actual {
+.clase-pagina__lateral li a.is-actual {
   background: var(--acento-suave);
   color: var(--acento-oscuro);
 }
-.clase-page__miniatura {
+.clase-pagina__miniatura {
   display: grid;
   place-items: center;
   width: 82px;
@@ -256,30 +257,30 @@
     url("../../../assets/fondos/paisaje-mina.webp") center / cover;
   color: #4ade80;
 }
-.clase-page .clase-page__miniatura svg {
+.clase-pagina .clase-pagina__miniatura svg {
   width: 20px;
   height: 20px;
 }
-.clase-page__numero {
+.clase-pagina__numero {
   color: var(--texto-suave);
   font-weight: 500;
 }
-.clase-page a:focus-visible,
-.clase-page button:focus-visible {
+.clase-pagina a:focus-visible,
+.clase-pagina button:focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 3px;
 }
 
 @media (max-width: 960px) {
-  .clase-page__layout {
+  .clase-pagina__distribucion {
     grid-template-columns: minmax(0, 1fr);
   }
-  .clase-page__lateral {
+  .clase-pagina__lateral {
     position: static;
   }
 }
 @media (max-width: 600px) {
-  .clase-page__detalle {
+  .clase-pagina__detalle {
     padding: 4px 18px 20px;
   }
 }

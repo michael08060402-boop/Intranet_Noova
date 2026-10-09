@@ -139,7 +139,7 @@
 }
 .soporte__estado--respondido {
   background: #e3f3ea;
-  color: var(--exito);
+  color: var(--exito-oscuro);
 }
 .soporte__estado--cerrado {
   background: #f4f4f4;

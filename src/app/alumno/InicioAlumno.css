@@ -1,17 +1,17 @@
-.alumno-main {
+.alumno-principal {
   width: min(92%, 1200px);
   margin: 0 auto;
   padding: 26px 0 40px;
 }
 
-.alumno-welcome {
+.alumno-bienvenida {
   margin-bottom: 22px;
   text-align: center;
 }
-.alumno-welcome h1 {
+.alumno-bienvenida h1 {
   margin-bottom: 2px;
 }
-.alumno-welcome__nombre {
+.alumno-bienvenida__nombre {
   color: var(--acento-oscuro);
 }
 
@@ -27,7 +27,7 @@
   background: var(--fondo-barra);
   color: #fff;
 }
-.alumno-portada .alumno-portada__image {
+.alumno-portada .alumno-portada__imagen {
   position: absolute;
   z-index: -1;
   top: 0;
@@ -38,28 +38,28 @@
   object-position: center 40%;
   mask-image: linear-gradient(90deg, transparent 0%, #000 45%);
 }
-.alumno-portada__copy {
+.alumno-portada__texto {
   max-width: 520px;
 }
-.alumno-portada__copy h2 {
+.alumno-portada__texto h2 {
   margin-bottom: 12px;
   font-size: clamp(24px, 2.4vw, 34px);
   font-weight: 750;
   letter-spacing: -0.7px;
   line-height: 1.15;
 }
-.alumno-portada__copy > p {
+.alumno-portada__texto > p {
   margin-bottom: 24px;
   color: #dbe8f2;
   font-size: clamp(14px, 1.2vw, 16px);
   line-height: 1.5;
 }
-.alumno-portada__actions {
+.alumno-portada__acciones {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
-.alumno-portada__actions a {
+.alumno-portada__acciones a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -84,27 +84,27 @@
   background: var(--dorado);
   color: #3b2a05;
 }
-.alumno-main .alumno-portada__secundario svg {
+.alumno-principal .alumno-portada__secundario svg {
   width: 18px;
   height: 18px;
 }
 
-.alumno-courses {
+.alumno-cursos {
   margin-top: 34px;
 }
-.alumno-section-heading {
+.alumno-seccion-titulo {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
   margin-bottom: 14px;
 }
-.alumno-section-heading h2 {
+.alumno-seccion-titulo h2 {
   font-size: 24px;
   font-weight: 750;
   letter-spacing: -0.6px;
 }
-.alumno-section-heading a {
+.alumno-seccion-titulo a {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -112,15 +112,15 @@
   font-size: 14px;
   font-weight: 700;
 }
-.alumno-section-heading a:hover {
+.alumno-seccion-titulo a:hover {
   text-decoration: underline;
 }
-.alumno-main .alumno-section-heading svg {
+.alumno-principal .alumno-seccion-titulo svg {
   width: 16px;
   height: 16px;
 }
 
-.alumno-empty {
+.alumno-inicio-vacio {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,7 +132,7 @@
   background: #fff;
   color: var(--texto-suave);
 }
-.alumno-empty > span {
+.alumno-inicio-vacio > span {
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -142,13 +142,13 @@
   background: var(--acento-suave);
   color: var(--acento);
 }
-.alumno-empty h3 {
+.alumno-inicio-vacio h3 {
   margin-bottom: 4px;
   color: var(--texto);
   font-size: 15px;
   font-weight: 650;
 }
-.alumno-empty--centrado {
+.alumno-inicio-vacio--centrado {
   text-align: center;
 }
 
@@ -219,7 +219,7 @@
 .alumno-continuar__cuerpo a:hover {
   text-decoration: underline;
 }
-.alumno-main .alumno-continuar svg {
+.alumno-principal .alumno-continuar svg {
   width: 16px;
   height: 16px;
 }
@@ -233,18 +233,18 @@
   }
 }
 @media (max-width: 760px) {
-  .alumno-main {
+  .alumno-principal {
     padding-top: 24px;
   }
   .alumno-portada {
     min-height: 0;
   }
-  .alumno-portada .alumno-portada__image {
+  .alumno-portada .alumno-portada__imagen {
     width: 100%;
     opacity: 0.35;
     mask-image: none;
   }
-  .alumno-section-heading h2 {
+  .alumno-seccion-titulo h2 {
     font-size: 20px;
   }
 }
@@ -252,13 +252,13 @@
   .alumno-destacados {
     grid-template-columns: minmax(0, 1fr);
   }
-  .alumno-portada__actions {
+  .alumno-portada__acciones {
     flex-direction: column;
   }
-  .alumno-section-heading {
+  .alumno-seccion-titulo {
     align-items: flex-start;
   }
-  .alumno-empty {
+  .alumno-inicio-vacio {
     flex-direction: column;
     text-align: center;
   }

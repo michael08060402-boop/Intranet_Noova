@@ -116,26 +116,26 @@ export default function Perfil() {
   }
 
   return (
-    <main className="perfil-page alumno-fondo">
-      <TituloPagina className="perfil-page__heading" titulo="Mi perfil" />
+    <main className="perfil-pagina alumno-fondo">
+      <TituloPagina className="perfil-pagina__titulo" titulo="Mi perfil" />
 
-      <section className="perfil-page__tarjeta perfil-page__tarjeta--datos" aria-labelledby="perfil-datos">
+      <section className="perfil-pagina__tarjeta perfil-pagina__tarjeta--datos" aria-labelledby="perfil-datos">
         <h2 id="perfil-datos"><UserRound />Perfil</h2>
-        <div className="perfil-page__foto">
-          <span className="perfil-page__avatar">
+        <div className="perfil-pagina__foto">
+          <span className="perfil-pagina__avatar">
             {perfil?.foto ? <Image src={perfil.foto} alt="" width={60} height={60} unoptimized /> : nombreGuardado.charAt(0) || "?"}
           </span>
           <div>
             <input ref={selectorFoto} type="file" accept="image/*" hidden onChange={cambiarFoto} />
-            <div className="perfil-page__botones-foto">
+            <div className="perfil-pagina__botones-foto">
               <button type="button" onClick={() => selectorFoto.current?.click()} disabled={guardandoFoto}><Camera />{guardandoFoto ? "Guardando…" : "Cambiar foto"}</button>
               {perfil?.foto && <button type="button" onClick={quitarFoto} disabled={guardandoFoto}><Trash2 />Quitar</button>}
             </div>
-            {errorFoto && <p className="perfil-page__error" role="alert">{errorFoto}</p>}
+            {errorFoto && <p className="perfil-pagina__error" role="alert">{errorFoto}</p>}
           </div>
         </div>
 
-        <form className="perfil-page__formulario" onSubmit={guardar}>
+        <form className="perfil-pagina__formulario" onSubmit={guardar}>
           <label>
             <span>Nombre</span>
             <input value={valorNombre} onChange={(evento) => { setNombre(evento.target.value); setMensaje(""); }} required minLength={2} maxLength={60} />
@@ -144,61 +144,61 @@ export default function Perfil() {
             <span>Apellidos</span>
             <input value={valorApellidos} onChange={(evento) => { setApellidos(evento.target.value); setMensaje(""); }} maxLength={60} />
           </label>
-          <label className="perfil-page__completo">
+          <label className="perfil-pagina__completo">
             <span>Correo electrónico</span>
             <input value={perfil?.correo ?? ""} readOnly />
           </label>
-          <div className="perfil-page__acciones">
-            {mensaje && <p className="perfil-page__mensaje" role="status">{mensaje}</p>}
-            {error && <p className="perfil-page__error" role="alert">{error}</p>}
+          <div className="perfil-pagina__acciones">
+            {mensaje && <p className="perfil-pagina__mensaje" role="status">{mensaje}</p>}
+            {error && <p className="perfil-pagina__error" role="alert">{error}</p>}
             <button type="submit" disabled={guardando || sinCambios}>{guardando ? "Guardando…" : "Guardar cambios"}</button>
           </div>
         </form>
       </section>
 
-      <section className="perfil-page__tarjeta" aria-labelledby="perfil-seguridad">
+      <section className="perfil-pagina__tarjeta" aria-labelledby="perfil-seguridad">
         <h2 id="perfil-seguridad"><ShieldCheck />Seguridad</h2>
-        <div className="perfil-page__fila">
+        <div className="perfil-pagina__fila">
           <div>
             <strong>Contraseña</strong>
             {!usaContrasena && <small>Tu cuenta usa Google: se gestiona desde Google.</small>}
           </div>
           {usaContrasena && (
-            <button type="button" className="perfil-page__secundario" onClick={cambiarContrasena} disabled={enviandoClave}>
+            <button type="button" className="perfil-pagina__secundario" onClick={cambiarContrasena} disabled={enviandoClave}>
               <KeyRound />{enviandoClave ? "Enviando…" : "Cambiar contraseña"}
             </button>
           )}
         </div>
-        {mensajeClave && <p className="perfil-page__mensaje" role="status">{mensajeClave}</p>}
-        <div className="perfil-page__fila">
+        {mensajeClave && <p className="perfil-pagina__mensaje" role="status">{mensajeClave}</p>}
+        <div className="perfil-pagina__fila">
           <div>
             <strong>Correo verificado</strong>
             <small>{perfil?.correo}</small>
           </div>
-          <span className="perfil-page__estado"><CircleCheck />Verificado</span>
+          <span className="perfil-pagina__estado"><CircleCheck />Verificado</span>
         </div>
       </section>
 
-      <section className="perfil-page__tarjeta" aria-labelledby="perfil-plan">
+      <section className="perfil-pagina__tarjeta" aria-labelledby="perfil-plan">
         <h2 id="perfil-plan"><Crown />Mi plan</h2>
-        <div className="perfil-page__fila">
+        <div className="perfil-pagina__fila">
           <div>
             <strong>Plan actual</strong>
             <small>Miembro desde el {registro}</small>
           </div>
-          <div className="perfil-page__etiquetas">
-            <span className="perfil-page__plan">{premium && <Crown />}{premium ? "Premium" : "Gratuito"}</span>
-            <span className="perfil-page__estado"><CircleCheck />Activo</span>
+          <div className="perfil-pagina__etiquetas">
+            <span className="perfil-pagina__plan">{premium && <Crown />}{premium ? "Premium" : "Gratuito"}</span>
+            <span className="perfil-pagina__estado"><CircleCheck />Activo</span>
           </div>
         </div>
         {!premium && (
-          <div className="perfil-page__premium">
-            <span className="perfil-page__corona"><Crown /></span>
+          <div className="perfil-pagina__premium">
+            <span className="perfil-pagina__corona"><Crown /></span>
             <div>
               <strong>Pasa a Premium</strong>
               <small>Todos los cursos, certificados y herramientas adicionales</small>
             </div>
-            <Link href="/alumno/premium" className="perfil-page__premium-boton alumno-dorado">Hazte Premium</Link>
+            <Link href="/alumno/premium" className="perfil-pagina__premium-boton alumno-dorado">Hazte Premium</Link>
           </div>
         )}
       </section>

@@ -54,32 +54,32 @@ export default function VerificacionCorreo({ usuario }: { usuario: User }) {
   }
 
   return (
-    <main className="verification-page">
-      <section className="verification-card" aria-labelledby="verification-title">
-        <span className="verification-eyebrow">VERIFICA TU CORREO</span>
+    <main className="verificacion-pagina">
+      <section className="verificacion-tarjeta" aria-labelledby="verification-title">
+        <span className="verificacion-antetitulo">VERIFICA TU CORREO</span>
         <h1 id="verification-title">Confirma tu cuenta</h1>
         <p>
           Enviamos un enlace de verificación a <strong>{usuario.email}</strong>. Abre ese mensaje y confirma
           tu correo para continuar.
         </p>
         {error && (
-          <p className="acceso-message acceso-message--error" role="alert">
+          <p className="acceso-mensaje acceso-mensaje--error" role="alert">
             {error}
           </p>
         )}
         {aviso && (
-          <p className="acceso-message acceso-message--success" role="status">
+          <p className="acceso-mensaje acceso-mensaje--exito" role="status">
             {aviso}
           </p>
         )}
-        <div className="verification-actions">
-          <button className="acceso-submit" type="button" onClick={revisar}>
+        <div className="verificacion-acciones">
+          <button className="acceso-enviar" type="button" onClick={revisar}>
             Ya verifiqué mi correo
           </button>
-          <button className="verification-secondary" type="button" onClick={reenviar}>
+          <button className="verificacion-secundario" type="button" onClick={reenviar}>
             Reenviar correo
           </button>
-          <button className="verification-link" type="button" onClick={() => signOut(auth)}>
+          <button className="verificacion-enlace" type="button" onClick={() => signOut(auth)}>
             Cerrar sesión
           </button>
         </div>

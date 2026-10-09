@@ -1,4 +1,4 @@
-.admin-shell:has(.curso-admin) {
+.admin-estructura:has(.curso-admin) {
   height: auto;
 }
 .curso-admin {
@@ -31,7 +31,7 @@
   text-decoration: underline;
 }
 
-.curso-admin__heading {
+.curso-admin__cabecera {
   display: flex;
   align-items: center;
   gap: 18px;
@@ -68,11 +68,11 @@
   color: var(--texto-suave);
   font-size: 15px;
 }
-.curso-admin__heading > .curso-admin__estado-badge {
+.curso-admin__cabecera > .curso-admin__estado-insignia {
   margin-left: 12px;
 }
 
-.curso-admin__estado-badge {
+.curso-admin__estado-insignia {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -82,20 +82,20 @@
   font-weight: 650;
   white-space: nowrap;
 }
-.curso-admin__estado-badge::before {
+.curso-admin__estado-insignia::before {
   content: "";
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: currentColor;
 }
-.curso-admin__estado-badge.is-publicado {
+.curso-admin__estado-insignia.is-publicado {
   background: #e6f6ee;
   color: #176f42;
 }
-.curso-admin__estado-badge.is-borrador {
+.curso-admin__estado-insignia.is-borrador {
   background: #fff1db;
-  color: #b25e00;
+  color: #954e00;
 }
 .curso-admin__inscritos {
   display: inline-flex;
@@ -196,14 +196,14 @@
   color: var(--texto-suave);
   font-size: 12px;
 }
-.curso-admin__panel-heading {
+.curso-admin__panel-titulo {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 16px;
   margin-bottom: 16px;
 }
-.curso-admin__panel-heading h2 {
+.curso-admin__panel-titulo h2 {
   font-size: 21px;
   font-weight: 750;
   letter-spacing: -.5px;
@@ -228,7 +228,7 @@
   background: var(--acento-oscuro);
 }
 
-.curso-admin__tabla-wrap {
+.curso-admin__tabla-caja {
   position: relative;
   overflow-x: auto;
 }
@@ -471,16 +471,14 @@
   font-size: 12px;
   font-weight: 400;
 }
-.clase-modal .clase-modal__check {
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  font-weight: 500;
+.clase-modal__campos {
+  display: contents;
 }
-.clase-modal__check input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--acento);
+.videos-microsoft__video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  background: #111;
 }
 .clase-modal__error {
   color: var(--peligro);
@@ -505,16 +503,16 @@
 }
 
 @media (max-width: 760px) {
-  .curso-admin__heading {
+  .curso-admin__cabecera {
     flex-wrap: wrap;
   }
-  .curso-admin__heading > .curso-admin__estado-badge {
+  .curso-admin__cabecera > .curso-admin__estado-insignia {
     margin-left: 0;
   }
   .curso-admin__panel {
     padding: 14px;
   }
-  .curso-admin__panel-heading {
+  .curso-admin__panel-titulo {
     flex-direction: column;
   }
   .curso-admin__miniatura {
@@ -537,13 +535,13 @@
 
 .clase-modal { max-height: 92dvh; overflow-y: auto; }
 .clase-modal--con-video { width: min(96vw, 1200px); }
-.clase-modal__layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 18px; }
-.clase-modal--con-video .clase-modal__layout { grid-template-columns: minmax(280px, .85fr) minmax(0, 1.35fr); align-items: start; }
-.clase-modal__layout form { min-width: 0; }
-.clase-modal__preview { min-width: 0; position: sticky; top: 0; padding: 18px; border-radius: 14px; background: #f3f6f8; }
-.clase-modal__preview .videos-microsoft { margin: 0; }
-.clase-modal__preview video { display: block; }
+.clase-modal__distribucion { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 18px; }
+.clase-modal--con-video .clase-modal__distribucion { grid-template-columns: minmax(280px, .85fr) minmax(0, 1.35fr); align-items: start; }
+.clase-modal__distribucion form { min-width: 0; }
+.clase-modal__vista-previa { min-width: 0; position: sticky; top: 0; padding: 18px; border-radius: 14px; background: #f3f6f8; }
+.clase-modal__vista-previa .videos-microsoft { margin: 0; }
+.clase-modal__vista-previa video { display: block; }
 @media (max-width: 760px) {
-  .clase-modal--con-video .clase-modal__layout { grid-template-columns: minmax(0, 1fr); }
-  .clase-modal__preview { position: static; padding: 12px; }
+  .clase-modal--con-video .clase-modal__distribucion { grid-template-columns: minmax(0, 1fr); }
+  .clase-modal__vista-previa { position: static; padding: 12px; }
 }

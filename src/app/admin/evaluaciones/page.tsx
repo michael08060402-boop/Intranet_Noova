@@ -70,7 +70,7 @@ function Evaluaciones() {
       <section className="admin-panel" aria-label="Listado de evaluaciones">
         <div className="admin-panel__titulo">
           <h2>Exámenes</h2>
-          <span className="admin-badge">{examenes.length} {examenes.length === 1 ? "examen" : "exámenes"}</span>
+          <span className="admin-insignia">{examenes.length} {examenes.length === 1 ? "examen" : "exámenes"}</span>
         </div>
         <div className="admin-panel__herramientas">
           <label className="admin-busqueda">
@@ -107,7 +107,7 @@ function Evaluaciones() {
                     <td>{nombreCurso(examen.cursoId)}</td>
                     <td>{examen.modo === "manual" ? examen.preguntas.length : "Archivo"}</td>
                     <td>{examen.duracionMin > 0 ? `${examen.duracionMin} min` : "Sin límite"}</td>
-                    <td><span className={`admin-badge ${examen.publicado ? "admin-badge--info" : ""}`}>{examen.publicado ? "Publicado" : "Borrador"}</span></td>
+                    <td><span className={`admin-insignia ${examen.publicado ? "admin-insignia--info" : ""}`}>{examen.publicado ? "Publicado" : "Borrador"}</span></td>
                     <td>
                       {entregas.length}
                       {pendientes > 0 && <small>{pendientes} por calificar</small>}

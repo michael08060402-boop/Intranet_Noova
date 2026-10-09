@@ -22,13 +22,24 @@ Lo que falta, ordenado por lo que lo desbloquea. Más detalle técnico en `DECIS
 
 ## 3. Antes de producción
 
+- **Videos optimizados:** recodificar los MP4 a H.264 720p/1080p con `faststart` antes de ponerlos en CURSOS (comando en `VIDEOS_SHAREPOINT.md`). A mediano plazo, si hay muchos alumnos a la vez, evaluar un servicio de streaming con HLS; SharePoint no adapta la calidad a la conexión.
+- **Arranque en frío de `obtenerVideo`:** si la primera clase del día tarda varios segundos, poner `minInstances: 1` en esa función (tiene costo mensual).
+- **Volver a subir las portadas de curso** cargadas antes del 9 de octubre para que queden reducidas.
+
 - **App Check** para la función de videos: hoy cualquier usuario con sesión puede llamarla (valida plan e inscripción, pero App Check frena el uso desde fuera de la web).
 - Dominio propio con HTTPS, copias de seguridad de Firestore y alerta de vencimiento del secreto de Entra.
 - **Correos de Authentication** (cuando haya Blaze, que desbloquea las plantillas): remitente "Noova Learn Mining", asunto en español y "Responder a" `contactos@noovasac.com`; página propia `/accion` para verificar el correo y cambiar la contraseña con el diseño de la plataforma. El nombre público del proyecto ya se puede cambiar a "Noova Learn Mining".
 - **Limpiar cuentas sin verificar:** función programada que borre de Authentication las cuentas que no verificaron su correo en 7 días (requiere Blaze). Mientras tanto se borran a mano.
 - Mover la calificación y los avisos a Cloud Functions: hoy todo corre en el navegador del administrador y las reglas son la única barrera.
 
+- **Restringir la API key de Firebase** por dominio (HTTP referrer) en Google Cloud y activar App Check; la key es pública por diseño, pero sin restricción cualquiera puede usarla contra Auth.
+- **CSP (Content-Security-Policy):** primero en modo `Report-Only`, con Google, Firebase, SharePoint y Culqi permitidos.
+- **Pasar las reglas de Firestore por el emulador** después de este cambio (`miniatura` en clases y `ruta` de hasta 1500 caracteres); `npm run test:reglas` necesita Java 21.
+
 ## 4. Siguiente versión
+
+- **Examen sin inscripción:** hoy un alumno puede rendir el examen de un curso al que tiene acceso sin haberse inscrito ni visto las clases. Decidir si se exige inscripción (y clases vistas) en `examenDisponible` de las reglas.
+- **Diálogos de confirmación repetidos:** hay tres juegos casi iguales de estilos de confirmación (`admin-confirmar`, `cursos-confirmar`, `curso-admin__confirmar`); un componente compartido los reduciría.
 
 - **Bloqueo de clases:** no abrir una clase hasta terminar la anterior y, si se decide, pedir todas vistas para el examen final.
 - **Duración de las clases** (se guarda cuando los videos estén en SharePoint).

@@ -1,4 +1,4 @@
-.alumnos-page {
+.alumnos-pagina {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(340px, 1fr);
@@ -7,10 +7,10 @@
   margin: 0 auto;
   padding: clamp(20px, 3svh, 32px) 0 24px;
 }
-.alumnos-page svg {
+.alumnos-pagina svg {
   stroke-width: 1.8;
 }
-.alumnos-heading h1 {
+.alumnos-titulo h1 {
   margin-bottom: 4px;
   font-size: clamp(26px, 2.4vw, 34px);
   font-weight: 750;
@@ -27,18 +27,18 @@
   border-radius: var(--radio-grande);
   background: #fff;
 }
-.alumnos-panel-heading {
+.alumnos-panel-titulo {
   display: flex;
   align-items: center;
   gap: 14px;
   margin-bottom: 18px;
 }
-.alumnos-panel-heading h2 {
+.alumnos-panel-titulo h2 {
   font-size: 19px;
   font-weight: 700;
   letter-spacing: -.4px;
 }
-.alumnos-panel-icon {
+.alumnos-panel-icono {
   display: grid;
   place-items: center;
   width: 40px;
@@ -47,11 +47,11 @@
   background: var(--acento-suave);
   color: var(--acento);
 }
-.alumnos-panel-icon svg {
+.alumnos-panel-icono svg {
   width: 22px;
   height: 22px;
 }
-.alumnos-count {
+.alumnos-contador {
   padding: 4px 12px;
   border-radius: 999px;
   background: #eef1f4;
@@ -60,13 +60,13 @@
   font-weight: 600;
   white-space: nowrap;
 }
-.alumnos-toolbar {
+.alumnos-controles {
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 18px;
 }
-.alumnos-search {
+.alumnos-buscador {
   display: flex;
   flex: 1;
   align-items: center;
@@ -77,12 +77,12 @@
   border-radius: var(--radio);
   color: var(--texto-suave);
 }
-.alumnos-search svg {
+.alumnos-buscador svg {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
 }
-.alumnos-search input {
+.alumnos-buscador input {
   width: 100%;
   min-width: 0;
   height: 44px;
@@ -102,7 +102,7 @@
   font-size: 14px;
   cursor: pointer;
 }
-.alumnos-search:focus-within,
+.alumnos-buscador:focus-within,
 .alumnos-plan:focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 3px;
@@ -116,20 +116,22 @@
   font-size: 13px;
 }
 
-.alumnos-table-wrap {
+/* Contiene el texto oculto "Acciones" (position: absolute) para que no ensanche la página en móviles. */
+.alumnos-tabla-caja {
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow: auto;
   border: 1px solid var(--borde);
   border-radius: var(--radio);
 }
-.alumnos-table {
+.alumnos-tabla {
   width: 100%;
 }
-.alumnos-table thead {
+.alumnos-tabla thead {
   background: #f0f4f8;
 }
-.alumnos-table th {
+.alumnos-tabla th {
   padding: 14px 20px;
   color: var(--texto-suave);
   font-size: 14px;
@@ -137,10 +139,10 @@
   text-align: left;
   white-space: nowrap;
 }
-.alumnos-table th:first-child {
+.alumnos-tabla th:first-child {
   width: 32%;
 }
-.alumnos-table td {
+.alumnos-tabla td {
   padding: 14px 20px;
   border-top: 1px solid var(--borde);
   font-size: 14px;
@@ -162,18 +164,18 @@
   color: var(--acento-oscuro);
   font-weight: 700;
 }
-.alumnos-badge {
+.alumnos-insignia {
   display: inline-block;
   padding: 4px 12px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 650;
 }
-.alumnos-badge--gratis {
+.alumnos-insignia--gratis {
   background: #e6f6ee;
   color: #176f42;
 }
-.alumnos-badge--premium {
+.alumnos-insignia--premium {
   background: #fff4d1;
   color: #8a6400;
 }
@@ -234,7 +236,7 @@
   cursor: wait;
 }
 
-.alumnos-empty {
+.alumnos-vacio {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -243,7 +245,7 @@
   padding: clamp(16px, 3svh, 32px);
   text-align: center;
 }
-.alumnos-empty > span {
+.alumnos-vacio > span {
   display: grid;
   place-items: center;
   width: 80px;
@@ -253,38 +255,38 @@
   background: var(--acento-suave);
   color: var(--acento);
 }
-.alumnos-empty > span svg {
+.alumnos-vacio > span svg {
   width: 40px;
   height: 40px;
 }
-.alumnos-empty h2 {
+.alumnos-vacio h2 {
   margin-bottom: 8px;
   font-size: 21px;
   font-weight: 700;
   letter-spacing: -.4px;
 }
-.alumnos-empty p {
+.alumnos-vacio p {
   color: var(--texto-suave);
   font-size: 15px;
   line-height: 1.6;
 }
 
 @media (max-width: 900px) {
-  .alumnos-page {
+  .alumnos-pagina {
     grid-template-rows: auto minmax(420px, 1fr);
   }
-  .alumnos-toolbar {
+  .alumnos-controles {
     flex-wrap: wrap;
   }
-  .alumnos-search {
+  .alumnos-buscador {
     flex-basis: 100%;
   }
   .alumnos-plan {
     width: 100%;
     margin-left: 0;
   }
-  .alumnos-table th,
-  .alumnos-table td {
+  .alumnos-tabla th,
+  .alumnos-tabla td {
     padding: 12px;
   }
 }
@@ -292,16 +294,16 @@
   .alumnos-panel {
     padding: 14px;
   }
-  .alumnos-panel-heading h2 {
+  .alumnos-panel-titulo h2 {
     font-size: 15px;
   }
-  .alumnos-table th {
+  .alumnos-tabla th {
     font-size: 12px;
   }
-  .alumnos-empty h2 {
+  .alumnos-vacio h2 {
     font-size: 18px;
   }
-  .alumnos-empty p {
+  .alumnos-vacio p {
     font-size: 14px;
   }
 }

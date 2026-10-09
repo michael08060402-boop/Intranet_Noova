@@ -1,6 +1,6 @@
 # Entrega al propietario: habilitar y publicar la intranet
 
-Actualizado: 7 de octubre de 2026. Proyecto destino: `noova-intranet`.
+Actualizado: 9 de octubre de 2026. Proyecto destino: `noova-intranet`.
 Esta guía describe lo que falta para funcionar en `web.app`. No autoriza por sí
 misma un despliegue. El ERP no requiere cambios ni un nuevo Client Secret.
 
@@ -12,18 +12,19 @@ Falta dar permisos a los servicios y publicar ESTE código en noova-intranet.
 
 ### Videos: conexión que ya tiene el código
 
-`functions/src/index.ts` contiene las cuatro funciones utilizadas por la web:
+`functions/src/index.ts` contiene las funciones utilizadas por la web:
 
 | Acción en la intranet | Código que la realiza | Conexión ya implementada |
 | --- | --- | --- |
 | Pulsar Elegir de Microsoft | listarVideosMicrosoft | Lee carpetas y videos bajo CURSOS del OneDrive de Contactos |
 | Seleccionar un video y verlo a la derecha | previsualizarVideoMicrosoft | Obtiene un enlace temporal de Microsoft para el administrador |
 | Abrir la clase como alumno | obtenerVideo | Comprueba acceso en Firestore y devuelve el enlace del video |
+| Guardar una clase con video (o abrir Administrar curso) | actualizarMiniaturaClase | Guarda la miniatura de Microsoft en Storage y su enlace en la clase |
 
 `src/firebase/cursos.ts` llama esas funciones. El formulario del administrador
 ya está conectado a esas llamadas. Las pantallas del alumno también lo están.
 
-Las cuatro funciones se autentican con la aplicación existente del ERP:
+Las funciones se autentican con la aplicación existente del ERP:
 
 ```text
 MS_TENANT_ID = 380bbe09-b7c8-4c9f-a5c3-e293ab02f443
@@ -51,7 +52,7 @@ No se guardan los archivos de video en Firebase.
 
 **Acción concreta del propietario para videos:** permitir que la cuenta de
 servicio de estas funciones lea el secreto MICROSOFT_CLIENT_SECRET que YA existe.
-Después se despliegan estas cuatro funciones y la web. No hay que pegar la clave en
+Después se despliegan estas funciones y la web. No hay que pegar la clave en
 el frontend, pasar la clave a los alumnos ni modificar el ERP. Los pasos de consola
 y comandos están en las secciones 1 y 3 de esta guía.
 
@@ -92,7 +93,7 @@ leer el secreto ni validar las subidas de portada.
 | Selección de videos de Microsoft | Funciona en la prueba local del usuario |
 | Previsualización grande en el modal del administrador | Implementada; pendiente de validar el último diseño |
 | Publicación de clase al guardar, sin checkbox | Implementada |
-| Miniatura automática / fotograma en listas de clases | Implementada; pendiente de comprobar visualmente la última versión |
+| Miniatura de clases | Imagen guardada en Storage por `actualizarMiniaturaClase` (9 de octubre); pendiente de comprobar en web.app |
 | Subida de portada de curso a Storage | Implementada; bloqueada por permiso Storage → Firestore |
 | Bucket de Storage | Creado por el usuario |
 | Reglas de Storage | El usuario mostró reglas corregidas publicadas; consola muestra falta de permiso entre servicios |
@@ -124,6 +125,9 @@ MICROSOFT_CLIENT_SECRET**:
    en la configuración efectiva del despliegue antes de asignar permisos.
 3. Conceder **Secret Manager Secret Accessor**
    (`roles/secretmanager.secretAccessor`) a esa cuenta, sobre este secreto.
+4. Esa misma cuenta escribe las miniaturas en Storage (`portadas-clases/`). La
+   cuenta predeterminada ya puede hacerlo si conserva el rol Editor; si se usa una
+   cuenta con permisos reducidos, darle **Storage Object Admin** sobre el bucket.
 
 La cuenta del desarrollador no necesita leer la clave en el navegador. Quien
 realice el despliegue debe tener permisos suficientes para desplegar Functions y
@@ -172,12 +176,12 @@ npm run test:videos
 npm run build
 ```
 
-Si las comprobaciones pasan, publicar reglas y las cuatro funciones que utiliza el
+Si las comprobaciones pasan, publicar reglas y las funciones que utiliza el
 flujo actual, siempre indicando el proyecto:
 
 ```powershell
 firebase deploy --only firestore:rules,storage --project noova-intranet
-firebase deploy --only functions:obtenerVideo,functions:listarVideosMicrosoft,functions:previsualizarVideoMicrosoft,functions:eliminarContenidoAdmin --project noova-intranet
+firebase deploy --only functions:obtenerVideo,functions:listarVideosMicrosoft,functions:previsualizarVideoMicrosoft,functions:actualizarMiniaturaClase,functions:eliminarContenidoAdmin --project noova-intranet
 firebase deploy --only hosting --project noova-intranet
 ```
 
@@ -198,6 +202,8 @@ de producción no conecta con el emulador aunque exista .env.development.local.
 - Crear una clase, pulsar Elegir de Microsoft, navegar por CURSOS, seleccionar un
   MP4/WebM y reproducir su previsualización antes de guardar.
 - Guardar la clase: queda publicada. El curso debe estar publicado para alumnos.
+- Entrar como administrador a Administrar curso de cada curso que ya tenga videos:
+  las clases sin miniatura la generan solas al abrir esa página (una sola vez).
 - Entrar como alumno activo con correo verificado e inscrito. Comprobar miniatura
   y reproducción. Los controles de Premium del curso aún existen; para este flujo
   seleccionar un curso gratis (el video se guarda con acceso gratis).
@@ -213,14 +219,14 @@ de producción no conecta con el emulador aunque exista .env.development.local.
   eliminar cursos: no implementados. No confundir quitar una referencia con
   eliminar el archivo en Storage/Microsoft.
 - Culqi: pendiente; no se ha integrado en esta etapa.
-- Confirmar el diseño final y el rendimiento de fotogramas: actualmente el
-  navegador abre el video y busca al 20 % de la duración; no guarda una imagen nueva.
+- Las portadas de curso subidas antes del 9 de octubre conservan su tamaño original
+  (hasta 5 MB). Volver a subirlas para que se guarden reducidas.
 
 ## Desarrollo con servicios desplegados
 
-La aplicaci?n llama a las funciones desplegadas tanto desde localhost como desde
-Hosting. Se retiraron los scripts locales de configuraci?n y diagn?stico de Microsoft
-y la conexi?n al emulador de Functions. No se necesita functions/.secret.local.
+La aplicación llama a las funciones desplegadas tanto desde localhost como desde
+Hosting. Se retiraron los scripts locales de configuración y diagnóstico de Microsoft
+y la conexión al emulador de Functions. No se necesita functions/.secret.local.
 Las pruebas automatizadas se conservan en pruebas_emulador/videos.test.cjs y se
 pueden ejecutar con npm run test:videos; no requieren Microsoft ni credenciales reales.
 

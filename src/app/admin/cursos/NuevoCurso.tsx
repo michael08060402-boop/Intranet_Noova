@@ -75,15 +75,15 @@ export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Cur
       const fuera = evento.clientX < rect.left || evento.clientX > rect.right || evento.clientY < rect.top || evento.clientY > rect.bottom;
       if (fuera && !guardando) dialogo.current?.close();
     }}>
-      <header className="nuevo-curso__heading">
+      <header className="nuevo-curso__titulo">
         <h2 id="nuevo-curso-titulo">{curso ? "Editar curso" : "Crear nuevo curso"}</h2>
         <button type="button" disabled={guardando} aria-label="Cerrar modal" onClick={() => dialogo.current?.close()}>
           <X />
         </button>
       </header>
       <form onSubmit={guardar}>
-        <fieldset disabled={guardando} style={{ border: 0, padding: 0, margin: 0, display: "contents" }}>
-        <label className="nuevo-curso__field">
+        <fieldset disabled={guardando} className="nuevo-curso__campos">
+        <label className="nuevo-curso__campo">
           <span>Imagen de portada</span>
           <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(evento) => {
             const archivo = evento.target.files?.[0] ?? null;
@@ -91,19 +91,19 @@ export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Cur
             setImagen(archivo); setError("");
           }} />
           <small>JPG, PNG o WebP. Máximo 5 MB.</small>
-          {vistaPrevia && <div style={{ aspectRatio: "16 / 9", borderRadius: 10, background: `url(${JSON.stringify(vistaPrevia)}) center / cover` }} role="img" aria-label="Vista previa de la portada" />}
+          {vistaPrevia && <div className="nuevo-curso__vista-previa" style={{ backgroundImage: `url(${JSON.stringify(vistaPrevia)})` }} role="img" aria-label="Vista previa de la portada" />}
         </label>
-        <label className="nuevo-curso__field">
+        <label className="nuevo-curso__campo">
           <span>Nombre del curso</span>
           <input value={nombre} onChange={(evento) => setNombre(evento.target.value)} placeholder="Ej. VentSim" required minLength={2} maxLength={120} autoFocus />
         </label>
-        <label className="nuevo-curso__field">
+        <label className="nuevo-curso__campo">
           <span>Descripción</span>
           <textarea value={descripcion} onChange={(evento) => setDescripcion(evento.target.value)} placeholder="Describe brevemente el contenido del curso..." maxLength={500} aria-describedby="curso-contador" />
-          <small id="curso-contador" className="nuevo-curso__counter">{descripcion.length}/500</small>
+          <small id="curso-contador" className="nuevo-curso__contador">{descripcion.length}/500</small>
         </label>
         {activas.length > 0 || curso ? (
-          <label className="nuevo-curso__field">
+          <label className="nuevo-curso__campo">
             <span>Categoría</span>
             <select value={categoriaElegida} onChange={(evento) => setCategoriaId(evento.target.value)} required>
               {curso && !activas.some((categoria) => categoria.id === curso.categoriaId) && (
@@ -113,19 +113,19 @@ export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Cur
             </select>
           </label>
         ) : (
-          <div className="nuevo-curso__field">
+          <div className="nuevo-curso__campo">
             <span>Categoría</span>
-            <p className="nuevo-curso__notice">No hay categorías activas. Créalas con el botón <strong>Categorías</strong> de la lista de cursos.</p>
+            <p className="nuevo-curso__aviso">No hay categorías activas. Créalas con el botón <strong>Categorías</strong> de la lista de cursos.</p>
           </div>
         )}
-        <div className="nuevo-curso__row">
-          <label className="nuevo-curso__field">
+        <div className="nuevo-curso__fila">
+          <label className="nuevo-curso__campo">
             <span>Nivel</span>
             <select value={nivel} onChange={(evento) => setNivel(evento.target.value as Nivel)}>
               {Object.entries(nombresNivel).map(([valor, etiqueta]) => <option key={valor} value={valor}>{etiqueta}</option>)}
             </select>
           </label>
-          <label className="nuevo-curso__field">
+          <label className="nuevo-curso__campo">
             <span>Acceso</span>
             <select value={acceso} onChange={(evento) => setAcceso(evento.target.value as Acceso)}>
               <option value="gratis">Gratis</option>
@@ -133,16 +133,16 @@ export default function NuevoCurso({ curso, categorias, alCerrar }: { curso: Cur
             </select>
           </label>
         </div>
-        <fieldset className="nuevo-curso__states">
+        <fieldset className="nuevo-curso__estados">
           <legend>Estado</legend>
           <label><input type="radio" name="estado" checked={!publicado} onChange={() => setPublicado(false)} /><span>Borrador</span></label>
           <label><input type="radio" name="estado" checked={publicado} onChange={() => setPublicado(true)} /><span>Publicado</span></label>
         </fieldset>
         {guardando && <p role="status">{estadoGuardado}</p>}
         {error && <p className="nuevo-curso__error" role="alert">{error}</p>}
-        <footer className="nuevo-curso__footer">
+        <footer className="nuevo-curso__pie">
           <button type="button" onClick={() => dialogo.current?.close()}>Cancelar</button>
-          <button type="submit" className="nuevo-curso__submit" disabled={guardando || !categoriaElegida}>{guardando ? "Guardando…" : curso ? "Guardar cambios" : "Crear curso"}</button>
+          <button type="submit" className="nuevo-curso__enviar" disabled={guardando || !categoriaElegida}>{guardando ? "Guardando…" : curso ? "Guardar cambios" : "Crear curso"}</button>
         </footer>
         </fieldset>
       </form>

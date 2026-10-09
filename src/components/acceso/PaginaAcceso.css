@@ -1,4 +1,4 @@
-.acceso-shell {
+.acceso-estructura {
   --acceso-primary: #082747;
   --acceso-link: #00678e;
   --acceso-gradient: linear-gradient(100deg, #0c4566 0%, #115a7f 50%, #1a7299 100%);
@@ -61,7 +61,7 @@
   flex-shrink: 0;
 }
 
-.acceso-card {
+.acceso-tarjeta {
   width: min(100%, 480px);
   margin: auto;
   padding: clamp(22px, 4dvh, 40px) clamp(22px, 3vw, 40px);
@@ -70,7 +70,7 @@
   background: #fff;
 }
 
-.acceso-card h1 {
+.acceso-tarjeta h1 {
   margin-bottom: clamp(18px, 3dvh, 28px);
   color: var(--acceso-primary);
   font-size: clamp(28px, 2.6vw, 38px);
@@ -79,20 +79,20 @@
   line-height: 1.15;
 }
 
-.acceso-card__lead {
+.acceso-tarjeta__entradilla {
   margin: -12px 0 20px;
   color: #60758a;
   font-size: 14px;
   line-height: 1.6;
 }
 
-.acceso-form {
+.acceso-formulario {
   display: flex;
   flex-direction: column;
   gap: clamp(12px, 2dvh, 18px);
 }
 
-.acceso-field {
+.acceso-campo {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -101,7 +101,7 @@
   font-weight: 600;
 }
 
-.acceso-field input {
+.acceso-campo input {
   width: 100%;
   height: 48px;
   padding: 0 14px;
@@ -114,32 +114,32 @@
   font-weight: 400;
 }
 
-.acceso-field input::placeholder {
+.acceso-campo input::placeholder {
   color: #8f9fae;
 }
 
-.acceso-field input:focus {
+.acceso-campo input:focus {
   border-color: var(--acceso-link);
   outline: 2px solid var(--acceso-link);
   outline-offset: 1px;
 }
 
-.acceso-icon {
+.acceso-icono {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
   stroke-width: 1.6;
 }
 
-.acceso-password {
+.acceso-contrasena {
   position: relative;
 }
 
-.acceso-password input {
+.acceso-contrasena input {
   padding-right: 46px;
 }
 
-.acceso-password button {
+.acceso-contrasena button {
   position: absolute;
   top: 50%;
   right: 12px;
@@ -186,25 +186,25 @@
   white-space: nowrap;
 }
 
-.acceso-options {
+.acceso-opciones {
   display: flex;
   justify-content: flex-end;
 }
 
-.acceso-text-button,
-.acceso-back {
+.acceso-texto-boton,
+.acceso-volver {
   color: var(--acceso-link);
   cursor: pointer;
   font-size: 13px;
   font-weight: 700;
 }
 
-.acceso-text-button:hover,
-.acceso-back:hover {
+.acceso-texto-boton:hover,
+.acceso-volver:hover {
   text-decoration: underline;
 }
 
-.acceso-submit {
+.acceso-enviar {
   display: flex;
   min-height: 48px;
   align-items: center;
@@ -219,17 +219,17 @@
   transition: filter 160ms ease;
 }
 
-.acceso-submit:hover:not(:disabled) {
+.acceso-enviar:hover:not(:disabled) {
   filter: brightness(1.1);
 }
 
-.acceso-submit:disabled,
+.acceso-enviar:disabled,
 .acceso-google:disabled {
   cursor: not-allowed;
   opacity: 0.7;
 }
 
-.acceso-divider {
+.acceso-separador {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -238,8 +238,8 @@
   font-size: 12px;
 }
 
-.acceso-divider::before,
-.acceso-divider::after {
+.acceso-separador::before,
+.acceso-separador::after {
   height: 1px;
   flex: 1;
   background: #dfe7ed;
@@ -272,33 +272,33 @@
   height: 18px;
 }
 
-.acceso-switch {
+.acceso-interruptor {
   margin-top: clamp(16px, 2.6dvh, 26px);
   color: #60758a;
   text-align: center;
   font-size: 13px;
 }
 
-.acceso-message {
+.acceso-mensaje {
   font-size: 12px;
   line-height: 1.5;
 }
 
-.acceso-message--error {
+.acceso-mensaje--error {
   color: #b42318;
 }
 
-.acceso-message--success {
+.acceso-mensaje--exito {
   color: #16734a;
 }
 
-.acceso-back {
+.acceso-volver {
   display: block;
   margin: 18px auto 0;
 }
 
-.acceso-shell a:focus-visible,
-.acceso-shell button:focus-visible {
+.acceso-estructura a:focus-visible,
+.acceso-estructura button:focus-visible {
   outline: 2px solid var(--acceso-link);
   outline-offset: 3px;
 }
@@ -324,14 +324,14 @@
   letter-spacing: -0.04em;
 }
 
-.acceso-loading {
+.acceso-carga {
   display: grid;
   min-height: 100svh;
   place-items: center;
   background: #f4f7f9;
 }
 
-.acceso-loading span {
+.acceso-carga span {
   width: 28px;
   height: 28px;
   border: 3px solid #d4e2e8;
@@ -347,13 +347,13 @@
 }
 
 @media (max-width: 1100px) {
-  .acceso-shell {
+  .acceso-estructura {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }
 
 @media (max-width: 760px) {
-  .acceso-shell {
+  .acceso-estructura {
     grid-template-columns: minmax(0, 1fr);
     padding: 0;
   }
@@ -366,7 +366,7 @@
     padding: 16px;
   }
 
-  .acceso-card {
+  .acceso-tarjeta {
     border-radius: 18px;
   }
 
@@ -376,14 +376,14 @@
 }
 
 @media (max-height: 740px) {
-  .acceso-field input,
-  .acceso-submit,
+  .acceso-campo input,
+  .acceso-enviar,
   .acceso-google {
     height: 42px;
     min-height: 42px;
   }
 
-  .acceso-field {
+  .acceso-campo {
     gap: 5px;
   }
 }

@@ -1,12 +1,12 @@
-.my-courses {
+.mis-cursos {
   width: min(92%, 1200px);
   margin: 0 auto;
   padding: 36px 0 48px;
 }
-.my-courses__heading {
+.mis-cursos__titulo {
   margin-bottom: 32px;
 }
-.my-courses__toolbar {
+.mis-cursos__controles {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -14,12 +14,12 @@
   gap: 12px 16px;
   margin-bottom: 24px;
 }
-.my-courses__filters {
+.mis-cursos__filtros {
   display: flex;
   flex-wrap: wrap;
   column-gap: 26px;
 }
-.my-courses__filters button {
+.mis-cursos__filtros button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -31,14 +31,14 @@
   white-space: nowrap;
   cursor: pointer;
 }
-.my-courses__filters button:hover {
+.mis-cursos__filtros button:hover {
   color: var(--texto);
 }
-.my-courses__filters .is-activo {
+.mis-cursos__filtros .is-activo {
   border-bottom-color: var(--acento);
   color: var(--acento);
 }
-.my-courses__filters button span {
+.mis-cursos__filtros button span {
   display: inline-grid;
   place-items: center;
   min-width: 22px;
@@ -51,22 +51,22 @@
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
-.my-courses__filters .is-activo span {
+.mis-cursos__filtros .is-activo span {
   background: var(--acento);
   color: #fff;
 }
-.my-courses__filters button:focus-visible {
+.mis-cursos__filtros button:focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 2px;
 }
-.my-courses__toolbar .alumno-orden {
+.mis-cursos__controles .alumno-orden {
   margin-bottom: 8px;
 }
-.my-courses__vacio {
+.mis-cursos__vacio {
   min-height: clamp(260px, 42svh, 440px);
   border-radius: 16px;
 }
-.my-courses__explorar {
+.mis-cursos__explorar {
   margin-top: 20px;
   padding: 12px 22px;
   border-radius: 10px;
@@ -75,24 +75,24 @@
   font-size: 14px;
   font-weight: 700;
 }
-.my-courses__explorar:hover {
+.mis-cursos__explorar:hover {
   background: var(--acento-oscuro);
 }
-.my-courses__estado,
-.my-courses__error {
+.mis-cursos__estado,
+.mis-cursos__error {
   margin-bottom: 16px;
   color: var(--texto-suave);
   font-size: 14px;
 }
-.my-courses__error {
+.mis-cursos__error {
   color: var(--peligro);
 }
-.my-courses__lista {
+.mis-cursos__lista {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
-.my-courses__curso {
+.mis-cursos__curso {
   display: flex;
   align-items: center;
   gap: 22px;
@@ -101,29 +101,29 @@
   border-radius: 14px;
   background: #fff;
 }
-.my-courses__portada {
+.mis-cursos__portada {
   width: 200px;
   flex-shrink: 0;
   aspect-ratio: 16 / 9;
   border-radius: 10px;
 }
-.my-courses__imagen {
+.mis-cursos__imagen {
   width: 100%;
   height: 100%;
   aspect-ratio: 16 / 9;
   border-radius: 10px;
   background: url("../../../assets/fondos/paisaje-mina.webp") center / cover;
 }
-.my-courses__info {
+.mis-cursos__info {
   flex: 1;
   min-width: 0;
 }
-.my-courses__info h2 {
+.mis-cursos__info h2 {
   margin-bottom: 6px;
   font-size: 18px;
   font-weight: 700;
 }
-.my-courses__info p {
+.mis-cursos__info p {
   display: -webkit-box;
   overflow: hidden;
   margin-bottom: 8px;
@@ -133,11 +133,11 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
-.my-courses__info small {
+.mis-cursos__info small {
   color: var(--texto-suave);
   font-size: 13px;
 }
-.my-courses__avance {
+.mis-cursos__avance {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -146,19 +146,19 @@
   color: var(--texto-suave);
   font-size: 13px;
 }
-.my-courses__barra {
+.mis-cursos__barra {
   height: 8px;
   overflow: hidden;
   border-radius: 999px;
   background: #e6edf3;
 }
-.my-courses__barra span {
+.mis-cursos__barra span {
   display: block;
   height: 100%;
   border-radius: inherit;
   background: var(--celeste);
 }
-.my-courses__continuar {
+.mis-cursos__continuar {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -171,36 +171,36 @@
   font-size: 14px;
   font-weight: 700;
 }
-.my-courses__continuar:hover {
+.mis-cursos__continuar:hover {
   background: var(--acento-oscuro);
 }
-.my-courses .my-courses__continuar svg {
+.mis-cursos .mis-cursos__continuar svg {
   width: 16px;
   height: 16px;
 }
-.my-courses__curso a:focus-visible {
+.mis-cursos__curso a:focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 3px;
 }
 @media (max-width: 760px) {
-  .my-courses {
+  .mis-cursos {
     padding-top: 24px;
   }
-  .my-courses__curso {
+  .mis-cursos__curso {
     flex-direction: column;
     align-items: stretch;
   }
-  .my-courses__portada,
-  .my-courses__avance {
+  .mis-cursos__portada,
+  .mis-cursos__avance {
     width: 100%;
   }
 }
 @media (max-width: 600px) {
-  .my-courses__filters {
+  .mis-cursos__filtros {
     width: 100%;
     column-gap: 20px;
   }
-  .my-courses__toolbar .alumno-orden {
+  .mis-cursos__controles .alumno-orden {
     order: -1;
     width: 100%;
   }

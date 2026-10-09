@@ -4,7 +4,7 @@
   gap: 10px;
   margin-bottom: 12px;
 }
-.categorias__formulario .nuevo-curso__field {
+.categorias__formulario .nuevo-curso__campo {
   flex: 1;
   margin-bottom: 0;
 }
@@ -23,15 +23,15 @@
 .categorias__formulario button:hover {
   background: var(--acento-suave);
 }
-.categorias__formulario .nuevo-curso__submit {
+.categorias__formulario .nuevo-curso__enviar {
   border-color: var(--acento);
   background: var(--acento);
   color: #fff;
 }
-.categorias__formulario .nuevo-curso__submit:hover {
+.categorias__formulario .nuevo-curso__enviar:hover {
   background: var(--acento-oscuro);
 }
-.categorias__formulario .nuevo-curso__submit:disabled {
+.categorias__formulario .nuevo-curso__enviar:disabled {
   opacity: 0.6;
   cursor: default;
 }

@@ -266,7 +266,7 @@ export default function ReportesPage() {
       <section className="admin-panel" aria-label="Resultados por alumno">
         <div className="admin-panel__titulo">
           <h2>Alumnos</h2>
-          <span className="admin-badge">{filasAlumnos.length}</span>
+          <span className="admin-insignia">{filasAlumnos.length}</span>
         </div>
         <div className="admin-panel__herramientas">
           <label className="admin-busqueda">
@@ -290,7 +290,7 @@ export default function ReportesPage() {
               {filasAlumnos.map(({ alumno, rendidos, promedio: nota, aprobados, calificados }) => (
                 <tr key={alumno.id}>
                   <td><strong>{alumno.nombre}</strong><small>{alumno.correo}</small></td>
-                  <td><span className={`admin-badge ${alumno.plan === "premium" ? "admin-badge--aviso" : "admin-badge--ok"}`}>{alumno.plan === "premium" ? "Premium" : "Gratis"}</span></td>
+                  <td><span className={`admin-insignia ${alumno.plan === "premium" ? "admin-insignia--aviso" : "admin-insignia--ok"}`}>{alumno.plan === "premium" ? "Premium" : "Gratis"}</span></td>
                   <td>{alumno.creadoEn > 0 ? formatoFecha.format(alumno.creadoEn) : "—"}</td>
                   <td>{rendidos}</td>
                   <td>{nota === null ? "—" : `${nota} / ${NOTA_MAXIMA}`}</td>

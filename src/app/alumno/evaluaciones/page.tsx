@@ -46,7 +46,7 @@ export default function MisEvaluaciones() {
 
   return (
     <main className="mis-evaluaciones alumno-fondo">
-      <TituloPagina className="mis-evaluaciones__heading" titulo="Mis evaluaciones" />
+      <TituloPagina className="mis-evaluaciones__titulo" titulo="Mis evaluaciones" />
       <div className="mis-evaluaciones__filtros" aria-label="Filtrar evaluaciones">
         {filtros.map((nombre) => (
           <button key={nombre} type="button" aria-pressed={filtro === nombre} className={filtro === nombre ? "is-activo" : ""} onClick={() => setFiltro(nombre)}>

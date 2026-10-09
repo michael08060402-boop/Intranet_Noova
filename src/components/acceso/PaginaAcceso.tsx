@@ -1,19 +1,26 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import logoNoova from "@/assets/marca/logo-noova.webp";
 import FormularioAcceso from "./FormularioAcceso";
-import { useSesion } from "./SesionProvider";
+import { MARCA_SESION, useSesion } from "./SesionProvider";
 import VerificacionCorreo from "./VerificacionCorreo";
 import "./PaginaAcceso.css";
+
+const sinSuscripcion = () => () => {};
+
+function leerMarcaSesion() {
+  try { return localStorage.getItem(MARCA_SESION) === "1"; } catch { return false; }
+}
 
 export default function PaginaAcceso() {
   const { usuario, perfil, cargando } = useSesion();
   const router = useRouter();
   const correoVerificado = !!usuario?.emailVerified;
+  const sesionPrevia = useSyncExternalStore(sinSuscripcion, leerMarcaSesion, () => false);
 
   useEffect(() => {
     if (cargando || !correoVerificado) return;
@@ -22,16 +29,16 @@ export default function PaginaAcceso() {
 
   if (usuario && !correoVerificado) return <VerificacionCorreo usuario={usuario} />;
 
-  if (cargando || usuario) {
+  if ((cargando && sesionPrevia) || usuario) {
     return (
-      <main className="acceso-loading" aria-label="Cargando">
+      <main className="acceso-carga" aria-label="Cargando">
         <span />
       </main>
     );
   }
 
   return (
-    <main className="acceso-shell">
+    <main className="acceso-estructura">
       <section className="acceso-panel">
         <div className="acceso-barra">
           <a href="https://www.noovasac.com/" className="acceso-web"><ArrowLeft />Ir al sitio de Noova</a>

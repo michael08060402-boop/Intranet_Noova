@@ -1,4 +1,4 @@
-.alumno-header {
+.alumno-encabezado {
   position: relative;
   isolation: isolate;
   overflow: clip;
@@ -12,30 +12,30 @@
   background: var(--fondo-barra);
   color: #fff;
 }
-.alumno-estructura .alumno-header__ondas {
+.alumno-estructura .alumno-encabezado__ondas {
   position: absolute;
   z-index: -1;
   inset: auto 0 0;
   width: 100%;
   height: 100%;
 }
-.alumno-brand {
+.alumno-marca {
   justify-self: start;
   display: flex;
   align-items: center;
 }
-.alumno-brand img {
+.alumno-marca img {
   width: auto;
   height: 44px;
 }
-.alumno-nav {
+.alumno-navegacion {
   display: flex;
   gap: 12px;
   align-items: center;
   justify-self: center;
 }
-.alumno-nav a,
-.alumno-nav button {
+.alumno-navegacion a,
+.alumno-navegacion button {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -51,14 +51,14 @@
   white-space: nowrap;
   cursor: pointer;
 }
-.alumno-nav .is-activo {
+.alumno-navegacion .is-activo {
   background: rgb(0 0 0 / 24%);
 }
-.alumno-nav a:hover,
-.alumno-nav button:hover {
+.alumno-navegacion a:hover,
+.alumno-navegacion button:hover {
   background: rgb(255 255 255 / 9%);
 }
-.alumno-estructura .alumno-nav .alumno-nav__flecha {
+.alumno-estructura .alumno-navegacion .alumno-navegacion__flecha {
   width: 14px;
   height: 14px;
   margin-left: -4px;
@@ -76,7 +76,7 @@
 .alumno-menu-boton:hover {
   background: rgb(255 255 255 / 12%);
 }
-.alumno-account button {
+.alumno-usuario button {
   display: grid;
   place-items: center;
   padding: 6px;
@@ -86,10 +86,10 @@
   color: #fff;
   cursor: pointer;
 }
-.alumno-account button:hover {
+.alumno-usuario button:hover {
   background: rgb(255 255 255 / 12%);
 }
-.alumno-account {
+.alumno-usuario {
   justify-self: end;
   display: flex;
   align-items: center;
@@ -97,7 +97,7 @@
   font-size: 14px;
   font-weight: 600;
 }
-.alumno-account .alumno-cuenta {
+.alumno-usuario .alumno-cuenta {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -109,20 +109,20 @@
   font: inherit;
   text-align: left;
 }
-.alumno-account .alumno-cuenta:hover {
+.alumno-usuario .alumno-cuenta:hover {
   border-color: rgb(255 255 255 / 40%);
   background: rgb(255 255 255 / 16%);
 }
-.alumno-account .alumno-cuenta > svg {
+.alumno-usuario .alumno-cuenta > svg {
   width: 16px;
   margin-left: -4px;
 }
-.alumno-account__name {
+.alumno-usuario__nombre {
   max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.alumno-account__plan {
+.alumno-usuario__plan {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -132,7 +132,7 @@
   font-weight: 400;
   white-space: nowrap;
 }
-.alumno-account .alumno-account__plan svg {
+.alumno-usuario .alumno-usuario__plan svg {
   width: 13px;
   height: 13px;
   color: var(--premium);
@@ -153,7 +153,7 @@
   height: 100%;
   object-fit: cover;
 }
-.alumno-account button svg {
+.alumno-usuario button svg {
   width: 19px;
 }
 .alumno-campana {
@@ -162,7 +162,7 @@
 .alumno-campana svg {
   width: 21px;
 }
-.alumno-account .alumno-campana span {
+.alumno-usuario .alumno-campana span {
   position: absolute;
   top: -4px;
   right: -6px;
@@ -395,7 +395,7 @@
   outline-color: var(--acento);
   outline-offset: -2px;
 }
-.alumno-logout {
+.alumno-salir {
   width: min(92%, 380px);
   margin: auto;
   padding: 26px;
@@ -404,20 +404,20 @@
   background: #fff;
   color: var(--texto);
 }
-.alumno-logout::backdrop {
+.alumno-salir::backdrop {
   background: rgb(3 35 55 / 45%);
 }
-.alumno-logout h2 {
+.alumno-salir h2 {
   margin: 0 0 6px;
   font-size: 19px;
   font-weight: 700;
 }
-.alumno-logout__actions {
+.alumno-salir__acciones {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
 }
-.alumno-logout__actions button {
+.alumno-salir__acciones button {
   padding: 10px 18px;
   border: 1px solid var(--borde);
   border-radius: var(--radio);
@@ -428,55 +428,55 @@
   font-weight: 600;
   cursor: pointer;
 }
-.alumno-logout__actions button:hover {
+.alumno-salir__acciones button:hover {
   background: var(--acento-suave);
 }
-.alumno-logout__actions .alumno-logout__confirm {
+.alumno-salir__acciones .alumno-salir__confirmar {
   border-color: #000;
   background: #000;
   color: #fff;
 }
-.alumno-logout__actions .alumno-logout__confirm:hover {
+.alumno-salir__acciones .alumno-salir__confirmar:hover {
   background: #2b2b2b;
 }
-.alumno-estructura .alumno-logout button:focus-visible {
+.alumno-estructura .alumno-salir button:focus-visible {
   outline-color: var(--acento);
 }
 @media (max-width: 1200px) {
-  .alumno-header {
+  .alumno-encabezado {
     column-gap: 20px;
   }
-  .alumno-nav {
+  .alumno-navegacion {
     gap: 4px;
   }
-  .alumno-nav a,
-  .alumno-nav button {
+  .alumno-navegacion a,
+  .alumno-navegacion button {
     padding: 10px 12px;
   }
 }
 @media (max-width: 1080px) {
-  .alumno-header {
+  .alumno-encabezado {
     grid-template-columns: auto minmax(0, 1fr) auto;
   }
-  .alumno-nav {
+  .alumno-navegacion {
     justify-self: center;
   }
-  .alumno-brand img {
+  .alumno-marca img {
     height: 40px;
   }
-  .alumno-account__name {
+  .alumno-usuario__nombre {
     display: none;
   }
 }
 @media (max-width: 900px) {
-  .alumno-header {
+  .alumno-encabezado {
     grid-template-columns: minmax(0, 1fr) auto auto;
     row-gap: 0;
   }
   .alumno-menu-boton {
     display: grid;
   }
-  .alumno-nav {
+  .alumno-navegacion {
     grid-column: 1 / -1;
     order: 4;
     display: none;
@@ -488,20 +488,20 @@
     padding-top: 10px;
     border-top: 1px solid rgb(255 255 255 / 15%);
   }
-  .alumno-nav.is-abierto {
+  .alumno-navegacion.is-abierto {
     display: flex;
   }
-  .alumno-nav a,
-  .alumno-nav button {
+  .alumno-navegacion a,
+  .alumno-navegacion button {
     padding: 12px 14px;
     font-size: 15px;
   }
 }
 @media (max-width: 760px) {
-  .alumno-header {
+  .alumno-encabezado {
     padding: 9px 4%;
   }
-  .alumno-brand img {
+  .alumno-marca img {
     height: 36px;
   }
 }
@@ -542,8 +542,8 @@
   outline: 2px solid #000;
   outline-offset: 4px;
 }
-.alumno-estructura .alumno-header a:focus-visible,
-.alumno-estructura .alumno-header button:focus-visible,
+.alumno-estructura .alumno-encabezado a:focus-visible,
+.alumno-estructura .alumno-encabezado button:focus-visible,
 .alumno-estructura .pie-pagina a:focus-visible {
   outline-color: #fff;
 }

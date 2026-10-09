@@ -27,7 +27,7 @@ function vencimientoPlan(meses: number) {
 
 export default function PagoPage() {
   return (
-    <Suspense fallback={<main className="pago-page alumno-fondo" />}>
+    <Suspense fallback={<main className="pago-pagina alumno-fondo" />}>
       <Pago />
     </Suspense>
   );
@@ -84,12 +84,12 @@ function Pago() {
 
   if (perfil?.plan === "premium") {
     return (
-      <main className="pago-page alumno-fondo">
-        <section className="pago-page__resultado">
+      <main className="pago-pagina alumno-fondo">
+        <section className="pago-pagina__resultado">
           <CircleCheck />
           <h1>Ya tienes Premium</h1>
           <p>Tu cuenta ya tiene acceso a todos los cursos.</p>
-          <Link href="/alumno/explorar" className="pago-page__boton">Ir a los cursos</Link>
+          <Link href="/alumno/explorar" className="pago-pagina__boton">Ir a los cursos</Link>
         </section>
       </main>
     );
@@ -97,102 +97,102 @@ function Pago() {
 
   if (paso === "exito") {
     return (
-      <main className="pago-page alumno-fondo">
-        <section className="pago-page__resultado">
+      <main className="pago-pagina alumno-fondo">
+        <section className="pago-pagina__resultado">
           <CircleCheck />
           <h1>¡Pago exitoso!</h1>
           <p>
             Tu Premium de {nombrePeriodo(meses)} estaría activo hasta el <strong>{vencimientoPlan(meses)}</strong>.
             Esta es una simulación: no se realizó ningún cobro y tu plan no cambió.
           </p>
-          <Link href="/alumno/explorar" className="pago-page__boton">Volver a los cursos</Link>
+          <Link href="/alumno/explorar" className="pago-pagina__boton">Volver a los cursos</Link>
         </section>
       </main>
     );
   }
 
   return (
-    <main className="pago-page alumno-fondo">
-      <Link href="/alumno/premium" className="pago-page__volver"><ArrowLeft />Volver a planes</Link>
-      <header className="pago-page__encabezado">
+    <main className="pago-pagina alumno-fondo">
+      <Link href="/alumno/premium" className="pago-pagina__volver"><ArrowLeft />Volver a planes</Link>
+      <header className="pago-pagina__encabezado">
         <h1>Completa tu compra</h1>
       </header>
 
-      <div className="pago-page__layout">
-        <section className="pago-page__panel" aria-labelledby="pago-metodo">
+      <div className="pago-pagina__distribucion">
+        <section className="pago-pagina__panel" aria-labelledby="pago-metodo">
           <h2 id="pago-metodo">Método de pago</h2>
-          <div className="pago-page__metodos" role="radiogroup" aria-label="Método de pago">
+          <div className="pago-pagina__metodos" role="radiogroup" aria-label="Método de pago">
             <button type="button" role="radio" aria-checked={metodo === "tarjeta"} className={metodo === "tarjeta" ? "is-activo" : ""} onClick={() => elegirMetodo("tarjeta")}>
-              <span className="pago-page__metodo-icono"><span className="pago-page__logo" aria-hidden="true" /></span>
+              <span className="pago-pagina__metodo-icono"><span className="pago-pagina__logo" aria-hidden="true" /></span>
               Tarjeta
-              <span className="pago-page__radio">{metodo === "tarjeta" && <CircleCheck />}</span>
+              <span className="pago-pagina__radio">{metodo === "tarjeta" && <CircleCheck />}</span>
             </button>
             <button type="button" role="radio" aria-checked={metodo === "yape"} className={metodo === "yape" ? "is-activo" : ""} onClick={() => elegirMetodo("yape")}>
-              <Image src={logoYape} alt="" className="pago-page__yape" />
+              <Image src={logoYape} alt="" className="pago-pagina__yape" />
               Yape
-              <span className="pago-page__radio">{metodo === "yape" && <CircleCheck />}</span>
+              <span className="pago-pagina__radio">{metodo === "yape" && <CircleCheck />}</span>
             </button>
           </div>
-          <form className="pago-page__formulario" onSubmit={pagar} autoComplete="off">
+          <form className="pago-pagina__formulario" onSubmit={pagar} autoComplete="off">
             {metodo === "tarjeta" ? (
               <>
-                <label className="pago-page__completo">
+                <label className="pago-pagina__completo">
                   <span>Nombre en la tarjeta</span>
                   <input value={titular} onChange={(evento) => setTitular(evento.target.value)} placeholder="Juan Pérez García" required maxLength={60} />
                 </label>
-                <label className="pago-page__completo">
+                <label className="pago-pagina__completo">
                   <span>Número de tarjeta</span>
-                  <span className="pago-page__campo"><CreditCard />
+                  <span className="pago-pagina__campo"><CreditCard />
                     <input value={tarjeta} onChange={(evento) => setTarjeta(formatoTarjeta(evento.target.value))} placeholder="4111 1111 1111 1111" inputMode="numeric" required />
                   </span>
                 </label>
                 <label>
                   <span>Vencimiento</span>
-                  <span className="pago-page__campo"><CalendarDays />
+                  <span className="pago-pagina__campo"><CalendarDays />
                     <input value={vencimiento} onChange={(evento) => setVencimiento(formatoVencimiento(evento.target.value))} placeholder="MM/AA" inputMode="numeric" required />
                   </span>
                 </label>
                 <label>
                   <span>CVV</span>
-                  <span className="pago-page__campo"><Lock />
+                  <span className="pago-pagina__campo"><Lock />
                     <input value={cvv} onChange={(evento) => setCvv(soloDigitos(evento.target.value, 4))} placeholder="123" inputMode="numeric" required />
-                    <CircleHelp className="pago-page__ayuda" aria-label="Los 3 o 4 dígitos al reverso de tu tarjeta" />
+                    <CircleHelp className="pago-pagina__ayuda" aria-label="Los 3 o 4 dígitos al reverso de tu tarjeta" />
                   </span>
                 </label>
               </>
             ) : (
               <>
-                <label className="pago-page__completo">
+                <label className="pago-pagina__completo">
                   <span>Celular afiliado a Yape</span>
-                  <span className="pago-page__campo"><Smartphone />
+                  <span className="pago-pagina__campo"><Smartphone />
                     <input value={celular} onChange={(evento) => setCelular(soloDigitos(evento.target.value, 9))} placeholder="987 654 321" inputMode="numeric" required />
                   </span>
                 </label>
-                <label className="pago-page__completo">
+                <label className="pago-pagina__completo">
                   <span>Código de aprobación</span>
-                  <span className="pago-page__campo"><Lock />
+                  <span className="pago-pagina__campo"><Lock />
                     <input value={codigo} onChange={(evento) => setCodigo(soloDigitos(evento.target.value, 6))} placeholder="6 dígitos" inputMode="numeric" required />
                   </span>
                   <small>Lo encuentras en tu app de Yape, en el menú «Código de aprobación».</small>
                 </label>
               </>
             )}
-            {error && <p className="pago-page__error" role="alert">{error}</p>}
-            <button type="submit" className="pago-page__pagar alumno-dorado" disabled={paso === "procesando"}>
+            {error && <p className="pago-pagina__error" role="alert">{error}</p>}
+            <button type="submit" className="pago-pagina__pagar alumno-dorado" disabled={paso === "procesando"}>
               {paso === "procesando" ? "Procesando pago…" : <>Pagar S/ {precio}<ArrowRight /></>}
             </button>
           </form>
         </section>
 
-        <aside className="pago-page__panel" aria-labelledby="pago-resumen">
+        <aside className="pago-pagina__panel" aria-labelledby="pago-resumen">
           <h2 id="pago-resumen">Resumen de compra</h2>
-          <div className="pago-page__plan">
-            <span className="pago-page__corona"><Crown /></span>
+          <div className="pago-pagina__plan">
+            <span className="pago-pagina__corona"><Crown /></span>
             <div>
               <strong>Plan Premium</strong>
             </div>
           </div>
-          <dl className="pago-page__detalle">
+          <dl className="pago-pagina__detalle">
             <div>
               <dt>Duración</dt>
               <dd>
@@ -204,16 +204,16 @@ function Pago() {
             {descuento > 0 && (
               <>
                 <div><dt>Precio original</dt><dd><s>S/ {precioSinDescuento(meses)}</s></dd></div>
-                <div className="pago-page__descuento"><dt>Descuento ({ahorroPeriodo(meses)}%)</dt><dd>- S/ {descuento}</dd></div>
+                <div className="pago-pagina__descuento"><dt>Descuento ({ahorroPeriodo(meses)}%)</dt><dd>- S/ {descuento}</dd></div>
               </>
             )}
-            <div className="pago-page__total"><dt>Total</dt><dd>S/ {precio}</dd></div>
+            <div className="pago-pagina__total"><dt>Total</dt><dd>S/ {precio}</dd></div>
           </dl>
-          <div className="pago-page__nota">
+          <div className="pago-pagina__nota">
             <CalendarDays />
             <div><small>Acceso hasta</small><strong>{vencimientoPlan(meses)}</strong></div>
           </div>
-          <p className="pago-page__unico"><ShieldCheck />Pago único: no se renueva automáticamente.</p>
+          <p className="pago-pagina__unico"><ShieldCheck />Pago único: no se renueva automáticamente.</p>
         </aside>
       </div>
     </main>

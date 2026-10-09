@@ -3,7 +3,6 @@ import {
   collection,
   collectionGroup,
   deleteDoc,
-  deleteField,
   doc,
   getCountFromServer,
   getDoc,
@@ -16,9 +15,14 @@ import {
   where,
   type DocumentData,
 } from "firebase/firestore";
-import { httpsCallable } from "firebase/functions";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { db, funciones, almacenamiento } from "./config";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { app, db } from "./config";
+
+// Storage y Functions se crean aquí y no en config.ts para no cargarlos en el acceso, que no los usa.
+// Desarrollo y Hosting usan las funciones desplegadas en noova-intranet.
+const almacenamiento = getStorage(app);
+const funciones = getFunctions(app, "us-east1");
 
 export type Nivel = "basico" | "intermedio" | "avanzado";
 export type Acceso = "gratis" | "premium";
@@ -37,11 +41,11 @@ export type Curso = {
   portadaKey?: string;
 };
 
-export type Clase = { id: string; nombre: string; descripcion: string; orden: number; publicado: boolean };
+export type Clase = { id: string; nombre: string; descripcion: string; orden: number; publicado: boolean; miniatura?: string };
 
 type DatosCategoria = Omit<Categoria, "id">;
 type DatosCurso = Omit<Curso, "id" | "creadoEn">;
-type DatosClase = Omit<Clase, "id">;
+type DatosClase = Omit<Clase, "id" | "miniatura">;
 
 export const nombresNivel: Record<Nivel, string> = { basico: "Básico", intermedio: "Intermedio", avanzado: "Avanzado" };
 
@@ -115,7 +119,7 @@ export function escucharClases(cursoId: string, soloPublicadas: boolean, alCambi
   return onSnapshot(consulta, (resultado) => {
     const clases = resultado.docs.map((documento) => {
       const datos = documento.data();
-      return { id: documento.id, nombre: datos.nombre, descripcion: datos.descripcion, orden: datos.orden, publicado: datos.publicado };
+      return { id: documento.id, nombre: datos.nombre, descripcion: datos.descripcion, orden: datos.orden, publicado: datos.publicado, miniatura: datos.miniatura };
     });
     alCambiar(clases.sort((a, b) => a.orden - b.orden));
   }, alFallar);
@@ -133,7 +137,7 @@ export function eliminarClase(cursoId: string, claseId: string) {
   return httpsCallable<{ cursoId: string; claseId: string }, { eliminado: boolean }>(funciones, "eliminarContenidoAdmin")({ cursoId, claseId });
 }
 
-export type VideoClase = { ruta: string; acceso: Acceso; portadaKey?: string };
+export type VideoClase = { ruta: string; acceso: Acceso };
 
 function referenciaVideo(cursoId: string, claseId: string) {
   return doc(db, "cursos", cursoId, "clases", claseId, "contenidos", "video");
@@ -141,7 +145,7 @@ function referenciaVideo(cursoId: string, claseId: string) {
 
 export async function leerVideoClase(cursoId: string, claseId: string): Promise<VideoClase | null> {
   const documento = await getDoc(referenciaVideo(cursoId, claseId));
-  return documento.exists() ? { ruta: documento.data().ruta, acceso: documento.data().acceso, portadaKey: documento.data().portadaKey } : null;
+  return documento.exists() ? { ruta: documento.data().ruta, acceso: documento.data().acceso } : null;
 }
 
 export async function guardarVideoClase(cursoId: string, claseId: string, video: VideoClase | null) {
@@ -153,16 +157,15 @@ export async function guardarVideoClase(cursoId: string, claseId: string, video:
 }
 
 export async function pedirVideo(cursoId: string, claseId: string) {
-  const resultado = await httpsCallable<{ cursoId: string; claseId: string }, { url: string; miniatura: string | null; portadaKey: string | null; portadaCursoKey: string | null }>(funciones, "obtenerVideo")({ cursoId, claseId });
-  const datos = resultado.data;
-  async function resolver(key: string | null) {
-    if (!key) return undefined;
-    try { return await obtenerPortadaCurso(key); } catch { return undefined; }
-  }
-  const respaldo = await resolver(datos.portadaCursoKey);
-  const poster = await resolver(datos.portadaKey) ?? datos.miniatura ?? respaldo;
-  return { url: datos.url, poster, respaldo, personalizada: Boolean(datos.portadaKey) };
+  const resultado = await httpsCallable<{ cursoId: string; claseId: string }, { url: string }>(funciones, "obtenerVideo")({ cursoId, claseId });
+  return resultado.data.url;
 }
+
+export async function actualizarMiniaturaClase(cursoId: string, claseId: string) {
+  const actualizar = httpsCallable<{ cursoId: string; claseId: string }, { miniatura: string | null }>(funciones, "actualizarMiniaturaClase");
+  return (await actualizar({ cursoId, claseId })).data.miniatura;
+}
+
 export function escucharInscripciones(uid: string, alCambiar: (cursoIds: string[]) => void, alFallar: () => void) {
   return onSnapshot(collection(db, "usuarios", uid, "inscripciones"), (resultado) => {
     alCambiar(resultado.docs.map((documento) => documento.id));
@@ -249,10 +252,33 @@ export async function listarVideosMicrosoft(carpeta = "", pagina = "") {
   return (await listar({ carpeta, pagina })).data;
 }
 
+// Las tarjetas muestran la portada a menos de 1280 px; reducirla evita descargar fotos de varios MB.
+function reducirPortada(archivo: File) {
+  return new Promise<Blob>((resolver, rechazar) => {
+    const direccion = URL.createObjectURL(archivo);
+    const imagen = document.createElement("img");
+    imagen.onload = () => {
+      const escala = Math.min(1, 1280 / imagen.width);
+      const lienzo = document.createElement("canvas");
+      lienzo.width = Math.round(imagen.width * escala);
+      lienzo.height = Math.round(imagen.height * escala);
+      lienzo.getContext("2d")?.drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
+      URL.revokeObjectURL(direccion);
+      lienzo.toBlob((blob) => (blob ? resolver(blob) : rechazar(new Error("No se pudo procesar la imagen."))), "image/jpeg", 0.82);
+    };
+    imagen.onerror = () => {
+      URL.revokeObjectURL(direccion);
+      rechazar(new Error("No se pudo leer la imagen seleccionada."));
+    };
+    imagen.src = direccion;
+  });
+}
+
 async function subirImagen(key: string, archivo: File, progreso?: (porcentaje: number) => void) {
   if (!["image/jpeg", "image/png", "image/webp"].includes(archivo.type) || archivo.size <= 0 || archivo.size > 5 * 1024 ** 2) throw new Error("Selecciona una imagen JPG, PNG o WebP de hasta 5 MB.");
-  const portadaKey = key;
-  const tarea = uploadBytesResumable(ref(almacenamiento, portadaKey), archivo, { contentType: archivo.type });
+  const imagen = await reducirPortada(archivo);
+  // Una hora de caché: si el administrador cambia la portada, la nueva aparece a más tardar en ese tiempo.
+  const tarea = uploadBytesResumable(ref(almacenamiento, key), imagen, { contentType: "image/jpeg", cacheControl: "public, max-age=3600" });
   await new Promise<void>((resolve, reject) => {
     let vencida = false;
     const limite = setTimeout(() => {
@@ -279,14 +305,6 @@ export function obtenerPortadaCurso(portadaKey: string) {
 export async function subirPortadaCurso(cursoId: string, archivo: File, progreso?: (porcentaje: number) => void) {
   await subirImagen(`portadas/${cursoId}`, archivo, progreso);
   await actualizarCurso(cursoId, { portadaKey: `portadas/${cursoId}` });
-}
-export async function subirPortadaVideo(cursoId: string, claseId: string, archivo: File) {
-  const portadaKey = `portadas-clases/${cursoId}/${claseId}`;
-  await subirImagen(portadaKey, archivo);
-  await updateDoc(referenciaVideo(cursoId, claseId), { portadaKey, actualizadoEn: serverTimestamp() });
-}
-export async function usarPortadaAutomatica(cursoId: string, claseId: string) {
-  await updateDoc(referenciaVideo(cursoId, claseId), { portadaKey: deleteField(), actualizadoEn: serverTimestamp() });
 }
 export async function previsualizarVideoMicrosoft(cursoId: string, ruta: string) {
   const consultar = httpsCallable<{ cursoId: string; ruta: string }, { url: string }>(funciones, "previsualizarVideoMicrosoft");

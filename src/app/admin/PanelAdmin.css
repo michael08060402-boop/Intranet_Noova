@@ -1,48 +1,48 @@
-.admin-dashboard {
+.admin-tablero {
   width: min(100% - 12%, 1360px);
   margin: 0 auto;
   padding: 40px 0 48px;
 }
-.admin-welcome {
+.admin-bienvenida {
   margin-bottom: 28px;
 }
-.admin-dashboard h1 {
+.admin-tablero h1 {
   margin: 0 0 6px;
   font-size: clamp(26px, 2.4vw, 34px);
   font-weight: 750;
   letter-spacing: -1px;
   line-height: 1.2;
 }
-.admin-tone--cursos {
+.admin-tono--cursos {
   --tono: #0098db;
   --tono-suave: #e8f6fd;
 }
-.admin-tone--categorias {
+.admin-tono--categorias {
   --tono: #17698d;
   --tono-suave: #e3eff5;
 }
-.admin-tone--alumnos {
+.admin-tono--alumnos {
   --tono: #00a3b4;
   --tono-suave: #e0f5f7;
 }
-.admin-tone--evaluaciones {
+.admin-tono--evaluaciones {
   --tono: #3b6fd8;
   --tono-suave: #e8effc;
 }
-.admin-tone--reportes {
+.admin-tono--reportes {
   --tono: #0f8a6c;
   --tono-suave: #e2f4ef;
 }
-.admin-tone--soporte {
+.admin-tono--soporte {
   --tono: #138a4b;
   --tono-suave: #e3f3ea;
 }
-.admin-metrics {
+.admin-metricas {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 22px;
 }
-.admin-metric {
+.admin-metrica {
   position: relative;
   display: flex;
   align-items: center;
@@ -55,7 +55,7 @@
   color: var(--texto);
   text-decoration: none;
 }
-.admin-metric__icon {
+.admin-metrica__icono {
   display: grid;
   place-items: center;
   width: 64px;
@@ -65,16 +65,16 @@
   background: var(--tono-suave);
   color: var(--tono);
 }
-.admin-metric__icon svg {
+.admin-metrica__icono svg {
   width: 32px;
   height: 32px;
 }
-.admin-metric p {
+.admin-metrica p {
   margin: 0;
   color: var(--texto-suave);
   font-size: 15px;
 }
-.admin-metric strong {
+.admin-metrica strong {
   display: block;
   margin-top: 4px;
   font-size: 36px;
@@ -82,7 +82,7 @@
   line-height: 1.1;
   letter-spacing: -1px;
 }
-.admin-arrow {
+.admin-flecha {
   display: grid;
   place-items: center;
   width: 32px;
@@ -92,29 +92,29 @@
   background: var(--acento-suave);
   color: var(--texto);
 }
-.admin-arrow svg {
+.admin-flecha svg {
   width: 18px;
   height: 18px;
 }
-.admin-metric > .admin-arrow {
+.admin-metrica > .admin-flecha {
   position: absolute;
   top: 20px;
   right: 20px;
 }
-.admin-panels {
+.admin-paneles {
   display: grid;
   grid-template-columns: minmax(0, 1.19fr) minmax(0, 1fr);
   gap: 22px;
   margin-top: 22px;
 }
-.admin-card {
+.admin-tarjeta {
   min-height: 320px;
   padding: 24px;
   border: 1px solid var(--borde);
   border-radius: var(--radio-grande);
   background: #fff;
 }
-.admin-card h2 {
+.admin-tarjeta h2 {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -123,20 +123,20 @@
   font-weight: 700;
   letter-spacing: -.5px;
 }
-.admin-card h2 svg {
+.admin-tarjeta h2 svg {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
   color: var(--acento);
 }
-.admin-card__titulo {
+.admin-tarjeta__titulo {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
 }
-.admin-card .admin-card__titulo h2 {
+.admin-tarjeta .admin-tarjeta__titulo h2 {
   margin: 0;
 }
 .admin-limpiar {
@@ -160,7 +160,7 @@
   width: 16px;
   height: 16px;
 }
-.admin-empty {
+.admin-vacio {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -168,27 +168,27 @@
   color: var(--texto-suave);
   text-align: center;
 }
-.admin-empty__document {
+.admin-vacio__documento {
   width: 56px;
   height: 60px;
   margin-bottom: 16px;
   color: #b5c6d6;
 }
-.admin-dashboard svg {
+.admin-tablero svg {
   stroke-width: 1.8;
 }
-.admin-empty__document svg {
+.admin-vacio__documento svg {
   width: 100%;
   height: 100%;
   stroke-width: 1.4;
 }
-.admin-empty p {
+.admin-vacio p {
   margin: 0 0 6px;
   color: var(--texto);
   font-size: 17px;
   font-weight: 600;
 }
-.admin-empty > span:last-child {
+.admin-vacio > span:last-child {
   font-size: 14px;
 }
 .admin-actividad {
@@ -232,12 +232,12 @@
   color: var(--texto-suave);
   font-size: 13px;
 }
-.admin-shortcuts {
+.admin-atajos {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.admin-shortcuts a {
+.admin-atajos a {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -249,7 +249,7 @@
   font-weight: 600;
   text-decoration: none;
 }
-.admin-shortcut__icon {
+.admin-atajo__icono {
   display: grid;
   place-items: center;
   width: 40px;
@@ -259,124 +259,124 @@
   background: var(--tono-suave);
   color: var(--tono);
 }
-.admin-shortcut__icon svg {
+.admin-atajo__icono svg {
   width: 22px;
   height: 22px;
 }
-.admin-shortcuts .admin-arrow {
+.admin-atajos .admin-flecha {
   margin-left: auto;
 }
-.admin-metric, .admin-shortcuts a {
+.admin-metrica, .admin-atajos a {
   transition: border-color .18s ease, background .18s ease;
 }
-.admin-metric:hover, .admin-shortcuts a:hover {
+.admin-metrica:hover, .admin-atajos a:hover {
   border-color: var(--tono);
 }
-.admin-shortcuts a:hover {
+.admin-atajos a:hover {
   background: var(--tono-suave);
 }
-.admin-dashboard a:focus-visible,
+.admin-tablero a:focus-visible,
 .admin-limpiar:focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 3px;
 }
 @media (max-width: 1150px) {
-  .admin-metrics {
+  .admin-metricas {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .admin-dashboard {
+  .admin-tablero {
     width: calc(100% - 64px);
     padding-top: 32px;
   }
-  .admin-metric {
+  .admin-metrica {
     gap: 16px;
     padding: 20px;
   }
-  .admin-metric__icon {
+  .admin-metrica__icono {
     width: 52px;
     height: 52px;
   }
 }
 @media (max-width: 900px) {
-  .admin-panels {
+  .admin-paneles {
     grid-template-columns: minmax(0, 1fr);
   }
-  .admin-card {
+  .admin-tarjeta {
     min-height: 0;
   }
-  .admin-metric p {
+  .admin-metrica p {
     font-size: 14px;
   }
-  .admin-metric strong {
+  .admin-metrica strong {
     font-size: 30px;
   }
 }
 @media (max-width: 600px) {
-  .admin-dashboard {
+  .admin-tablero {
     width: calc(100% - 32px);
     padding-top: 24px;
   }
-  .admin-metrics {
+  .admin-metricas {
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
   }
-  .admin-metric {
+  .admin-metrica {
     min-height: 96px;
     padding: 18px;
   }
-  .admin-card {
+  .admin-tarjeta {
     padding: 20px 16px;
   }
 }
 @media (min-width: 901px) {
-  .admin-dashboard {
+  .admin-tablero {
     display: flex;
     flex-direction: column;
     min-height: 0;
     padding: clamp(20px, 4svh, 40px) 0 clamp(16px, 3svh, 32px);
   }
-  .admin-welcome {
+  .admin-bienvenida {
     margin-bottom: clamp(16px, 3svh, 28px);
   }
-  .admin-metric {
+  .admin-metrica {
     min-height: 0;
     padding: clamp(14px, 2.4svh, 24px);
   }
-  .admin-metric__icon {
+  .admin-metrica__icono {
     width: clamp(44px, 7svh, 64px);
     height: clamp(44px, 7svh, 64px);
   }
-  .admin-metric strong {
+  .admin-metrica strong {
     font-size: clamp(26px, 4svh, 36px);
   }
-  .admin-panels {
+  .admin-paneles {
     flex: 1;
     min-height: 0;
     margin-top: clamp(12px, 2.4svh, 22px);
   }
-  .admin-card {
+  .admin-tarjeta {
     display: flex;
     flex-direction: column;
     min-height: 0;
     overflow: auto;
     padding: clamp(14px, 2.6svh, 24px);
   }
-  .admin-card h2,
-  .admin-card__titulo {
+  .admin-tarjeta h2,
+  .admin-tarjeta__titulo {
     flex-shrink: 0;
     margin-bottom: clamp(10px, 2svh, 20px);
   }
-  .admin-empty {
+  .admin-vacio {
     flex: 1;
     justify-content: center;
     padding: 0;
   }
-  .admin-shortcuts a {
+  .admin-atajos a {
     padding: clamp(8px, 1.4svh, 12px) 14px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .admin-metric, .admin-shortcuts a {
+  .admin-metrica, .admin-atajos a {
     transition: none;
   }
 }

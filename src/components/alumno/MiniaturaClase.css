@@ -1,0 +1,15 @@
+.miniatura-clase {
+  position: relative;
+  overflow: hidden;
+}
+
+.miniatura-clase__imagen {
+  object-fit: cover;
+}
+
+.miniatura-clase__contenido {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}

@@ -23,8 +23,15 @@ El código no lleva comentarios; las razones que no se ven leyéndolo están aqu
 - Cada clase tiene como máximo un video, en `contenidos/video`, con la ruta dentro de la biblioteca de SharePoint. Los alumnos no leen `contenidos`; piden el enlace a la función `obtenerVideo`, que valida sesión, correo verificado, inscripción y plan, y devuelve un enlace temporal. Detalle y configuración en `VIDEOS_SHAREPOINT.md`.
 - Al editar una clase, el video se carga aparte y el formulario no deja guardar hasta tenerlo, para no borrarlo sin querer.
 - Al cambiar de clase se ignora la respuesta del video anterior si llega tarde.
+- **Miniaturas guardadas, no fotogramas en vivo.** Antes cada miniatura llamaba a `obtenerVideo` y abría el video para buscar un fotograma: un curso de 12 clases abría 13 descargas contra SharePoint y el video principal competía con ellas. Ahora `actualizarMiniaturaClase` copia la miniatura de Microsoft a Storage al guardar la clase y la clase lleva su enlace en `miniatura`; las listas no llaman a ninguna función. La URL lleva un token nuevo en cada copia, por eso se puede guardar en caché un año.
+- **Enlace reutilizado.** `obtenerVideo` guarda en memoria el enlace de cada video por 30 minutos y ya no pide la miniatura a Graph. Se guarda la promesa y no el resultado: si 300 alumnos abren la clase a la vez, cada instancia pide un solo token y un solo enlace por video (prueba de carga en `QA_2026-10-09.md`). El reproductor renueva el enlace vencido una vez y vuelve al segundo donde iba.
+- **La clase espera el avance.** Al abrir un curso sin `&clase=`, la página elige la primera clase pendiente; espera a tener clases y avance para no abrir la clase 1 y saltar después (pedía un video de más).
+- **Portadas reducidas en el navegador** a 1280 px en JPEG (calidad 0,82) con caché de una hora, como la foto de perfil.
 
 ## Pantallas
+
+- **Acceso sin esperar a Firebase.** El HTML estático ya trae el formulario; el spinner solo aparece si en ese navegador había una sesión abierta (marca `noova-sesion` en localStorage, que escribe `SesionProvider`). Antes el formulario esperaba a que Firebase cargara (LCP móvil de 4,5 s a unos 2 s).
+- **Storage y Functions se crean en `cursos.ts`**, no en `config.ts`, para no cargarlos en el acceso.
 
 - **Accesos con parámetros** (`?id=`, `?nuevo`, `?categorias`, `?curso=`): el sitio es estático (`output: "export"`), así que no hay rutas dinámicas. Cada página que lee parámetros va dentro de `Suspense`.
 - **Panel equivocado.** Si un alumno entra a `/admin` (o un admin a `/alumno`), `AccesoPorRol` lo manda a su panel con `window.location.replace`: con `router.replace` la pantalla se quedaba en "Comprobando acceso…" al escribir la URL a mano.
@@ -43,6 +50,7 @@ El código no lleva comentarios; las razones que no se ven leyéndolo están aqu
 - **Factor de conversión cfm:** 35,315 por m³/min, como en el Excel de Luis.
 - **Presión del ventilador:** ecuación de Atkinson (R = k·L·P/A³; h = R·Q²). **Bombeo:** Hazen-Williams con C = 130 y eficiencia 70 % por defecto. Estos valores y fórmulas son de libro, no los entregó la empresa: validar con quien dicta Ventsim/Pumpsim.
 - **Acceso y diseño:** no hay página de herramientas; el encabezado tiene un menú (`popover`) con las cinco, con el mismo estilo del menú de cuenta. El negro se usa solo en el bloque de resultado y los botones principales; el resto es blanco y gris, con fondo de curvas de nivel. Los gráficos (dona, medidor, barras, curvas) usan la paleta semántica `paleta` de `PiezasHerramienta.tsx` (azul personas, ocre madera, rojo calor, gris acero, violeta explosivos, celeste agua); el déficit o error se marca con franjas diagonales. Las fórmulas van sobre fondo gris. No hay subtítulos: el título basta. "Manual de uso" es un botón aparte, con contorno azul, junto al título (no está en el menú); "Limpiar" aparece solo cuando hay datos. En Requerimiento de aire, Personas y Temperatura son obligatorios y Madera, Explosivos y Equipos petroleros se agregan desde su módulo y se quitan con la X. El detalle de cada fórmula está en `public/manual-herramientas.pdf` (solo para alumnos; se regenera si cambia la pantalla).
+- **Hosting** agrega `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy` y `Permissions-Policy`, y guarda en caché un año los archivos con hash de `/_next/static`. No hay CSP todavía: hay que probarla con Google, Firebase, SharePoint y Culqi antes de activarla.
 - **Herramientas en exámenes.** Dentro del examen hay un botón "Calculadoras" que abre un panel lateral (abajo en móvil) sin cerrar ni pausar el examen. Cada examen tiene el campo opcional `herramientas`: se activa al crearlo, y los exámenes anteriores, que no lo tienen, se tratan como sin calculadoras hasta que el administrador lo marque al editarlos. Requiere volver a publicar `firestore.rules`.
 - Los campos vacíos cuentan como 0; cualquier valor negativo o no numérico muestra un aviso y bloquea el resultado.
 
@@ -51,7 +59,9 @@ El código no lleva comentarios; las razones que no se ven leyéndolo están aqu
 - **Color:** encabezado, pie y portada en azul marino (`--fondo-barra`); superficies blancas y grises; negro solo para acciones principales y resultados; dorado (`--dorado`, `--premium`) exclusivo de Premium; rojo solo vía `--peligro`. No usar colores sueltos en las hojas de estilo.
 - Sin sombras: la jerarquía se marca con bordes y color; el foco usa contorno de 2 px.
 - Campos y botones principales de 44 px o más, contorno de foco de 2 px, `prefers-reduced-motion` respetado y contraste mínimo 4,5:1 (revisado con axe en todas las rutas, móvil y escritorio).
-- Tablas anchas del panel admin con scroll horizontal enfocable por teclado.
+- Tablas anchas del panel admin con scroll horizontal enfocable por teclado. El contenedor con scroll lleva `position: relative`: el texto oculto "Acciones" de la última columna es `position: absolute` y, sin eso, ensanchaba la página y el móvil la mostraba alejada.
+- Los campos de las calculadoras marcan `aria-invalid` y borde rojo cuando el valor no es válido.
+- Las clases CSS se nombran en español (`mis-cursos`, `admin-encabezado`, `cursos-tabla-caja`…); el prefijo de estado `is-` se mantiene como convención.
 - Los estilos van junto a cada página o componente; `globals.css` solo tiene el reinicio base.
 
 ## Mi perfil

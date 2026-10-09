@@ -1,12 +1,12 @@
-.verification-eyebrow {
+.verificacion-antetitulo {
   display: inline-block;
-  color: #0789a7;
+  color: #06748d;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
 }
 
-.verification-page {
+.verificacion-pagina {
   display: grid;
   min-height: 100svh;
   place-items: center;
@@ -14,7 +14,7 @@
   background: #f4f7f9;
 }
 
-.verification-card {
+.verificacion-tarjeta {
   width: min(100%, 440px);
   padding: 36px;
   border: 1px solid #e0e8ed;
@@ -22,32 +22,32 @@
   background: #fff;
 }
 
-.verification-card h1 {
+.verificacion-tarjeta h1 {
   margin: 12px 0 8px;
   color: #10263b;
   font-size: 30px;
   letter-spacing: -0.04em;
 }
 
-.verification-card > p {
+.verificacion-tarjeta > p {
   color: #60758a;
   font-size: 14px;
   line-height: 1.65;
 }
 
-.verification-card strong {
+.verificacion-tarjeta strong {
   color: #18354d;
   overflow-wrap: anywhere;
 }
 
-.verification-actions {
+.verificacion-acciones {
   display: grid;
   gap: 10px;
   margin-top: 24px;
 }
 
-.verification-secondary,
-.verification-link {
+.verificacion-secundario,
+.verificacion-enlace {
   min-height: 40px;
   border: 1px solid #d3dfe7;
   border-radius: 6px;
@@ -59,14 +59,14 @@
   font-weight: 600;
 }
 
-.verification-link {
+.verificacion-enlace {
   border-color: transparent;
   min-height: 32px;
   font-size: 12px;
 }
 
 @media (max-width: 480px) {
-  .verification-card {
+  .verificacion-tarjeta {
     padding: 28px 22px;
   }
 }

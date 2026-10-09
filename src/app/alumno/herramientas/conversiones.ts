@@ -1,4 +1,4 @@
-export const CFM_POR_M3_MIN = 35.315;
+const CFM_POR_M3_MIN = 35.315;
 
 export const aCfm = (m3PorMin: number) => m3PorMin * CFM_POR_M3_MIN;
 

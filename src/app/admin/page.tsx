@@ -70,29 +70,29 @@ export default function PanelAdmin() {
   }
 
   return (
-    <main className="admin-dashboard">
-      <section className="admin-welcome" aria-labelledby="bienvenida-titulo">
+    <main className="admin-tablero">
+      <section className="admin-bienvenida" aria-labelledby="bienvenida-titulo">
         <h1 id="bienvenida-titulo">Panel de administración</h1>
       </section>
-      <section className="admin-metrics" aria-label="Indicadores">
+      <section className="admin-metricas" aria-label="Indicadores">
         {metricas.map(({ clave, etiqueta, Icono, href }) => (
-          <Link href={href} key={clave} className={`admin-metric admin-tone--${clave}`}>
-            <span className="admin-metric__icon">
+          <Link href={href} key={clave} className={`admin-metrica admin-tono--${clave}`}>
+            <span className="admin-metrica__icono">
               <Icono />
             </span>
             <div>
               <p>{etiqueta}</p>
               <strong>{clave === "soporte" ? porResponder : total(clave)}</strong>
             </div>
-            <span className="admin-arrow">
+            <span className="admin-flecha">
               <ChevronRight />
             </span>
           </Link>
         ))}
       </section>
-      <div className="admin-panels">
-        <section className="admin-card" aria-labelledby="actividad-titulo">
-          <div className="admin-card__titulo">
+      <div className="admin-paneles">
+        <section className="admin-tarjeta" aria-labelledby="actividad-titulo">
+          <div className="admin-tarjeta__titulo">
             <h2 id="actividad-titulo">
               <Clock />
               Actividad reciente
@@ -107,7 +107,7 @@ export default function PanelAdmin() {
           {actividad.length > 0 ? (
             <ul className="admin-actividad">
               {actividad.map((evento) => (
-                <li key={evento.id} className={`admin-tone--${evento.tipo}`}>
+                <li key={evento.id} className={`admin-tono--${evento.tipo}`}>
                   <span className="admin-actividad__icono">{evento.tipo === "cursos" ? <BookOpen /> : <Users />}</span>
                   <span className="admin-actividad__texto">{evento.texto}</span>
                   <time dateTime={new Date(evento.fecha).toISOString()}>{formatoFecha.format(evento.fecha)}</time>
@@ -115,8 +115,8 @@ export default function PanelAdmin() {
               ))}
             </ul>
           ) : (
-            <div className="admin-empty">
-              <span className="admin-empty__document">
+            <div className="admin-vacio">
+              <span className="admin-vacio__documento">
                 <FileText />
               </span>
               <p>No hay actividad reciente.</p>
@@ -124,19 +124,19 @@ export default function PanelAdmin() {
             </div>
           )}
         </section>
-        <section className="admin-card" aria-labelledby="accesos-titulo">
+        <section className="admin-tarjeta" aria-labelledby="accesos-titulo">
           <h2 id="accesos-titulo">
             <Zap />
             Accesos rápidos
           </h2>
-          <div className="admin-shortcuts">
+          <div className="admin-atajos">
             {accesos.map(({ clave, etiqueta, Icono, href }) => (
-              <Link href={href} key={clave} className={`admin-tone--${clave}`}>
-                <span className="admin-shortcut__icon">
+              <Link href={href} key={clave} className={`admin-tono--${clave}`}>
+                <span className="admin-atajo__icono">
                   <Icono />
                 </span>
                 <span>{etiqueta}</span>
-                <span className="admin-arrow">
+                <span className="admin-flecha">
                   <ChevronRight />
                 </span>
               </Link>

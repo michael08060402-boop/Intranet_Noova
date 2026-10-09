@@ -67,16 +67,16 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
 
   return (
     <AccesoPorRol rol="admin">
-      <div className="admin-shell">
-        <header className="admin-header">
+      <div className="admin-estructura">
+        <header className="admin-encabezado">
           <Link
             href="/admin"
-            className="admin-header__brand"
+            className="admin-encabezado__marca"
             aria-label="Noova Learn Mining, panel de administración"
           >
             <Image src={logoNoova} alt="" preload />
           </Link>
-          <nav className="admin-header__nav" aria-label="Secciones de administración">
+          <nav className="admin-encabezado__navegacion" aria-label="Secciones de administración">
             {enlaces.map(({ href, etiqueta, Icono }) => {
               const activo = href === "/admin" ? ruta === "/admin" : ruta.startsWith(href);
 
@@ -93,10 +93,10 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
               );
             })}
           </nav>
-          <div className="admin-header__actions">
+          <div className="admin-encabezado__acciones">
             <button
               type="button"
-              className="admin-header__campana"
+              className="admin-encabezado__campana"
               popoverTarget="admin-pendientes"
               aria-label={nuevos > 0 ? `Pendientes: ${nuevos} nuevos` : "Pendientes"}
               title="Pendientes"
@@ -104,14 +104,14 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
               <Bell />
               {nuevos > 0 && <span>{nuevos > 99 ? "99+" : nuevos}</span>}
             </button>
-            <span className="admin-header__avatar">{nombre.charAt(0).toUpperCase()}</span>
-            <span className="admin-header__identity">
+            <span className="admin-encabezado__avatar">{nombre.charAt(0).toUpperCase()}</span>
+            <span className="admin-encabezado__identidad">
               {nombre}
               <small>Administrador</small>
             </span>
             <button
               type="button"
-              className="admin-header__logout"
+              className="admin-encabezado__salir"
               onClick={() => confirmarSalida.current?.showModal()}
               aria-label="Cerrar sesión"
               title="Cerrar sesión"
@@ -142,14 +142,14 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
               </ul>
             )}
           </div>
-          <dialog ref={confirmarSalida} className="admin-logout" aria-labelledby="admin-logout-title">
+          <dialog ref={confirmarSalida} className="admin-salir" aria-labelledby="admin-logout-title">
             <h2 id="admin-logout-title">¿Cerrar sesión?</h2>
             <p>Tendrás que volver a ingresar para administrar la plataforma.</p>
-            <div className="admin-logout__actions">
+            <div className="admin-salir__acciones">
               <button type="button" onClick={() => confirmarSalida.current?.close()}>
                 Cancelar
               </button>
-              <button type="button" className="admin-logout__confirm" onClick={() => signOut(auth)}>
+              <button type="button" className="admin-salir__confirmar" onClick={() => signOut(auth)}>
                 Cerrar sesión
               </button>
             </div>

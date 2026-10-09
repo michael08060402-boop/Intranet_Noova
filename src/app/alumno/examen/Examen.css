@@ -27,7 +27,7 @@
   border-radius: var(--radio-grande);
   background: #fff;
 }
-.alumno-examen__eyebrow {
+.alumno-examen__antetitulo {
   display: block;
   margin-bottom: 6px;
   color: var(--acento-oscuro);
@@ -153,16 +153,16 @@
 .alumno-examen__resultado .is-desaprobado {
   color: var(--peligro);
 }
-.alumno-examen__badge {
+.alumno-examen__insignia {
   padding: 4px 12px;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 700;
 }
-.alumno-examen__badge.is-aprobado {
+.alumno-examen__insignia.is-aprobado {
   background: #e6f6ee;
 }
-.alumno-examen__badge.is-desaprobado {
+.alumno-examen__insignia.is-desaprobado {
   background: var(--peligro-suave);
 }
 

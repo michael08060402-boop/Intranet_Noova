@@ -96,48 +96,48 @@ export default function NuevoExamen({ examen, cursos, alCerrar }: { examen: Exam
 
   return (
     <dialog ref={dialogo} className="nuevo-curso nuevo-examen" aria-labelledby="nuevo-examen-titulo" onClose={alCerrar}>
-      <header className="nuevo-curso__heading">
+      <header className="nuevo-curso__titulo">
         <h2 id="nuevo-examen-titulo">{examen ? "Editar examen" : "Crear nuevo examen"}</h2>
         <button type="button" aria-label="Cerrar modal" onClick={() => dialogo.current?.close()}>
           <X />
         </button>
       </header>
       <form onSubmit={guardar}>
-        <label className="nuevo-curso__field">
+        <label className="nuevo-curso__campo">
           <span>Curso</span>
           <select value={cursoId} onChange={(evento) => setCursoId(evento.target.value)} disabled={!!examen} required>
             {cursos.map((curso) => <option key={curso.id} value={curso.id}>{curso.nombre}</option>)}
           </select>
         </label>
-        <label className="nuevo-curso__field">
+        <label className="nuevo-curso__campo">
           <span>Nombre del examen</span>
           <input value={nombre} onChange={(evento) => setNombre(evento.target.value)} placeholder="Ej. Evaluación final de ventilación" required minLength={2} maxLength={120} autoFocus />
         </label>
-        <label className="nuevo-curso__field">
+        <label className="nuevo-curso__campo">
           <span>Instrucciones</span>
           <textarea value={descripcion} onChange={(evento) => setDescripcion(evento.target.value)} placeholder="Indicaciones para el alumno (opcional)" maxLength={2000} />
         </label>
 
 
-        <div className="nuevo-curso__row">
-          <label className="nuevo-curso__field">
+        <div className="nuevo-curso__fila">
+          <label className="nuevo-curso__campo">
             <span>Tiempo límite</span>
             <select value={duracionMin} onChange={(evento) => setDuracionMin(Number(evento.target.value))}>
               {opcionesDuracion.map((minutos) => <option key={minutos} value={minutos}>{minutos === 0 ? "Sin límite" : `${minutos} minutos`}</option>)}
             </select>
           </label>
-          <label className="nuevo-curso__field">
+          <label className="nuevo-curso__campo">
             <span>Nota mínima para aprobar (de {NOTA_MAXIMA})</span>
             <input type="number" min={0} max={NOTA_MAXIMA} step={0.5} value={notaMinima} onChange={(evento) => setNotaMinima(Number(evento.target.value))} required />
           </label>
         </div>
 
-        <fieldset className="nuevo-curso__states">
+        <fieldset className="nuevo-curso__estados">
           <legend>Calculadoras</legend>
           <label><input type="checkbox" checked={herramientas} onChange={(evento) => setHerramientas(evento.target.checked)} /><span>Permitirlas durante el examen<small>El alumno las abre desde un panel dentro del examen. Úsalo cuando las preguntas pidan calcular.</small></span></label>
         </fieldset>
 
-        <fieldset className="nuevo-curso__states">
+        <fieldset className="nuevo-curso__estados">
           <legend>Estado</legend>
           <label><input type="radio" name="estado" checked={!publicado} onChange={() => setPublicado(false)} /><span>Borrador</span></label>
           <label><input type="radio" name="estado" checked={publicado} onChange={() => setPublicado(true)} /><span>Publicado</span></label>
@@ -188,9 +188,9 @@ export default function NuevoExamen({ examen, cursos, alCerrar }: { examen: Exam
         </section>
 
         {error && <p className="nuevo-curso__error" role="alert">{error}</p>}
-        <footer className="nuevo-curso__footer">
+        <footer className="nuevo-curso__pie">
           <button type="button" onClick={() => dialogo.current?.close()}>Cancelar</button>
-          <button type="submit" className="nuevo-curso__submit" disabled={guardando || cargandoClaves}>{guardando ? "Guardando…" : examen ? "Guardar cambios" : "Crear examen"}</button>
+          <button type="submit" className="nuevo-curso__enviar" disabled={guardando || cargandoClaves}>{guardando ? "Guardando…" : examen ? "Guardar cambios" : "Crear examen"}</button>
         </footer>
       </form>
     </dialog>

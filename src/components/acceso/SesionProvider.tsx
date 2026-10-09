@@ -19,6 +19,10 @@ export function useSesion() {
   return useContext(SesionContext);
 }
 
+// Firebase tarda en confirmar la sesión guardada; esta marca permite mostrar el formulario de acceso
+// sin esperar a Firebase cuando en este navegador no había una sesión abierta.
+export const MARCA_SESION = "noova-sesion";
+
 export default function SesionProvider({ children }: { children: ReactNode }) {
   const [sesion, setSesion] = useState<Sesion>({
     usuario: null,
@@ -35,6 +39,10 @@ export default function SesionProvider({ children }: { children: ReactNode }) {
       const actual = ++version;
       dejarPerfil?.();
       clearTimeout(espera);
+      try {
+        if (usuario) localStorage.setItem(MARCA_SESION, "1");
+        else localStorage.removeItem(MARCA_SESION);
+      } catch {}
       setSesion({ usuario, perfil: null, cargando: !!usuario?.emailVerified, error: "" });
       if (!usuario?.emailVerified) return;
       function fallo() {

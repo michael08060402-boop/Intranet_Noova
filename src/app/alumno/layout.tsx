@@ -69,12 +69,12 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
   return (
     <AccesoPorRol rol="alumno">
       <div className="alumno-estructura">
-        <header className="alumno-header">
-          <Ondas className="alumno-header__ondas" />
-          <Link href="/alumno" className="alumno-brand" aria-label="Noova Learn Mining, inicio">
+        <header className="alumno-encabezado">
+          <Ondas className="alumno-encabezado__ondas" />
+          <Link href="/alumno" className="alumno-marca" aria-label="Noova Learn Mining, inicio">
             <Image src={logoNoova} alt="" preload />
           </Link>
-          <nav id="alumno-nav" className={`alumno-nav ${menuAbierto ? "is-abierto" : ""}`} aria-label="Navegación del alumno">
+          <nav id="alumno-navegacion" className={`alumno-navegacion ${menuAbierto ? "is-abierto" : ""}`} aria-label="Navegación del alumno">
             {enlaces.map(({ href, etiqueta, Icono }) => {
               const activo = href === "/alumno" ? ruta === href : ruta.startsWith(href);
 
@@ -100,10 +100,10 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
             >
               <Calculator />
               Herramientas
-              <ChevronDown className="alumno-nav__flecha" />
+              <ChevronDown className="alumno-navegacion__flecha" />
             </button>
           </nav>
-          <div className="alumno-account">
+          <div className="alumno-usuario">
             <button
               type="button"
               className="alumno-campana"
@@ -116,9 +116,9 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
             </button>
             <button type="button" className="alumno-cuenta" popoverTarget="alumno-menu-cuenta" aria-label="Abrir menú de la cuenta">
               <span className="alumno-avatar">{perfil?.foto ? <Image src={perfil.foto} alt="" width={34} height={34} unoptimized /> : nombre.charAt(0).toUpperCase()}</span>
-              <span className="alumno-account__name">
+              <span className="alumno-usuario__nombre">
                 {nombre}
-                <small className="alumno-account__plan">
+                <small className="alumno-usuario__plan">
                   {perfil?.plan === "premium" ? <><Crown />Premium</> : "Plan gratuito"}
                 </small>
               </span>
@@ -130,7 +130,7 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
             className="alumno-menu-boton"
             onClick={() => setMenuAbierto(!menuAbierto)}
             aria-expanded={menuAbierto}
-            aria-controls="alumno-nav"
+            aria-controls="alumno-navegacion"
             aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
           >
             {menuAbierto ? <X /> : <Menu />}
@@ -206,13 +206,13 @@ export default function AlumnoLayout({ children }: LayoutProps<"/alumno">) {
             Cerrar sesión
           </button>
         </div>
-        <dialog ref={confirmarSalida} className="alumno-logout" aria-labelledby="alumno-logout-title">
+        <dialog ref={confirmarSalida} className="alumno-salir" aria-labelledby="alumno-logout-title">
           <h2 id="alumno-logout-title">¿Cerrar sesión?</h2>
-          <div className="alumno-logout__actions">
+          <div className="alumno-salir__acciones">
             <button type="button" onClick={() => confirmarSalida.current?.close()}>
               Cancelar
             </button>
-            <button type="button" className="alumno-logout__confirm" onClick={() => signOut(auth)}>
+            <button type="button" className="alumno-salir__confirmar" onClick={() => signOut(auth)}>
               Cerrar sesión
             </button>
           </div>

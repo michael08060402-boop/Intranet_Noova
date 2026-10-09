@@ -5,8 +5,10 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowLeft, Pencil, Plus, Trash2, Users, Video } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
+import MiniaturaClase from "@/components/alumno/MiniaturaClase";
 import {
   actualizarClase,
+  actualizarMiniaturaClase,
   contarDocumentos,
   crearClase,
   eliminarClase,
@@ -14,9 +16,6 @@ import {
   escucharCurso,
   guardarVideoClase,
   subirVideoClase,
-
-  usarPortadaAutomatica,
-
   leerVideoClase,
   listarVideosMicrosoft,
   previsualizarVideoMicrosoft,
@@ -102,8 +101,8 @@ function CursoAdmin() {
     } else {
       await guardarVideoClase(id, claseId, video);
     }
-    if (video || archivo) await usarPortadaAutomatica(id, claseId);
     await actualizarClase(id, claseId, datos);
+    actualizarMiniaturaClase(id, claseId).catch(() => {});
     claseNuevaPendiente.current = null;
     setVersion((actual) => actual + 1);
   }
@@ -129,13 +128,13 @@ function CursoAdmin() {
           <span aria-current="page">{curso.nombre}</span>
         </nav>
 
-        <header className="curso-admin__heading">
+        <header className="curso-admin__cabecera">
           <Link href="/admin/cursos" className="curso-admin__volver" aria-label="Volver a cursos"><ArrowLeft /></Link>
           <div className="curso-admin__titulo">
             <h1>{curso.nombre}</h1>
             {curso.descripcion && <p>{curso.descripcion}</p>}
           </div>
-          <span className={`curso-admin__estado-badge ${curso.publicado ? "is-publicado" : "is-borrador"}`}>{curso.publicado ? "Publicado" : "Borrador"}</span>
+          <span className={`curso-admin__estado-insignia ${curso.publicado ? "is-publicado" : "is-borrador"}`}>{curso.publicado ? "Publicado" : "Borrador"}</span>
           <span className="curso-admin__inscritos" title="Alumnos inscritos en este curso">
             <Users />
             {inscritos === undefined ? "…" : inscritos === null ? "—" : `${inscritos.length} ${inscritos.length === 1 ? "inscrito" : "inscritos"}`}
@@ -144,14 +143,14 @@ function CursoAdmin() {
         {error && <p className="curso-admin__error" role="alert">{error}</p>}
 
         <section className="curso-admin__panel" aria-labelledby="clases-titulo">
-          <div className="curso-admin__panel-heading">
+          <div className="curso-admin__panel-titulo">
             <div>
               <h2 id="clases-titulo">Clases</h2>
             </div>
             <button type="button" className="curso-admin__nueva" onClick={() => { claseNuevaPendiente.current = null; setEditando(null); }}><Plus />Nueva clase</button>
           </div>
 
-          <div className="curso-admin__tabla-wrap">
+          <div className="curso-admin__tabla-caja" tabIndex={0} role="region" aria-label="Tabla de clases">
             <table className="curso-admin__tabla">
               <thead>
                 <tr>
@@ -169,7 +168,7 @@ function CursoAdmin() {
                       <td><span className="curso-admin__numero">{String(indice + 1).padStart(2, "0")}</span></td>
                       <td>
                         <div className="curso-admin__clase">
-                          <MiniaturaVideoAdmin cursoId={id} claseId={clase.id} />
+                          <MiniaturaVideoAdmin cursoId={id} clase={clase} tieneVideo={Boolean(total)} />
                           <div>
                             <strong>{clase.nombre}</strong>
                             {clase.descripcion && <small>{clase.descripcion}</small>}
@@ -177,7 +176,7 @@ function CursoAdmin() {
                           </div>
                         </div>
                       </td>
-                      <td><span className={`curso-admin__estado-badge ${clase.publicado ? "is-publicado" : "is-borrador"}`}>{clase.publicado ? "Publicado" : "Borrador"}</span></td>
+                      <td><span className={`curso-admin__estado-insignia ${clase.publicado ? "is-publicado" : "is-borrador"}`}>{clase.publicado ? "Publicado" : "Borrador"}</span></td>
                       <td>
                         <div className="curso-admin__acciones">
                           <button type="button" className="curso-admin__icono" onClick={() => setEditando(clase)} aria-label={`Editar ${clase.nombre}`} title="Editar"><Pencil /></button>
@@ -199,10 +198,10 @@ function CursoAdmin() {
         </section>
 
         <section className="curso-admin__panel" aria-labelledby="inscritos-titulo">
-          <div className="curso-admin__panel-heading">
+          <div className="curso-admin__panel-titulo">
             <h2 id="inscritos-titulo">Alumnos inscritos</h2>
           </div>
-          <div className="curso-admin__tabla-wrap">
+          <div className="curso-admin__tabla-caja" tabIndex={0} role="region" aria-label="Tabla de alumnos inscritos">
             <table className="curso-admin__tabla curso-admin__tabla--inscritos">
               <thead>
                 <tr>
@@ -310,9 +309,9 @@ function ClaseFormulario({ cursoId, clase, alGuardar, alCerrar }: { cursoId: str
   return (
     <dialog ref={dialogo} className={`clase-modal${ruta ? " clase-modal--con-video" : ""}`} aria-labelledby="clase-modal-titulo" onClose={alCerrar} onCancel={(evento) => { if (guardando) evento.preventDefault(); }}>
       <h2 id="clase-modal-titulo">{clase ? "Editar clase" : "Nueva clase"}</h2>
-      <div className="clase-modal__layout">
+      <div className="clase-modal__distribucion">
       <form onSubmit={enviar}>
-        <fieldset disabled={guardando} style={{ border: 0, padding: 0, margin: 0, display: "contents" }}>
+        <fieldset disabled={guardando} className="clase-modal__campos">
         <label>
           <span>Nombre de la clase</span>
           <input value={nombre} onChange={(evento) => setNombre(evento.target.value)} placeholder="Ej. Introducción a la ventilación" required minLength={2} maxLength={120} autoFocus />
@@ -336,7 +335,7 @@ function ClaseFormulario({ cursoId, clase, alGuardar, alCerrar }: { cursoId: str
         </div>
         </fieldset>
       </form>
-      {ruta && <aside className="clase-modal__preview"><PrevisualizacionVideo cursoId={cursoId} ruta={ruta} /></aside>}
+      {ruta && <aside className="clase-modal__vista-previa"><PrevisualizacionVideo cursoId={cursoId} ruta={ruta} /></aside>}
       </div>
     </dialog>
   );
@@ -409,25 +408,17 @@ function PrevisualizacionVideo({ cursoId, ruta }: { cursoId: string; ruta: strin
     <strong>Previsualización del video</strong>
     {!actual && <p role="status">Cargando video…</p>}
     {actual?.error && <p role="alert">{actual.error} <button type="button" onClick={() => { setResultado(null); setIntento((valor) => valor + 1); }}>Reintentar</button></p>}
-    {actual?.url && <video key={actual.url} src={actual.url} controls playsInline preload="metadata" style={{ width: "100%", aspectRatio: "16 / 9", borderRadius: 10, background: "#111" }}
+    {actual?.url && <video key={actual.url} className="videos-microsoft__video" src={actual.url} controls playsInline preload="metadata"
       onError={() => setResultado({ ruta, error: "El enlace del video no está disponible. Reintenta para actualizarlo." })} />}
   </section>;
 }
-function MiniaturaVideoAdmin({ cursoId, claseId }: { cursoId: string; claseId: string }) {
-  const [video, setVideo] = useState<{ claseId: string; url: string } | null>(null);
+// Las clases con video guardado antes de existir las miniaturas la generan al abrir esta página.
+function MiniaturaVideoAdmin({ cursoId, clase, tieneVideo }: { cursoId: string; clase: Clase; tieneVideo: boolean }) {
+  const pedida = useRef(false);
   useEffect(() => {
-    let activo = true;
-    leerVideoClase(cursoId, claseId).then(async (datos) => {
-      if (!datos || !activo) return;
-      const url = await previsualizarVideoMicrosoft(cursoId, datos.ruta);
-      if (activo) setVideo({ claseId, url });
-    }).catch(() => {});
-    return () => { activo = false; };
-  }, [cursoId, claseId]);
-  return <span className="curso-admin__miniatura" style={{ position: "relative", overflow: "hidden" }}>
-    {video?.claseId === claseId ? <video src={video.url} muted playsInline preload="metadata" aria-hidden="true" tabIndex={-1}
-      style={{ width: "100%", height: "100%", objectFit: "cover", pointerEvents: "none" }}
-      onLoadedMetadata={(evento) => { const elemento = evento.currentTarget; if (Number.isFinite(elemento.duration) && elemento.duration > 0) elemento.currentTime = elemento.duration * 0.2; }}
-      onSeeked={(evento) => evento.currentTarget.pause()} /> : <Video aria-hidden="true" />}
-  </span>;
+    if (!tieneVideo || clase.miniatura || pedida.current) return;
+    pedida.current = true;
+    actualizarMiniaturaClase(cursoId, clase.id).catch(() => {});
+  }, [cursoId, clase.id, clase.miniatura, tieneVideo]);
+  return <MiniaturaClase miniatura={clase.miniatura} className="curso-admin__miniatura">{!clase.miniatura && <Video aria-hidden="true" />}</MiniaturaClase>;
 }

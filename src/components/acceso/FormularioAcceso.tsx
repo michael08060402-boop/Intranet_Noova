@@ -95,13 +95,13 @@ export default function FormularioAcceso() {
   }
 
   return (
-    <div className="acceso-card">
+    <div className="acceso-tarjeta">
       <h1>{titulos[modo]}</h1>
-      {modo === "recuperar" && <p className="acceso-card__lead">Te enviaremos un enlace a tu correo.</p>}
+      {modo === "recuperar" && <p className="acceso-tarjeta__entradilla">Te enviaremos un enlace a tu correo.</p>}
 
-      <form className="acceso-form" onSubmit={enviarFormulario}>
+      <form className="acceso-formulario" onSubmit={enviarFormulario}>
         {modo === "registrar" && (
-          <label className="acceso-field">
+          <label className="acceso-campo">
             <span>Nombre completo</span>
             <input
               autoComplete="name"
@@ -112,7 +112,7 @@ export default function FormularioAcceso() {
             />
           </label>
         )}
-        <label className="acceso-field">
+        <label className="acceso-campo">
           <span>Correo electrónico</span>
           <input
             type="email"
@@ -124,9 +124,9 @@ export default function FormularioAcceso() {
           />
         </label>
         {modo !== "recuperar" && (
-          <label className="acceso-field">
+          <label className="acceso-campo">
             <span>Contraseña</span>
-            <span className="acceso-password">
+            <span className="acceso-contrasena">
               <input
                 type={mostrarClave ? "text" : "password"}
                 autoComplete={modo === "registrar" ? "new-password" : "current-password"}
@@ -143,7 +143,7 @@ export default function FormularioAcceso() {
                 aria-label={mostrarClave ? "Ocultar contraseña" : "Mostrar contraseña"}
                 aria-pressed={mostrarClave}
               >
-                <Eye className="acceso-icon" />
+                <Eye className="acceso-icono" />
               </button>
             </span>
           </label>
@@ -164,30 +164,30 @@ export default function FormularioAcceso() {
         )}
 
         {modo === "entrar" && (
-          <div className="acceso-options">
-            <button className="acceso-text-button" type="button" onClick={() => cambiarModo("recuperar")}>
+          <div className="acceso-opciones">
+            <button className="acceso-texto-boton" type="button" onClick={() => cambiarModo("recuperar")}>
               ¿Olvidaste tu contraseña?
             </button>
           </div>
         )}
         {error && (
-          <p className="acceso-message acceso-message--error" role="alert">
+          <p className="acceso-mensaje acceso-mensaje--error" role="alert">
             {error}
           </p>
         )}
         {aviso && (
-          <p className="acceso-message acceso-message--success" role="status">
+          <p className="acceso-mensaje acceso-mensaje--exito" role="status">
             {aviso}
           </p>
         )}
-        <button className="acceso-submit" type="submit" disabled={enviando || (modo === "registrar" && !claveSegura)}>
+        <button className="acceso-enviar" type="submit" disabled={enviando || (modo === "registrar" && !claveSegura)}>
           {enviando ? "Un momento…" : textosBoton[modo]}
         </button>
       </form>
 
       {modo !== "recuperar" && (
         <>
-          <div className="acceso-divider">
+          <div className="acceso-separador">
             <span>o</span>
           </div>
           <button className="acceso-google" type="button" onClick={entrarConGoogle} disabled={enviando}>
@@ -198,14 +198,14 @@ export default function FormularioAcceso() {
       )}
 
       {modo === "recuperar" ? (
-        <button className="acceso-back" type="button" onClick={() => cambiarModo("entrar")}>
+        <button className="acceso-volver" type="button" onClick={() => cambiarModo("entrar")}>
           ← Volver al inicio de sesión
         </button>
       ) : (
-        <p className="acceso-switch">
+        <p className="acceso-interruptor">
           {modo === "registrar" ? "¿Ya tienes una cuenta?" : "¿Es tu primera vez?"}{" "}
           <button
-            className="acceso-text-button"
+            className="acceso-texto-boton"
             type="button"
             onClick={() => cambiarModo(modo === "registrar" ? "entrar" : "registrar")}
           >

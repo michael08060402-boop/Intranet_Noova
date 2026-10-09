@@ -38,8 +38,8 @@ src/
 │   └── alumno/             /alumno    inicio, mis cursos, explorar, exámenes y herramientas
 ├── components/           Piezas reutilizables, agrupadas por zona
 │   ├── acceso/             sesión, guardia por rol y formulario de acceso
-│   ├── admin/              encabezado y listado compartido del panel
-│   ├── alumno/             encabezado y selectores de la vista de alumno
+│   ├── alumno/             portada, tarjeta y miniatura de curso/clase, pie y ondas
+│   ├── soporte/            panel de tickets compartido por alumno y admin
 │   └── herramientas/       piezas de las calculadoras (pasos, campos, barra y panel de resultado)
 ├── firebase/             Conexión y acceso a datos (perfiles, cursos, evaluaciones, notificaciones)
 └── assets/               Imágenes importadas desde el código (marca y fondos)

@@ -107,10 +107,10 @@ function Entregas() {
   }
 
   function estado(intento: Intento) {
-    if (intento.estado === "calificado") return <span className="admin-badge admin-badge--ok">Calificado</span>;
-    if (intento.estado === "entregado") return <span className="admin-badge admin-badge--aviso">Por calificar</span>;
+    if (intento.estado === "calificado") return <span className="admin-insignia admin-insignia--ok">Calificado</span>;
+    if (intento.estado === "entregado") return <span className="admin-insignia admin-insignia--aviso">Por calificar</span>;
     const vence = vencimientoIntento(examenActual, intento);
-    return vence && vence < ahora ? <span className="admin-badge admin-badge--error">Tiempo vencido</span> : <span className="admin-badge admin-badge--info">En curso</span>;
+    return vence && vence < ahora ? <span className="admin-insignia admin-insignia--error">Tiempo vencido</span> : <span className="admin-insignia admin-insignia--info">En curso</span>;
   }
 
   return (
@@ -118,7 +118,7 @@ function Entregas() {
       <header className="admin-pagina__cabecera">
         <div>
           <Link href="/admin/evaluaciones" className="admin-pagina__volver">← Evaluaciones</Link>
-          <span className="admin-pagina__eyebrow">Entregas</span>
+          <span className="admin-pagina__antetitulo">Entregas</span>
           <h1>{examen.nombre}</h1>
           <p>
             {examen.preguntas.length} preguntas · {examen.duracionMin > 0 ? `${examen.duracionMin} min` : "sin límite de tiempo"} · aprueba con {examen.notaMinima} de {NOTA_MAXIMA}
@@ -135,9 +135,9 @@ function Entregas() {
       <section className="admin-panel" aria-label="Entregas del examen">
         <div className="admin-panel__titulo">
           <h2>Alumnos</h2>
-          <span className="admin-badge">{intentos.length} {intentos.length === 1 ? "intento" : "intentos"}</span>
-          <span className="admin-badge admin-badge--aviso">{pendientes.length} por calificar</span>
-          {promedio !== null && <span className="admin-badge admin-badge--info">Promedio {promedio}</span>}
+          <span className="admin-insignia">{intentos.length} {intentos.length === 1 ? "intento" : "intentos"}</span>
+          <span className="admin-insignia admin-insignia--aviso">{pendientes.length} por calificar</span>
+          {promedio !== null && <span className="admin-insignia admin-insignia--info">Promedio {promedio}</span>}
         </div>
         {!esAutomatico(examen) && <p className="admin-aviso entregas__aviso">Este examen tiene preguntas abiertas: revisa cada entrega y asigna los puntos tú mismo.</p>}
         {error && <p className="admin-error" role="alert">{error}</p>}
@@ -219,7 +219,7 @@ function Revision({ examen, intento, claves, alCerrar }: { examen: Examen; inten
 
   return (
     <dialog ref={dialogo} className="nuevo-curso revision" aria-labelledby="revision-titulo" onClose={alCerrar}>
-      <header className="nuevo-curso__heading">
+      <header className="nuevo-curso__titulo">
         <div>
           <h2 id="revision-titulo">{intento.nombre}</h2>
           <p className="revision__correo">{intento.correo}</p>
@@ -254,15 +254,15 @@ function Revision({ examen, intento, claves, alCerrar }: { examen: Examen; inten
           );
         })}
       </ol>
-      <label className="nuevo-curso__field">
+      <label className="nuevo-curso__campo">
         <span>Comentario para el alumno (opcional)</span>
         <textarea value={comentario} onChange={(evento) => setComentario(evento.target.value)} maxLength={1000} placeholder="Observaciones sobre el desempeño" />
       </label>
       {error && <p className="nuevo-curso__error" role="alert">{error}</p>}
-      <footer className="nuevo-curso__footer revision__pie">
+      <footer className="nuevo-curso__pie revision__pie">
         <strong className={nota >= examen.notaMinima ? "entregas__nota is-aprobado" : "entregas__nota is-desaprobado"}>Nota: {nota} / {NOTA_MAXIMA}</strong>
         <button type="button" onClick={() => dialogo.current?.close()}>Cancelar</button>
-        <button type="button" className="nuevo-curso__submit" onClick={guardar} disabled={guardando}>{guardando ? "Guardando…" : intento.estado === "calificado" ? "Actualizar nota" : "Guardar y avisar al alumno"}</button>
+        <button type="button" className="nuevo-curso__enviar" onClick={guardar} disabled={guardando}>{guardando ? "Guardando…" : intento.estado === "calificado" ? "Actualizar nota" : "Guardar y avisar al alumno"}</button>
       </footer>
     </dialog>
   );

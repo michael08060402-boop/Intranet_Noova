@@ -137,8 +137,9 @@ service cloud.firestore {
         ])
         && datos.keys().hasOnly([
           'nombre', 'descripcion', 'orden', 'publicado', 'creadoEn',
-          'actualizadoEn', 'creadoPor'
+          'actualizadoEn', 'creadoPor', 'miniatura'
         ])
+        && (!('miniatura' in datos) || textoValido(datos.miniatura, 1, 2000))
         && textoValido(datos.nombre, 2, 120)
         && textoValido(datos.descripcion, 0, 2000)
         && datos.orden is int
@@ -161,7 +162,7 @@ service cloud.firestore {
         && (!('portadaKey' in datos) || datos.portadaKey == 'portadas-clases/' + cursoId + '/' + claseId)
         && textoValido(datos.nombre, 2, 160)
         && datos.tipo in ['video', 'documento']
-        && textoValido(datos.ruta, 1, 300)
+        && textoValido(datos.ruta, 1, 1500)
         && datos.orden is int
         && datos.orden >= 0
         && datos.orden <= 10000

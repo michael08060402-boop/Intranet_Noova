@@ -63,18 +63,18 @@ function Explorar() {
   return (
     <main className="alumno-explorar">
       <TituloPagina
-        className="alumno-explorar__heading"
+        className="alumno-explorar__titulo"
         titulo="Explora nuestros cursos"
              />
-      <div className="alumno-explorar__layout">
-        <aside className="alumno-explorar__sidebar" aria-label="Filtros del catálogo">
+      <div className="alumno-explorar__distribucion">
+        <aside className="alumno-explorar__lateral" aria-label="Filtros del catálogo">
           <details open>
             <summary>
               <Layers />
               Categorías
               <ChevronDown />
             </summary>
-            <div className="alumno-explorar__categories">
+            <div className="alumno-explorar__categorias">
               <button type="button" className={categoria === "todas" ? "is-activo" : ""} aria-pressed={categoria === "todas"} onClick={() => setCategoria("todas")}>
                 <LayoutGrid />
                 <span>Todos</span>
@@ -95,7 +95,7 @@ function Explorar() {
               Tipo de curso
               <ChevronDown />
             </summary>
-            <div className="alumno-explorar__types">
+            <div className="alumno-explorar__tipos">
               <label>
                 <input type="checkbox" checked={tipos.length === 0} onChange={() => setTipos([])} />
                 Todos<small>{cursos.length}</small>
@@ -110,16 +110,16 @@ function Explorar() {
             </div>
           </details>
         </aside>
-        <section className="alumno-explorar__catalog" aria-label="Catálogo de cursos">
-          <div className="alumno-explorar__toolbar">
-            <label className="alumno-explorar__search">
+        <section className="alumno-explorar__catalogo" aria-label="Catálogo de cursos">
+          <div className="alumno-explorar__controles">
+            <label className="alumno-explorar__buscador">
               <Search />
               <input type="search" value={busqueda} onChange={(evento) => setBusqueda(evento.target.value)} placeholder="Buscar cursos, temas o palabras clave..." aria-label="Buscar en el catálogo" />
             </label>
             <SelectorOrden orden={orden} alCambiar={setOrden} />
           </div>
           {visibles.length > 0 ? (
-            <div className="alumno-explorar__grid">
+            <div className="alumno-explorar__rejilla">
               {visibles.map((curso) => (
                 <TarjetaCurso
                   key={curso.id}

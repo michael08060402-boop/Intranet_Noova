@@ -62,19 +62,19 @@ export default function AlumnosPage() {
     && `${alumno.nombre} ${alumno.correo}`.toLowerCase().includes(texto));
 
   return (
-    <main className="alumnos-page">
-      <header className="alumnos-heading">
+    <main className="alumnos-pagina">
+      <header className="alumnos-titulo">
         <h1>Alumnos</h1>
       </header>
 
       <section className="alumnos-panel" aria-label="Listado de alumnos">
-        <div className="alumnos-panel-heading">
-          <span className="alumnos-panel-icon"><Users /></span>
+        <div className="alumnos-panel-titulo">
+          <span className="alumnos-panel-icono"><Users /></span>
           <h2>Directorio de alumnos</h2>
-          <span className="alumnos-count">{alumnos.length} {alumnos.length === 1 ? "alumno" : "alumnos"}</span>
+          <span className="alumnos-contador">{alumnos.length} {alumnos.length === 1 ? "alumno" : "alumnos"}</span>
         </div>
-        <div className="alumnos-toolbar">
-          <label className="alumnos-search">
+        <div className="alumnos-controles">
+          <label className="alumnos-buscador">
             <Search />
             <input type="search" value={busqueda} onChange={(evento) => setBusqueda(evento.target.value)} placeholder="Buscar por nombre o correo..." aria-label="Buscar alumno por nombre o correo" />
           </label>
@@ -86,8 +86,8 @@ export default function AlumnosPage() {
         </div>
         {error && <p className="alumnos-error" role="alert">{error}</p>}
 
-        <div className="alumnos-table-wrap">
-          <table className="alumnos-table">
+        <div className="alumnos-tabla-caja">
+          <table className="alumnos-tabla">
             <thead>
               <tr>
                 {["Alumno", "Correo electrónico", "Fecha de registro", "Plan", "Estado"].map((titulo) => <th key={titulo} scope="col">{titulo}</th>)}
@@ -105,7 +105,7 @@ export default function AlumnosPage() {
                   </td>
                   <td>{alumno.correo}</td>
                   <td>{alumno.creadoEn ? formatoFecha.format(alumno.creadoEn) : "—"}</td>
-                  <td><span className={`alumnos-badge alumnos-badge--${alumno.plan}`}>{alumno.plan === "premium" ? "Premium" : "Gratis"}</span></td>
+                  <td><span className={`alumnos-insignia alumnos-insignia--${alumno.plan}`}>{alumno.plan === "premium" ? "Premium" : "Gratis"}</span></td>
                   <td><span className={`alumnos-estado alumnos-estado--${alumno.estado}`}>{alumno.estado === "suspendido" ? "Suspendida" : "Activa"}</span></td>
                   <td className="alumnos-accion">
                     <button type="button" className="alumnos-cambiar" onClick={() => pedirCambio(alumno, "plan")}>
@@ -120,7 +120,7 @@ export default function AlumnosPage() {
               {visibles.length === 0 && (
                 <tr>
                   <td colSpan={6}>
-                    <div className="alumnos-empty">
+                    <div className="alumnos-vacio">
                       <span><Users /></span>
                       {cargando ? <h2>Cargando alumnos…</h2> : alumnos.length > 0 ? <h2>Ningún alumno coincide con la búsqueda</h2> : (
                         <>
