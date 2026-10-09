@@ -168,7 +168,7 @@ Desde la raíz de Noova-Intranet:
 ```powershell
 npm --prefix functions run build
 npx tsc --noEmit
-node --test --test-isolation=none scripts/subida-video.test.cjs
+npm run test:videos
 npm run build
 ```
 
@@ -216,19 +216,12 @@ de producción no conecta con el emulador aunque exista .env.development.local.
 - Confirmar el diseño final y el rendimiento de fotogramas: actualmente el
   navegador abre el video y busca al 20 % de la duración; no guarda una imagen nueva.
 
-## Herramientas locales
+## Desarrollo con servicios desplegados
 
-`probar-video.ps1` es diagnóstico; `configurar-videos-local.ps1` prepara la clave
-para el emulador; `subida-video.test.cjs` contiene pruebas automatizadas. Ninguno
-es requisito de ejecución para alumnos en Hosting. `.secret.local` contiene una
-clave en texto plano, está ignorado por Git y por el deploy y puede borrarse cuando
-terminen las pruebas locales. Mantener únicamente el secreto remoto para producción.
-## Eliminación desde administración
+La aplicaci?n llama a las funciones desplegadas tanto desde localhost como desde
+Hosting. Se retiraron los scripts locales de configuraci?n y diagn?stico de Microsoft
+y la conexi?n al emulador de Functions. No se necesita functions/.secret.local.
+Las pruebas automatizadas se conservan en pruebas_emulador/videos.test.cjs y se
+pueden ejecutar con npm run test:videos; no requieren Microsoft ni credenciales reales.
 
-El botón Eliminar permite borrar cursos con clases y clases con videos, previa
-confirmación. eliminarContenidoAdmin exige administrador activo verificado y
-elimina recursivamente el documento y sus subcolecciones de Firestore. No elimina
-archivos de Microsoft ni portadas de Storage. Inscripciones, progreso y exámenes
-guardados fuera del curso permanecen como registros históricos; no se borran
-automáticamente. Reiniciar el emulador para probar; publicar la función al llevar
-a Hosting. Las pruebas automatizadas ahora incluyen 16 casos.
+

@@ -55,51 +55,19 @@ locales todavía admiten su referencia; no se utiliza desde el modal.
 No se envía el Client Secret al navegador. Los enlaces temporales son accesibles
 para quien los posea mientras sigan válidos; no equivalen a protección DRM.
 
-## Pruebas locales
+## Pruebas con las funciones desplegadas
 
-```powershell
-powershell -STA -ExecutionPolicy Bypass -File .\scripts\configurar-videos-local.ps1
-```
-
-Cuando el script espere, copiar el valor completo del secreto, volver y pulsar
-Enter sin pegar. Lo guarda en functions/.secret.local (ignorado por Git/deploy).
-
-En dos terminales:
-
-```powershell
-npm run emulador:videos
-```
+Desarrollo y Hosting llaman a las funciones de noova-intranet en us-east1.
+No se utiliza el emulador de Functions ni los scripts locales de Microsoft.
 
 ```powershell
 npm run dev
 ```
 
-Abrir localhost:3000. Solo Functions se emula; sesión, Firestore y Storage usan el
-proyecto real noova-intranet, y Microsoft también es real. Crear cursos/clases
-modifica datos reales de esta intranet. La UI del emulador está en 127.0.0.1:4000.
-Tras cambiar el backend reiniciar el comando del emulador para recompilar.
+Abrir localhost:3000, entrar como administrador, seleccionar un video de Microsoft
+y comprobar la previsualizaci?n. Despu?s guardar la clase y reproducirla como alumno
+inscrito. Estas pruebas usan datos reales de la intranet y Microsoft.
+Las funciones deben estar desplegadas y su cuenta de servicio debe poder leer
+MICROSOFT_CLIENT_SECRET en Secret Manager. La clave local ya no se utiliza.
 
-La compilación de producción no usa el emulador. Hosting necesita Functions
-publicadas y acceso de su cuenta de servicio al secreto remoto.
 
-## Verificación y problemas conocidos
-
-- La lectura de Pumpsim y la selección de videos fueron confirmadas por el usuario.
-- Compilación de Functions, TypeScript, ESLint y 13 pruebas simuladas pasaron.
-- La portada no pudo subirse: la consola confirmó que falta habilitar Storage →
-  Firestore. Acciones exactas en ENTREGA_PROPIETARIO.md.
-- El último diseño y los fotogramas deben comprobarse en navegador.
-- No se ha publicado esta integración de Functions/Hosting por el agente.
-- Las imágenes incluyen progreso y límite de 45 segundos para no bloquear el modal.
-- Los videos dependen de la vigencia del secreto compartido de Entra.
-- La lista de clases carga videos para buscar fotogramas; validar consumo/rendimiento
-  con cursos grandes antes de dar por terminada la prueba de producción.
-## Eliminación desde administración
-
-El botón Eliminar permite borrar cursos con clases y clases con videos, previa
-confirmación. eliminarContenidoAdmin exige administrador activo verificado y
-elimina recursivamente el documento y sus subcolecciones de Firestore. No elimina
-archivos de Microsoft ni portadas de Storage. Inscripciones, progreso y exámenes
-guardados fuera del curso permanecen como registros históricos; no se borran
-automáticamente. Reiniciar el emulador para probar; publicar la función al llevar
-a Hosting. Las pruebas automatizadas ahora incluyen 16 casos.

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import PortadaCurso from "@/components/alumno/PortadaCurso";
 import { useEffect, useState } from "react";
 import { Play } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
@@ -86,7 +87,9 @@ export default function MisCursos() {
               const total = totales[curso.id] ?? 0;
               return (
                 <li key={curso.id} className="my-courses__curso">
-                  <Link href={`/alumno/explorar?curso=${curso.id}`} className="my-courses__portada" aria-label={`Ver ${curso.nombre}`} />
+                  <Link href={`/alumno/explorar?curso=${curso.id}`} className="my-courses__portada" aria-label={`Ver ${curso.nombre}`}>
+                    <PortadaCurso className="my-courses__imagen" portadaKey={curso.portadaKey} nombre={curso.nombre} />
+                  </Link>
                   <div className="my-courses__info">
                     <h2>{curso.nombre}</h2>
                     {curso.descripcion && <p>{curso.descripcion}</p>}

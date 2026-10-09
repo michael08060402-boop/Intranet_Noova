@@ -1,0 +1,13 @@
+.portada-curso {
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.portada-curso__carga {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #526779;
+  font-size: 14px;
+}

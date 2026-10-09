@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import MiniaturaClase from "@/components/alumno/MiniaturaClase";
+import PortadaCurso from "@/components/alumno/PortadaCurso";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, BookOpen, ChartNoAxesColumn, CircleCheck, CirclePlay, ClipboardCheck, Crown, Lock, Play, PlusCircle, Tag } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
@@ -51,7 +52,7 @@ export default function CursoDetalle({ curso, categoria, bloqueado, inscrito, al
     <main className="alumno-explorar">
       <button type="button" className="alumno-explorar__volver" onClick={alVolver}><ArrowLeft />Volver al catálogo</button>
       <section className="alumno-curso" aria-labelledby="alumno-curso-titulo">
-        <div className="alumno-curso__cover" />
+        <PortadaCurso className="alumno-curso__cover" portadaKey={curso.portadaKey} nombre={curso.nombre} />
         <div className="alumno-curso__info">
           <small className="alumno-curso__categoria">{categoria}</small>
           <h1 id="alumno-curso-titulo">{curso.nombre}</h1>
