@@ -104,7 +104,7 @@ Repite las pruebas con el emulador de Firestore antes de publicar cambios import
 
 ### Revisión de intentos de abuso
 
-Las reglas actuales, incluidas las restricciones de progreso e inicio del examen, pasaron 25 pruebas en el emulador el 12 de octubre de 2026. Se ejecutan con `npm run test:reglas` (Java 21, proyecto `demo-noova`). Repetirlas al cambiar las reglas. Una prueba del emulador no valida Firebase real, la interfaz, Culqi ni Microsoft; falta ampliar la cobertura de entrega fuera de tiempo.
+Las reglas actuales, incluidas las restricciones de progreso e inicio del examen, pasaron 28 pruebas en el emulador el 12 de octubre de 2026. Se ejecutan con `npm run test:reglas` (Java 21, proyecto `demo-noova`). Repetirlas al cambiar las reglas. Una prueba del emulador no valida Firebase real, la interfaz, Culqi ni Microsoft; falta ampliar la cobertura de entrega fuera de tiempo.
 
 | Intento | Protección de estas reglas |
 |---|---|

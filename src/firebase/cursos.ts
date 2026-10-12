@@ -153,23 +153,29 @@ export async function leerVideoClase(cursoId: string, claseId: string): Promise<
 export async function guardarVideoClase(cursoId: string, claseId: string, video: VideoClase | null) {
   const referencia = referenciaVideo(cursoId, claseId);
   if (!video) return deleteDoc(referencia);
+  const usadas = await rutasVideosUsados(cursoId, claseId);
+  if (usadas.includes(video.ruta.toLocaleLowerCase())) throw new Error("Ese video ya está utilizado en otra clase.");
   const datos = { nombre: "Video de la clase", tipo: "video", ruta: video.ruta, orden: 0, acceso: video.acceso, actualizadoEn: serverTimestamp() };
   if ((await getDoc(referencia)).exists()) return updateDoc(referencia, datos);
   return setDoc(referencia, { ...datos, creadoEn: serverTimestamp() });
 }
 
+export async function rutasVideosUsados(cursoId: string, exceptoClaseId?: string): Promise<string[]> {
+  // Incluir borradores y excluir únicamente la clase que se está editando.
+  const cursos = await getDocs(collection(db, "cursos"));
+  const rutas = await Promise.all(cursos.docs.map(async (curso) => {
+    const clases = await getDocs(collection(db, "cursos", curso.id, "clases"));
+    const videos = await Promise.all(clases.docs
+      .filter((clase) => curso.id !== cursoId || clase.id !== exceptoClaseId)
+      .map((clase) => leerVideoClase(curso.id, clase.id)));
+    return videos.flatMap((video) => video ? [video.ruta.toLocaleLowerCase()] : []);
+  }));
+  return [...new Set(rutas.flat())];
+}
+
 export async function pedirVideo(cursoId: string, claseId: string) {
   const resultado = await httpsCallable<{ cursoId: string; claseId: string }, { url: string; subtitulos?: string; transcripcion?: string }>(funciones, "obtenerVideo")({ cursoId, claseId });
   return resultado.data;
-}
-
-export type AccesibilidadClase = { subtitulos: string; transcripcion: string };
-export async function leerAccesibilidadClase(cursoId: string, claseId: string): Promise<AccesibilidadClase> {
-  const datos = (await getDoc(doc(db, "cursos", cursoId, "clases", claseId, "accesibilidad", "texto"))).data();
-  return { subtitulos: datos?.subtitulos ?? "", transcripcion: datos?.transcripcion ?? "" };
-}
-export function guardarAccesibilidadClase(cursoId: string, claseId: string, texto: AccesibilidadClase) {
-  return setDoc(doc(db, "cursos", cursoId, "clases", claseId, "accesibilidad", "texto"), { ...texto, actualizadoEn: serverTimestamp() });
 }
 
 export async function actualizarMiniaturaClase(cursoId: string, claseId: string) {

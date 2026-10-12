@@ -62,7 +62,6 @@ export async function crearClase() { return { id: 'nueva' }; }
 export async function eliminarClase() {}
 export async function guardarVideoClase() {}
 export async function leerVideoClase() { return null; }
-export async function leerAccesibilidadClase() { return { subtitulos: '', transcripcion: '' }; }
-export async function guardarAccesibilidadClase() {}
 export async function listarVideosMicrosoft() { return { elementos: [], siguiente: null }; }
 export async function previsualizarVideoMicrosoft() { return ''; }
+export async function rutasVideosUsados() { return []; }

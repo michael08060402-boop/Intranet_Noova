@@ -168,7 +168,7 @@ test('no inscrito o suspendido no puede completar ni iniciar examen', async () =
   }
 });
 
-test('tiempo estándar y sin límite se guardan desde servidor antes de iniciar', async () => {
+test('el tiempo del administrador se guarda al iniciar', async () => {
   for (const sinLimite of [false]) {
     const app = cargar({ rol: 'alumno', estado: 'activo' }, {}, documentosSecuencia(['clase', 'segunda']));
     await app.exports.iniciarExamenAlumno({ auth, data: { examenId: 'examen', sinLimite } });

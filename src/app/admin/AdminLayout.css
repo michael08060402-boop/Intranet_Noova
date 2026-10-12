@@ -186,23 +186,7 @@
   line-height: 16px;
   text-align: center;
 }
-.admin-encabezado__salir {
-  display: grid;
-  place-items: center;
-  padding: 6px;
-  border: 0;
-  border-radius: var(--radio);
-  background: transparent;
-  color: #fff;
-  cursor: pointer;
-}
-.admin-encabezado__salir:hover {
-  background: rgb(255 255 255 / 12%);
-}
-.admin-encabezado__salir svg {
-  width: 19px;
-}
-.admin-encabezado a:focus-visible, .admin-encabezado__salir:focus-visible, .admin-encabezado__campana:focus-visible {
+.admin-encabezado a:focus-visible, .admin-encabezado__campana:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 4px;
 }

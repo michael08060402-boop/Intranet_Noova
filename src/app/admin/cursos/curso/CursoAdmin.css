@@ -529,6 +529,7 @@
 .videos-microsoft p { margin: 0; overflow-wrap: anywhere; }
 .videos-microsoft button { padding: 10px 12px; border: 1px solid #d6d6d6; border-radius: 8px; background: white; color: #222; cursor: pointer; text-align: left; }
 .videos-microsoft button:disabled { opacity: .6; cursor: wait; }
+.videos-microsoft button.videos-microsoft__usado:disabled { opacity: .35; cursor: not-allowed; }
 .videos-microsoft__explorador { padding: 12px; border: 1px solid #ddd; border-radius: 10px; max-height: 320px; overflow-y: auto; display: grid; gap: 10px; }
 .videos-microsoft__explorador ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .videos-microsoft__explorador li button { width: 100%; overflow-wrap: anywhere; }

@@ -16,6 +16,7 @@ import {
   escucharCurso,
   guardarVideoClase,
   leerVideoClase,
+  rutasVideosUsados,
   listarVideosMicrosoft,
   previsualizarVideoMicrosoft,
   type ArchivoMicrosoft,
@@ -320,7 +321,7 @@ function ClaseFormulario({ cursoId, clase, alGuardar, alCerrar }: { cursoId: str
           {ruta ? <p>Seleccionado: {ruta.split("/").pop()}</p> : <p>Elige un video de la carpeta de cursos.</p>}
           <button type="button" disabled={cargandoVideo} onClick={() => setExplorando(!explorando)}>{explorando ? "Cerrar carpetas" : "Elegir de Microsoft"}</button>
           {ruta && <button type="button" onClick={() => setRuta("")}>Quitar selección</button>}
-          {explorando && <ExploradorVideos alElegir={(video) => { setRuta(video.ruta); setExplorando(false); }} />}
+          {explorando && <ExploradorVideos cursoId={cursoId} claseId={clase?.id} alElegir={(video) => { setRuta(video.ruta); setExplorando(false); }} />}
         </section>
         {error && <p id="error-clase" className="clase-modal__error" role="alert">{error}</p>}
         <div className="clase-modal__acciones">
@@ -335,7 +336,15 @@ function ClaseFormulario({ cursoId, clase, alGuardar, alCerrar }: { cursoId: str
   );
 }
 
-function ExploradorVideos({ alElegir }: { alElegir: (video: ArchivoMicrosoft) => void }) {
+function ExploradorVideos({ cursoId, claseId, alElegir }: { cursoId: string; claseId?: string; alElegir: (video: ArchivoMicrosoft) => void }) {
+  const [usados, setUsados] = useState<string[] | null>(null);
+  const [falloUsados, setFalloUsados] = useState(false);
+  useEffect(() => {
+    let activo = true;
+    rutasVideosUsados(cursoId, claseId).then((rutas) => { if (activo) setUsados(rutas); })
+      .catch(() => { if (activo) setFalloUsados(true); });
+    return () => { activo = false; };
+  }, [cursoId, claseId]);
   const [carpeta, setCarpeta] = useState("");
   const [elementos, setElementos] = useState<ArchivoMicrosoft[]>([]);
   const [siguiente, setSiguiente] = useState<string | null>(null);
@@ -375,11 +384,12 @@ function ExploradorVideos({ alElegir }: { alElegir: (video: ArchivoMicrosoft) =>
     finally { if (solicitud.current === numero) setCargando(false); }
   }
   return <div className="videos-microsoft__explorador">
+    {falloUsados && <p role="alert">No se pudo comprobar qué videos están usados. Cierra y vuelve a abrir el selector.</p>}
     <p>CURSOS{carpeta ? ` / ${carpeta}` : ""}</p>
     {carpeta && <button type="button" disabled={cargando} onClick={() => navegar(carpeta.split("/").slice(0, -1).join("/"))}>Volver a la carpeta anterior</button>}
     {error && <p role="alert">{error} <button type="button" disabled={cargando} onClick={() => { setCargando(true); setError(""); setReintento((valor) => valor + 1); }}>Reintentar</button></p>}
     <ul>{[...elementos].sort((a, b) => Number(b.carpeta) - Number(a.carpeta) || a.nombre.localeCompare(b.nombre)).map((item) => <li key={item.ruta}>
-      <button type="button" disabled={cargando} onClick={() => item.carpeta ? navegar(carpeta ? `${carpeta}/${item.nombre}` : item.nombre) : alElegir(item)}>
+      <button type="button" className={!item.carpeta && usados?.includes(item.ruta.toLocaleLowerCase()) ? "videos-microsoft__usado" : undefined} disabled={cargando || (!item.carpeta && (usados === null || usados.includes(item.ruta.toLocaleLowerCase())))} onClick={() => item.carpeta ? navegar(carpeta ? `${carpeta}/${item.nombre}` : item.nombre) : alElegir(item)}>
         <span aria-hidden="true">{item.carpeta ? "📁" : "▶"}</span> {item.nombre}
       </button>
     </li>)}</ul>

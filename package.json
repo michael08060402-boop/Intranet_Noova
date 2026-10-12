@@ -8,7 +8,6 @@
     "test:reportes": "node --test --test-isolation=none pruebas_emulador/reportes.test.cjs",
     "test:accesibilidad": "node --test --test-isolation=none pruebas_emulador/accesibilidad.test.cjs",
     "build": "next build",
-    "start": "next start",
     "lint": "eslint",
     "test:reglas": "firebase emulators:exec --only firestore --project demo-noova \"node --test pruebas_emulador/reglas.test.mjs\""
   },

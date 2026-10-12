@@ -10,7 +10,7 @@ Actualizado: 12 de octubre de 2026. Este archivo recoge trabajo pendiente, no fu
 - Clases consecutivas y examen habilitado al completar todas las clases publicadas. El marcado sigue siendo manual; ver [PROGRESO_Y_EVALUACIONES.md](PROGRESO_Y_EVALUACIONES.md).
 - Reportes de alumnos y resultados en Excel (.xlsx), con logo y diseño, sin filtros. Los botones conservan el texto “(CSV)” por solicitud del usuario; los archivos son Excel.
 - Retirados los scripts locales de Microsoft, la subida de videos desde la computadora y los validadores de reglas que quedaron sin uso.
-- Mejoras de accesibilidad: foco, salto al contenido, modales, mensajes, opción de examen sin límite y soporte para subtítulos/transcripción protegidos. Ver [ACCESIBILIDAD_WCAG.md](ACCESIBILIDAD_WCAG.md).
+- Mejoras de accesibilidad: foco, salto al contenido, modales, mensajes y soporte para subtítulos/transcripción protegidos. Ver [ACCESIBILIDAD_WCAG.md](ACCESIBILIDAD_WCAG.md).
 
 ## Verificación y publicación pendientes
 

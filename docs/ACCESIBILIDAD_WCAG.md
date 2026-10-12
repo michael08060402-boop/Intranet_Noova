@@ -40,10 +40,10 @@ las pistas existentes pueden usar los controles nativos del reproductor.
 - Axe analiza once pantallas en escritorio y 320 px, registro/recuperación, el
   examen iniciado, modal de clase y las cinco calculadoras con datos de ejemplo.
   No detecta infracciones A/AA en los estados probados.
-- Se verifica salto por teclado, Escape, retorno del foco, adjuntar WebVTT, texto
+- Se verifica salto por teclado, Escape, retorno del foco y texto
   al 200 %, espaciado ampliado y reflow de los formularios a 320 × 256 px.
 - 22 pruebas simuladas de Functions y 28 pruebas de reglas de Firestore pasan;
-  incluyen tiempo sin límite, rechazo de entregas tardías con tiempo estándar y
+  incluyen rechazo del cambio de tiempo por el alumno y
   protección de los textos de accesibilidad.
 - TypeScript y ESLint de los archivos modificados pasan. La compilación de la web
   y de Functions se verificó durante el trabajo; repetir antes de publicar cambios.
