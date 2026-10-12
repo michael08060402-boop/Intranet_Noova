@@ -6,8 +6,26 @@
 .portada-curso__carga {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   color: #526779;
   font-size: 14px;
+}
+.portada-curso__carga i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: portada-puntos 1.2s ease-in-out infinite;
+}
+.portada-curso__carga i:nth-child(2) { animation-delay: .15s; }
+.portada-curso__carga i:nth-child(3) { animation-delay: .3s; }
+@keyframes portada-puntos {
+  0%, 100% { opacity: .35; }
+  50% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portada-curso__carga i { animation: none; }
 }

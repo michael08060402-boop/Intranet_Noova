@@ -252,9 +252,7 @@
   flex-shrink: 0;
   aspect-ratio: 16 / 10;
   border-radius: var(--radio);
-  background:
-    linear-gradient(rgb(4 43 78 / 45%), rgb(4 43 78 / 45%)),
-    url("../../../assets/fondos/paisaje-mina.webp") center / cover;
+  background: #29485f;
   color: #4ade80;
 }
 .clase-pagina .clase-pagina__miniatura svg {
@@ -283,4 +281,11 @@
   .clase-pagina__detalle {
     padding: 4px 18px 20px;
   }
+}
+.clase-pagina__bloqueada {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  color: #526779;
 }

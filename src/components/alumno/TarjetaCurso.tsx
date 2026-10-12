@@ -20,7 +20,7 @@ export default function TarjetaCurso({
 }) {
   return (
     <Link href={`/alumno/explorar?curso=${curso.id}`} className="tarjeta-curso">
-      <PortadaCurso className="tarjeta-curso__portada" portadaKey={curso.portadaKey} nombre={curso.nombre}>
+      <PortadaCurso className="tarjeta-curso__portada" portadaKey={curso.portadaKey} version={curso.versionPortada} nombre={curso.nombre}>
         <span className="tarjeta-curso__etiquetas">
           {curso.acceso === "premium" && <span className="tarjeta-curso__etiqueta tarjeta-curso__etiqueta--premium">{bloqueado ? <Lock /> : <Crown />}Premium</span>}
           {inscrito && <span className="tarjeta-curso__etiqueta tarjeta-curso__etiqueta--inscrito"><Check />Inscrito</span>}

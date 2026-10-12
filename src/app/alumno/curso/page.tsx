@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import type { FunctionsError } from "firebase/functions";
-import { ChevronRight, Circle, CircleCheck, Trophy } from "lucide-react";
+import { ChevronRight, Circle, CircleCheck, Lock, Trophy } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { escucharClases, escucharCurso, escucharInscripciones, escucharProgreso, marcarClase, pedirVideo, type Clase, type Curso, type Progreso } from "@/firebase/cursos";
 import { escucharExamenesDeCurso, type Examen } from "@/firebase/evaluaciones";
@@ -77,15 +77,18 @@ function ClaseCurso() {
   const completada = (clase: Clase) => progreso.some((item) => item.claseId === clase.id);
   const indice = Math.max(0, clases.findIndex((clase) => claseId ? clase.id === claseId : !completada(clase)));
   const actual = clases[indice];
+  const habilitada = (posicion: number) => clases.slice(0, posicion).every(completada);
+  const actualBloqueada = !habilitada(indice);
+  const posterioresCompletadas = clases.slice(indice + 1).some(completada);
   const enlace = (clase: Clase) => `/alumno/curso?id=${curso.id}&clase=${clase.id}`;
   const cursoCompleto = clases.length > 0 && clases.every(completada);
   const evaluacion = examenes.find((examen) => examen.modo === "manual");
 
   async function cambiarEstado() {
-    if (!usuario || !actual) return;
+    if (!usuario || !actual || actualBloqueada) return;
     setGuardando(true);
     setError("");
-    try { await marcarClase(usuario.uid, curso!.id, actual.id, !completada(actual)); }
+    try { await marcarClase(curso!.id, actual.id, !completada(actual)); }
     catch { setError("No se pudo guardar tu avance. Inténtalo nuevamente."); }
     setGuardando(false);
   }
@@ -103,7 +106,7 @@ function ClaseCurso() {
         <>
           <header className="clase-pagina__encabezado">
             <h1>{actual.nombre}</h1>
-            <button type="button" className={`clase-pagina__completar ${completada(actual) ? "is-completada" : ""}`} onClick={cambiarEstado} disabled={guardando}>
+            <button type="button" className={`clase-pagina__completar ${completada(actual) ? "is-completada" : ""}`} onClick={cambiarEstado} disabled={guardando || actualBloqueada || (completada(actual) && posterioresCompletadas)} title={posterioresCompletadas ? "Desmarca primero las clases posteriores" : undefined}>
               {completada(actual) ? <><CircleCheck />Completada</> : <><Circle />Marcar como completada</>}
             </button>
           </header>
@@ -124,7 +127,7 @@ function ClaseCurso() {
 
           <div className="clase-pagina__distribucion">
             <section>
-              <ReproductorClase cursoId={curso.id} claseId={actual.id} poster={actual.miniatura} />
+              {actualBloqueada ? <p className="clase-pagina__estado"><Lock />Completa las clases anteriores para habilitar esta clase.</p> : <ReproductorClase key={actual.id} cursoId={curso.id} claseId={actual.id} poster={actual.miniatura} />}
               <div className="clase-pagina__detalle">
                 <div className="clase-pagina__pestanas" role="tablist">
                   <button type="button" role="tab" aria-selected={pestana === "descripcion"} onClick={() => setPestana("descripcion")}>Descripción</button>
@@ -147,11 +150,11 @@ function ClaseCurso() {
               <ol>
                 {clases.map((clase, posicion) => (
                   <li key={clase.id}>
-                    <Link href={enlace(clase)} className={clase === actual ? "is-actual" : ""} aria-current={clase === actual ? "page" : undefined}>
+                    {habilitada(posicion) ? <Link href={enlace(clase)} className={clase === actual ? "is-actual" : ""} aria-current={clase === actual ? "page" : undefined}>
                       <MiniaturaClase miniatura={clase.miniatura} className="clase-pagina__miniatura">{completada(clase) && <CircleCheck aria-label="Completada" />}</MiniaturaClase>
                       <span className="clase-pagina__numero">{posicion + 1}</span>
                       <span>{clase.nombre}</span>
-                    </Link>
+                    </Link> : <span className="clase-pagina__bloqueada" aria-label={`Clase ${posicion + 1} bloqueada: completa las anteriores`}><Lock /><span>{posicion + 1}. {clase.nombre}</span></span>}
                   </li>
                 ))}
               </ol>

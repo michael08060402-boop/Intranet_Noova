@@ -5,12 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "test:videos": "node --test --test-isolation=none pruebas_emulador/videos.test.cjs",
+    "test:reportes": "node --test --test-isolation=none pruebas_emulador/reportes.test.cjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "test:reglas": "firebase emulators:exec --only firestore --project demo-noova \"node --test pruebas_emulador/reglas.test.mjs\""
   },
   "dependencies": {
+    "exceljs": "^4.4.0",
     "firebase": "^12.19.0",
     "lucide-react": "^1.49.0",
     "next": "16.3.8",

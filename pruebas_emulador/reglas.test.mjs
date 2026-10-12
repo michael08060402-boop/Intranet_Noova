@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
+import assert from "node:assert/strict";
 import { after, before, beforeEach, describe, it } from "node:test";
 import { assertFails, assertSucceeds, initializeTestEnvironment } from "@firebase/rules-unit-testing";
-import { Timestamp, deleteDoc, deleteField, doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { Timestamp, collection, getDocs, query, where, deleteDoc, deleteField, doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 
 let entorno;
 
@@ -67,6 +68,31 @@ beforeEach(async () => {
 });
 
 describe("Lo que el alumno no debe poder hacer", () => {
+  it("consultar su intento inexistente y encontrarlo después de iniciar el examen", async () => {
+    const db = como("alumno");
+    const consulta = query(collection(db, "intentos"), where("uid", "==", "alumno"), where("examenId", "==", "e2"));
+    const inicial = await assertSucceeds(getDocs(consulta));
+    assert.equal(inicial.empty, true);
+    await entorno.withSecurityRulesDisabled(async (contexto) => {
+      await setDoc(doc(contexto.firestore(), "examenes/e2"), { cursoId: "gratis", nombre: "Examen", publicado: true, modo: "manual" });
+    });
+    const datos = {
+      examenId: "e2", cursoId: "gratis", uid: "alumno", nombre: "Alumno", correo: "alumno@prueba.com",
+      inicio: serverTimestamp(), fin: null, estado: "en_curso", respuestas: {}, nota: null, actualizadoEn: serverTimestamp(),
+    };
+    await assertFails(setDoc(doc(db, "intentos/e2_alumno"), datos));
+    await entorno.withSecurityRulesDisabled(async (contexto) => {
+      await setDoc(doc(contexto.firestore(), "intentos/e2_alumno"), datos);
+    });
+    const iniciado = await assertSucceeds(getDocs(consulta));
+    assert.equal(iniciado.docs[0].data().estado, "en_curso");
+    await assertFails(getDocs(query(collection(como("otro"), "intentos"), where("uid", "==", "alumno"), where("examenId", "==", "e2"))));
+  });
+  it("no puede saltarse el orden escribiendo progreso directamente", async () => {
+    await assertFails(setDoc(doc(como("alumno"), "usuarios/alumno/progreso/gratis_c1"), {
+      cursoId: "gratis", claseId: "c1", completado: true, completadoEn: serverTimestamp(), actualizadoEn: serverTimestamp(),
+    }));
+  });
   it("leer las respuestas de un examen", async () => {
     await assertFails(getDoc(doc(como("alumno"), "examenes/e1/claves/clave")));
   });

@@ -1,4 +1,4 @@
-import type { User } from "firebase/auth";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import {
   collection,
   deleteDoc,
@@ -7,13 +7,12 @@ import {
   onSnapshot,
   query,
   serverTimestamp,
-  setDoc,
   updateDoc,
   where,
   writeBatch,
   type DocumentData,
 } from "firebase/firestore";
-import { db } from "./config";
+import { app, db } from "./config";
 import { nuevaNotificacion } from "./notificaciones";
 
 export type TipoPregunta = "opcion" | "abierta";
@@ -140,8 +139,12 @@ export function eliminarExamen(id: string) {
 const idIntento = (examenId: string, uid: string) => `${examenId}_${uid}`;
 
 export function escucharIntento(examenId: string, uid: string, alCambiar: (intento: Intento | null) => void, alFallar: () => void) {
-  return onSnapshot(doc(db, "intentos", idIntento(examenId, uid)), (documento) => {
-    alCambiar(documento.exists() ? leerIntento(documento.id, documento.data()) : null);
+  // La lectura de un documento inexistente no puede validar resource.data.uid.
+  // Una consulta por propietario devuelve una lista vacía y sigue escuchando su creación.
+  const consulta = query(collection(db, "intentos"), where("uid", "==", uid), where("examenId", "==", examenId));
+  return onSnapshot(consulta, (resultado) => {
+    const documento = resultado.docs.find((item) => item.id === idIntento(examenId, uid));
+    alCambiar(documento ? leerIntento(documento.id, documento.data()) : null);
   }, alFallar);
 }
 
@@ -165,20 +168,8 @@ export function escucharIntentosExamen(examenId: string, alCambiar: (intentos: I
   }, alFallar);
 }
 
-export function iniciarIntento(examen: Examen, usuario: User, nombre: string) {
-  return setDoc(doc(db, "intentos", idIntento(examen.id, usuario.uid)), {
-    examenId: examen.id,
-    cursoId: examen.cursoId,
-    uid: usuario.uid,
-    nombre,
-    correo: usuario.email ?? "",
-    inicio: serverTimestamp(),
-    fin: null,
-    estado: "en_curso",
-    respuestas: {},
-    nota: null,
-    actualizadoEn: serverTimestamp(),
-  });
+export function iniciarIntento(examen: Examen) {
+  return httpsCallable<{ examenId: string }, { iniciado: boolean }>(getFunctions(app, "us-east1"), "iniciarExamenAlumno")({ examenId: examen.id });
 }
 
 export function guardarRespuestas(intentoId: string, respuestas: Respuestas) {

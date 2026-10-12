@@ -8,24 +8,11 @@ import { escucharAlumnos, type Alumno } from "@/firebase/perfiles";
 import "../AdminPagina.css";
 import "./Reportes.css";
 
-type Celda = string | number;
 type AvanceCurso = { inscritos: Inscrito[]; publicadas: number };
 
 const formatoFecha = new Intl.DateTimeFormat("es-PE", { day: "2-digit", month: "short", year: "numeric" });
 const promedio = (notas: number[]) => (notas.length > 0 ? Math.round((notas.reduce((suma, nota) => suma + nota, 0) / notas.length) * 10) / 10 : null);
 const porcentaje = (parte: number, total: number) => (total > 0 ? `${Math.round((parte / total) * 100)} %` : "—");
-
-function descargarCsv(archivo: string, filas: Celda[][]) {
-  const texto = filas.map((fila) => fila.map((celda) => {
-    const valor = typeof celda === "string" && /^[=+\-@]/.test(celda) ? `'${celda}` : String(celda);
-    return `"${valor.replaceAll('"', '""')}"`;
-  }).join(",")).join("\r\n");
-  const enlace = document.createElement("a");
-  enlace.href = URL.createObjectURL(new Blob(["﻿" + texto], { type: "text/csv;charset=utf-8" }));
-  enlace.download = archivo;
-  enlace.click();
-  URL.revokeObjectURL(enlace.href);
-}
 
 function Avance({ valor }: { valor: number }) {
   return (
@@ -48,13 +35,16 @@ export default function ReportesPage() {
   const [avance, setAvance] = useState<Record<string, AvanceCurso> | null>(null);
   const [cursoAvance, setCursoAvance] = useState("todos");
   const [clasesAvance, setClasesAvance] = useState<Clase[]>([]);
+  const [exportandoAlumnos, setExportandoAlumnos] = useState(false);
+  const [exportandoResultados, setExportandoResultados] = useState(false);
+  const [datosReporteListos, setDatosReporteListos] = useState({ alumnos: false, cursos: false, examenes: false, intentos: false });
 
   useEffect(() => {
     const fallo = () => { setError("No se pudieron cargar todos los datos. Revisa tu conexión."); setCargando(false); };
-    const dejarAlumnos = escucharAlumnos((lista) => { setAlumnos(lista); setCargando(false); }, fallo);
-    const dejarCursos = escucharCursos(false, setCursos, fallo);
-    const dejarExamenes = escucharExamenes(false, setExamenes, fallo);
-    const dejarIntentos = escucharIntentos(null, setIntentos, fallo);
+    const dejarAlumnos = escucharAlumnos((lista) => { setAlumnos(lista); setCargando(false); setDatosReporteListos((actual) => ({ ...actual, alumnos: true })); }, fallo);
+    const dejarCursos = escucharCursos(false, (lista) => { setCursos(lista); setDatosReporteListos((actual) => ({ ...actual, cursos: true })); }, fallo);
+    const dejarExamenes = escucharExamenes(false, (lista) => { setExamenes(lista); setDatosReporteListos((actual) => ({ ...actual, examenes: true })); }, fallo);
+    const dejarIntentos = escucharIntentos(null, (lista) => { setIntentos(lista); setDatosReporteListos((actual) => ({ ...actual, intentos: true })); }, fallo);
     return () => { dejarAlumnos(); dejarCursos(); dejarExamenes(); dejarIntentos(); };
   }, []);
 
@@ -100,26 +90,41 @@ export default function ReportesPage() {
       return { alumno, rendidos: entregados(propios).length, promedio: promedio(calificados.map((intento) => intento.nota ?? 0)), aprobados: calificados.filter(aprobo).length, calificados: calificados.length };
     });
 
-  function exportarResultados() {
-    descargarCsv("resultados-examenes.csv", [
-      ["Alumno", "Correo", "Curso", "Examen", "Estado", "Nota (de 20)", "Resultado", "Inicio", "Entrega", "Calificado"],
-      ...intentosVisibles.map((intento) => [
-        intento.nombre, intento.correo, nombreCurso(intento.cursoId), examenDe(intento)?.nombre ?? "Examen eliminado",
-        intento.estado === "calificado" ? "Calificado" : intento.estado === "entregado" ? "Por calificar" : "En curso",
-        intento.nota ?? "", intento.estado === "calificado" ? (aprobo(intento) ? "Aprobado" : "Desaprobado") : "",
-        new Date(intento.inicio).toLocaleString("es-PE"), intento.fin ? new Date(intento.fin).toLocaleString("es-PE") : "",
-        intento.calificadoEn ? new Date(intento.calificadoEn).toLocaleString("es-PE") : "",
-      ]),
-    ]);
+  async function exportarResultados() {
+    if (exportandoResultados) return;
+    setExportandoResultados(true);
+    try {
+      const { descargarReporteResultados } = await import("./exportarAlumnos");
+      const fecha = new Intl.DateTimeFormat("es-PE", { timeZone: "America/Lima", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+      await descargarReporteResultados(intentos.map((intento) => ({
+        nombre: intento.nombre, correo: intento.correo, curso: nombreCurso(intento.cursoId), examen: examenDe(intento)?.nombre ?? "Examen eliminado",
+        estado: intento.estado === "calificado" ? "Calificado" : intento.estado === "entregado" ? "Por calificar" : "En curso",
+        nota: intento.nota, resultado: intento.estado === "calificado" ? (aprobo(intento) ? "Aprobado" : "Desaprobado") : "—",
+        inicio: fecha.format(intento.inicio), entrega: intento.fin ? fecha.format(intento.fin) : "—", calificado: intento.calificadoEn ? fecha.format(intento.calificadoEn) : "—",
+      })));
+    } catch {
+      setError("No se pudo descargar el reporte de resultados. Inténtalo nuevamente.");
+    } finally {
+      setExportandoResultados(false);
+    }
   }
 
-  function exportarAlumnos() {
-    descargarCsv("alumnos.csv", [
-      ["Alumno", "Correo", "Plan", "Registro", "Exámenes rendidos", "Promedio (de 20)", "Aprobados"],
-      ...filasAlumnos.map(({ alumno, rendidos, promedio: nota, aprobados }) => [
-        alumno.nombre, alumno.correo, alumno.plan === "premium" ? "Premium" : "Gratis", alumno.creadoEn > 0 ? new Date(alumno.creadoEn).toLocaleDateString("es-PE") : "", rendidos, nota ?? "", aprobados,
-      ]),
-    ]);
+  async function exportarAlumnos() {
+    if (exportandoAlumnos) return;
+    setExportandoAlumnos(true);
+    try {
+      const { descargarReporteAlumnos } = await import("./exportarAlumnos");
+      const fecha = new Intl.DateTimeFormat("es-PE", { timeZone: "America/Lima", day: "2-digit", month: "2-digit", year: "numeric" });
+      await descargarReporteAlumnos(alumnos.map((alumno) => {
+        const propios = intentos.filter((intento) => intento.uid === alumno.id);
+        const calificados = propios.filter((intento) => intento.estado === "calificado");
+        return { nombre: alumno.nombre, correo: alumno.correo, plan: alumno.plan === "premium" ? "Premium" : "Gratis", registro: alumno.creadoEn > 0 ? fecha.format(alumno.creadoEn) : "—", rendidos: entregados(propios).length, promedio: promedio(calificados.map((intento) => intento.nota ?? 0)), aprobados: calificados.filter(aprobo).length };
+      }));
+    } catch {
+      setError("No se pudo descargar el reporte Excel. Inténtalo nuevamente.");
+    } finally {
+      setExportandoAlumnos(false);
+    }
   }
 
   return (
@@ -129,8 +134,8 @@ export default function ReportesPage() {
           <h1>Reportes</h1>
         </div>
         <div className="admin-pagina__acciones">
-          <button type="button" className="admin-boton admin-boton--secundario" onClick={exportarAlumnos} disabled={alumnos.length === 0}><Download />Alumnos (CSV)</button>
-          <button type="button" className="admin-boton" onClick={exportarResultados} disabled={intentosVisibles.length === 0}><Download />Resultados (CSV)</button>
+          <button type="button" className="admin-boton admin-boton--secundario" title="Descarga Excel (.xlsx) con diseño y logo" onClick={exportarAlumnos} disabled={alumnos.length === 0 || exportandoAlumnos || !Object.values(datosReporteListos).every(Boolean)}><Download />{exportandoAlumnos ? "Generando…" : "Alumnos (CSV)"}</button>
+          <button type="button" className="admin-boton" title="Descarga Excel (.xlsx) con diseño y logo" onClick={exportarResultados} disabled={intentos.length === 0 || exportandoResultados || !Object.values(datosReporteListos).every(Boolean)}><Download />{exportandoResultados ? "Generando…" : "Resultados (CSV)"}</button>
         </div>
       </header>
       {error && <p className="admin-error" role="alert">{error}</p>}

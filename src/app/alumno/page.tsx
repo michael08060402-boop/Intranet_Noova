@@ -112,7 +112,7 @@ export default function InicioAlumno() {
               const valor = porcentaje(curso);
               return (
                 <article key={curso.id} className="alumno-continuar__curso">
-                  <PortadaCurso className="alumno-continuar__portada" portadaKey={curso.portadaKey} nombre={curso.nombre} />
+                  <PortadaCurso className="alumno-continuar__portada" portadaKey={curso.portadaKey} version={curso.versionPortada} nombre={curso.nombre} />
                   <div className="alumno-continuar__cuerpo">
                     <h3>{curso.nombre}</h3>
                     <small>{valor}% completado</small>

@@ -88,7 +88,7 @@ export default function MisCursos() {
               return (
                 <li key={curso.id} className="mis-cursos__curso">
                   <Link href={`/alumno/explorar?curso=${curso.id}`} className="mis-cursos__portada" aria-label={`Ver ${curso.nombre}`}>
-                    <PortadaCurso className="mis-cursos__imagen" portadaKey={curso.portadaKey} nombre={curso.nombre} />
+                    <PortadaCurso className="mis-cursos__imagen" portadaKey={curso.portadaKey} version={curso.versionPortada} nombre={curso.nombre} />
                   </Link>
                   <div className="mis-cursos__info">
                     <h2>{curso.nombre}</h2>

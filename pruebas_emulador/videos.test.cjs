@@ -8,7 +8,13 @@ function cargar(perfil, subida, respuestaGraph, documentos = {}) {
   const source = ts.transpileModule(fs.readFileSync('functions/src/index.ts', 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
   let llamadasGraph = 0;
   const eliminados = [];
-  const db = { recursiveDelete: async (referencia) => eliminados.push(referencia.ruta), doc: (ruta) => ({ ruta, get: async () => ({ exists: true, data: () => ruta.startsWith('usuarios/') ? perfil : ruta.startsWith('subidasVideos/') ? subida : documentos[ruta] ?? {} }) }) };
+  const escritos = [];
+  const db = {
+    recursiveDelete: async (referencia) => eliminados.push(referencia.ruta),
+    doc: (ruta) => ({ ruta, get: async () => ({ exists: ruta.startsWith('intentos/') ? Boolean(documentos[ruta]) : ruta.endsWith('/inscripciones/curso') ? documentos.inscrito !== false : true, data: () => /^usuarios\/[^/]+$/.test(ruta) ? perfil : ruta.startsWith('subidasVideos/') ? subida : documentos[ruta] ?? {} }) }),
+    collection: (ruta) => ({ where: (campo, operador, valor) => ({ get: async () => ({ docs: Object.entries(documentos).filter(([path, datos]) => path.startsWith(ruta + '/') && !path.slice(ruta.length + 1).includes('/') && datos[campo] === valor).map(([path, datos]) => ({ id: path.split('/').at(-1), data: () => datos })) }) }) }),
+    runTransaction: async (handler) => handler({ get: (referencia) => referencia.get(), set: (referencia, datos) => escritos.push({ ruta: referencia.ruta, datos }), create: (referencia, datos) => escritos.push({ ruta: referencia.ruta, datos }) }),
+  };
   class HttpsError extends Error { constructor(code, message) { super(message); this.code = code; } }
   const modulos = {
     'firebase-admin/app': { initializeApp() {} },
@@ -23,7 +29,7 @@ function cargar(perfil, subida, respuestaGraph, documentos = {}) {
     llamadasGraph++;
     return { ok: true, json: async () => url.includes('oauth2') ? { access_token: 'token-simulado', expires_in: 3600 } : typeof respuestaGraph === "function" ? respuestaGraph(url) : respuestaGraph };
   } });
-  return { exports, llamadas: () => llamadasGraph, eliminados };
+  return { exports, llamadas: () => llamadasGraph, eliminados, escritos };
 }
 const auth = { uid: 'admin', token: { email_verified: true } };
 test('alumno no puede iniciar una subida ni contactar Microsoft', async () => {
@@ -74,24 +80,22 @@ test('explorador devuelve carpetas y videos, omite otros documentos y pagina', a
 function documentosVideo(portadaKey) {
   return {
     'cursos/curso': { publicado: true, acceso: 'gratis', portadaKey: 'portadas/curso' },
-    'cursos/curso/clases/clase': { publicado: true },
+    'cursos/curso/clases/clase': { publicado: true, orden: 0 },
     'cursos/curso/clases/clase/contenidos/video': { ruta: 'CURSOS/video.mp4', acceso: 'gratis', portadaKey },
   };
 }
-test('video devuelve miniatura automatica e ignora portada personalizada anterior', async () => {
+test('video devuelve solo el enlace: miniaturas se sirven por separado', async () => {
   const app = cargar({ rol: 'alumno', estado: 'activo' }, null, (url) => url.endsWith('/thumbnails') ? { value: [{ large: { url: 'https://example.com/miniatura' } }] } : { id: 'archivo', '@microsoft.graph.downloadUrl': 'https://example.com/video' }, documentosVideo('portadas-clases/curso/clase'));
   const resultado = await app.exports.obtenerVideo({ auth, data: { cursoId: 'curso', claseId: 'clase' } });
-  assert.equal(resultado.miniatura, 'https://example.com/miniatura');
-  assert.equal(resultado.portadaKey, null);
-  assert.equal(resultado.portadaCursoKey, 'portadas/curso');
+  assert.equal(resultado.url, 'https://example.com/video');
+  assert.equal(resultado.miniatura, undefined);
 });
 test('miniatura inexistente no bloquea reproduccion ni acepta portada ajena', async () => {
   const app = cargar({ rol: 'alumno', estado: 'activo' }, null, (url) => url.endsWith('/thumbnails') ? { value: [] } : { id: 'archivo', '@microsoft.graph.downloadUrl': 'https://example.com/video' }, documentosVideo('portadas-clases/otro/clase'));
   const resultado = await app.exports.obtenerVideo({ auth, data: { cursoId: 'curso', claseId: 'clase' } });
   assert.equal(resultado.url, 'https://example.com/video');
-  assert.equal(resultado.miniatura, null);
-  assert.equal(resultado.portadaKey, null);
-  assert.equal(resultado.portadaCursoKey, 'portadas/curso');
+  assert.equal(resultado.miniatura, undefined);
+  assert.equal(resultado.portadaKey, undefined);
 });
 test('solo administrador puede previsualizar videos', async () => {
   const app = cargar({ rol: 'alumno', estado: 'activo' });
@@ -125,4 +129,64 @@ test('administrador elimina curso de forma recursiva y rechaza rutas invalidas',
   await assert.rejects(app.exports.eliminarContenidoAdmin({ auth, data: { cursoId: '../otro' } }), { code: 'invalid-argument' });
   await app.exports.eliminarContenidoAdmin({ auth, data: { cursoId: 'curso' } });
   assert.equal(app.eliminados[0], 'cursos/curso');
+});
+function documentosSecuencia(completadas = []) {
+  return {
+    ...documentosVideo(),
+    'cursos/curso/clases/segunda': { publicado: true, orden: 1 },
+    'cursos/curso/clases/segunda/contenidos/video': { ruta: 'CURSOS/segunda.mp4', acceso: 'gratis' },
+    'examenes/examen': { publicado: true, modo: 'manual', cursoId: 'curso', preguntas: [{ id: 'p1' }] },
+    ...Object.fromEntries(completadas.map((id) => [`usuarios/admin/progreso/curso_${id}`, { cursoId: 'curso', claseId: id, completado: true }])),
+  };
+}
+test('segunda clase bloqueada no pide un enlace a Microsoft', async () => {
+  const app = cargar({ rol: 'alumno', estado: 'activo' }, null, {}, documentosSecuencia());
+  await assert.rejects(app.exports.obtenerVideo({ auth, data: { cursoId: 'curso', claseId: 'segunda' } }), { code: 'failed-precondition' });
+  assert.equal(app.llamadas(), 0);
+});
+test('primera clase puede completarse manualmente, segunda requiere primera', async () => {
+  const app = cargar({ rol: 'alumno', estado: 'activo' }, null, {}, documentosSecuencia());
+  await assert.rejects(app.exports.registrarClaseCompletada({ auth, data: { cursoId: 'curso', claseId: 'segunda', completado: true } }), { code: 'failed-precondition' });
+  await app.exports.registrarClaseCompletada({ auth, data: { cursoId: 'curso', claseId: 'clase', completado: true } });
+  assert.equal(app.escritos[0].datos.completado, true);
+});
+test('al completar primera se habilita segunda', async () => {
+  const app = cargar({ rol: 'alumno', estado: 'activo' }, null, {}, documentosSecuencia(['clase']));
+  await app.exports.registrarClaseCompletada({ auth, data: { cursoId: 'curso', claseId: 'segunda', completado: true } });
+  assert.equal(app.escritos[0].ruta, 'usuarios/admin/progreso/curso_segunda');
+});
+test('no se puede desmarcar una clase con posteriores completadas', async () => {
+  const app = cargar({ rol: 'alumno', estado: 'activo' }, null, {}, documentosSecuencia(['clase', 'segunda']));
+  await assert.rejects(app.exports.registrarClaseCompletada({ auth, data: { cursoId: 'curso', claseId: 'clase', completado: false } }), { code: 'failed-precondition' });
+  assert.equal(app.escritos.length, 0);
+});
+test('examen bloqueado hasta completar todas las clases publicadas', async () => {
+  const app = cargar({ rol: 'alumno', estado: 'activo' }, null, {}, documentosSecuencia(['clase']));
+  await assert.rejects(app.exports.iniciarExamenAlumno({ auth, data: { examenId: 'examen' } }), { code: 'failed-precondition' });
+  assert.equal(app.escritos.length, 0);
+});
+test('curso terminado permite examen; clases borrador no bloquean', async () => {
+  const datos = documentosSecuencia(['clase', 'segunda']);
+  datos['cursos/curso/clases/borrador'] = { publicado: false, orden: 2 };
+  const app = cargar({ rol: 'alumno', estado: 'activo', nombre: 'Alumno', correo: 'alumno@ejemplo.com' }, null, {}, datos);
+  await app.exports.iniciarExamenAlumno({ auth, data: { examenId: 'examen' } });
+  assert.equal(app.escritos[0].ruta, 'intentos/examen_admin');
+  assert.equal(app.escritos[0].datos.inicio, 'fecha-simulada');
+});
+test('reanudar examen nunca reinicia el tiempo ni respuestas', async () => {
+  const datos = documentosSecuencia(['clase', 'segunda']);
+  datos['intentos/examen_admin'] = { estado: 'en_curso', inicio: 123, respuestas: { p1: 1 } };
+  const app = cargar({ rol: 'alumno', estado: 'activo' }, null, {}, datos);
+  await app.exports.iniciarExamenAlumno({ auth, data: { examenId: 'examen' } });
+  assert.equal(app.escritos.length, 0);
+});
+test('no inscrito o suspendido no puede completar ni iniciar examen', async () => {
+  for (const suspendido of [false, true]) {
+    const datos = documentosSecuencia(['clase', 'segunda']);
+    datos.inscrito = false;
+    const app = cargar({ rol: 'alumno', estado: suspendido ? 'suspendido' : 'activo' }, null, {}, datos);
+    const code = suspendido ? 'permission-denied' : 'failed-precondition';
+    await assert.rejects(app.exports.iniciarExamenAlumno({ auth, data: { examenId: 'examen' } }), { code });
+    await assert.rejects(app.exports.registrarClaseCompletada({ auth, data: { cursoId: 'curso', claseId: 'clase', completado: true } }), { code });
+  }
 });

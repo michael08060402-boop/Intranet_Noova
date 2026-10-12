@@ -112,7 +112,7 @@
   height: 100%;
   aspect-ratio: 16 / 9;
   border-radius: 10px;
-  background: url("../../../assets/fondos/paisaje-mina.webp") center / cover;
+  background: #e7edf2 center / cover no-repeat;
 }
 .mis-cursos__info {
   flex: 1;

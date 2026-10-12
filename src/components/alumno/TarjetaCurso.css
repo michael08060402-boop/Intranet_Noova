@@ -17,7 +17,7 @@
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: 10px;
-  background: url("../../assets/fondos/paisaje-mina.webp") center / cover;
+  background: #e7edf2 center / cover no-repeat;
 }
 .tarjeta-curso__etiquetas {
   position: absolute;

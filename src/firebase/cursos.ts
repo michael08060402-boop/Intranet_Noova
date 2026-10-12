@@ -39,12 +39,13 @@ export type Curso = {
   publicado: boolean;
   creadoEn: number;
   portadaKey?: string;
+  versionPortada?: number;
 };
 
 export type Clase = { id: string; nombre: string; descripcion: string; orden: number; publicado: boolean; miniatura?: string };
 
 type DatosCategoria = Omit<Categoria, "id">;
-type DatosCurso = Omit<Curso, "id" | "creadoEn">;
+type DatosCurso = Omit<Curso, "id" | "creadoEn" | "versionPortada">;
 type DatosClase = Omit<Clase, "id" | "miniatura">;
 
 export const nombresNivel: Record<Nivel, string> = { basico: "Básico", intermedio: "Intermedio", avanzado: "Avanzado" };
@@ -60,6 +61,7 @@ function leerCurso(id: string, datos: DocumentData): Curso {
     publicado: datos.publicado,
     creadoEn: datos.creadoEn?.toMillis() ?? Date.now(),
     portadaKey: datos.portadaKey,
+    versionPortada: datos.actualizadoEn?.toMillis() ?? 0,
   };
 }
 
@@ -121,7 +123,7 @@ export function escucharClases(cursoId: string, soloPublicadas: boolean, alCambi
       const datos = documento.data();
       return { id: documento.id, nombre: datos.nombre, descripcion: datos.descripcion, orden: datos.orden, publicado: datos.publicado, miniatura: datos.miniatura };
     });
-    alCambiar(clases.sort((a, b) => a.orden - b.orden));
+    alCambiar(clases.sort((a, b) => (a.orden - b.orden) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)));
   }, alFallar);
 }
 
@@ -187,14 +189,8 @@ export function escucharProgreso(uid: string, alCambiar: (progreso: Progreso[]) 
   }, alFallar);
 }
 
-export function marcarClase(uid: string, cursoId: string, claseId: string, completado: boolean) {
-  return setDoc(doc(db, "usuarios", uid, "progreso", `${cursoId}_${claseId}`), {
-    cursoId,
-    claseId,
-    completado,
-    completadoEn: completado ? serverTimestamp() : null,
-    actualizadoEn: serverTimestamp(),
-  });
+export function marcarClase(cursoId: string, claseId: string, completado: boolean) {
+  return httpsCallable<{ cursoId: string; claseId: string; completado: boolean }, { completado: boolean }>(funciones, "registrarClaseCompletada")({ cursoId, claseId, completado });
 }
 
 export async function contarDocumentos(ruta: string) {
@@ -258,13 +254,19 @@ function reducirPortada(archivo: File) {
     const direccion = URL.createObjectURL(archivo);
     const imagen = document.createElement("img");
     imagen.onload = () => {
-      const escala = Math.min(1, 1280 / imagen.width);
+      const escala = Math.min(1, 1280 / Math.max(imagen.width, imagen.height));
       const lienzo = document.createElement("canvas");
       lienzo.width = Math.round(imagen.width * escala);
       lienzo.height = Math.round(imagen.height * escala);
-      lienzo.getContext("2d")?.drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
+      const contexto = lienzo.getContext("2d");
+      if (!contexto) {
+        URL.revokeObjectURL(direccion);
+        rechazar(new Error("No se pudo procesar la imagen."));
+        return;
+      }
+      contexto.drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
       URL.revokeObjectURL(direccion);
-      lienzo.toBlob((blob) => (blob ? resolver(blob) : rechazar(new Error("No se pudo procesar la imagen."))), "image/jpeg", 0.82);
+      lienzo.toBlob((blob) => (blob?.type === "image/webp" ? resolver(blob) : rechazar(new Error("Este navegador no permite convertir la portada a WebP."))), "image/webp", 0.82);
     };
     imagen.onerror = () => {
       URL.revokeObjectURL(direccion);
@@ -277,8 +279,8 @@ function reducirPortada(archivo: File) {
 async function subirImagen(key: string, archivo: File, progreso?: (porcentaje: number) => void) {
   if (!["image/jpeg", "image/png", "image/webp"].includes(archivo.type) || archivo.size <= 0 || archivo.size > 5 * 1024 ** 2) throw new Error("Selecciona una imagen JPG, PNG o WebP de hasta 5 MB.");
   const imagen = await reducirPortada(archivo);
-  // Una hora de caché: si el administrador cambia la portada, la nueva aparece a más tardar en ese tiempo.
-  const tarea = uploadBytesResumable(ref(almacenamiento, key), imagen, { contentType: "image/jpeg", cacheControl: "public, max-age=3600" });
+  // El navegador reutiliza la imagen; las tarjetas versionan la URL al actualizar el curso.
+  const tarea = uploadBytesResumable(ref(almacenamiento, key), imagen, { contentType: "image/webp", cacheControl: "public, max-age=3600" });
   await new Promise<void>((resolve, reject) => {
     let vencida = false;
     const limite = setTimeout(() => {
@@ -299,11 +301,34 @@ async function subirImagen(key: string, archivo: File, progreso?: (porcentaje: n
   });
 
 }
-export function obtenerPortadaCurso(portadaKey: string) {
-  return getDownloadURL(ref(almacenamiento, portadaKey));
+const urlsPortadas = new Map<string, Promise<string>>();
+export function obtenerPortadaCurso(portadaKey: string, version?: number) {
+  const clave = JSON.stringify([portadaKey, version ?? 0]);
+  const existente = urlsPortadas.get(clave);
+  if (existente) return existente;
+  const consulta = (async () => {
+    const cacheKey = `noova-portada:${clave}`;
+    if (typeof window !== "undefined" && version) {
+      try {
+        const guardada = JSON.parse(sessionStorage.getItem(cacheKey) ?? "null");
+        if (guardada && typeof guardada.url === "string" && guardada.vence > Date.now()) return guardada.url as string;
+      } catch { /* La caché es opcional. */ }
+    }
+    const url = new URL(await getDownloadURL(ref(almacenamiento, portadaKey)));
+    if (version) url.searchParams.set("v", String(version));
+    if (typeof window !== "undefined" && version) {
+      try { sessionStorage.setItem(cacheKey, JSON.stringify({ url: url.href, vence: Date.now() + 3600_000 })); } catch { /* La caché es opcional. */ }
+    }
+    return url.href;
+  })();
+  urlsPortadas.set(clave, consulta);
+  consulta.catch(() => { if (urlsPortadas.get(clave) === consulta) urlsPortadas.delete(clave); });
+  if (urlsPortadas.size > 200) urlsPortadas.delete(urlsPortadas.keys().next().value!);
+  return consulta;
 }
 export async function subirPortadaCurso(cursoId: string, archivo: File, progreso?: (porcentaje: number) => void) {
   await subirImagen(`portadas/${cursoId}`, archivo, progreso);
+  urlsPortadas.clear();
   await actualizarCurso(cursoId, { portadaKey: `portadas/${cursoId}` });
 }
 export async function previsualizarVideoMicrosoft(cursoId: string, ruta: string) {

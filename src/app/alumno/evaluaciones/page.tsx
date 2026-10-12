@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { ClipboardCheck, Lock } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import { EstadoVacio, TituloPagina } from "@/components/alumno/PiezasCatalogo";
-import { escucharCursos, escucharInscripciones, type Curso } from "@/firebase/cursos";
+import { escucharClases, escucharCursos, escucharInscripciones, escucharProgreso, type Curso, type Progreso } from "@/firebase/cursos";
 import { escucharExamenes, escucharIntentosAlumno, estadoExamen, type Examen, type Intento } from "@/firebase/evaluaciones";
 import "./Evaluaciones.css";
 
@@ -20,6 +20,15 @@ export default function MisEvaluaciones() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [filtro, setFiltro] = useState("Todas");
+  const [progreso, setProgreso] = useState<Progreso[]>([]);
+  const [clasesCurso, setClasesCurso] = useState<Record<string, string[]>>({});
+  const idsCursos = [...new Set(examenes.filter((examen) => inscritos.includes(examen.cursoId)).map((examen) => examen.cursoId))].sort().join(",");
+  useEffect(() => usuario ? escucharProgreso(usuario.uid, setProgreso, () => setError("No se pudo consultar tu avance.")) : undefined, [usuario]);
+  useEffect(() => {
+    if (!idsCursos) return;
+    const dejar = idsCursos.split(",").map((id) => escucharClases(id, true, (lista) => setClasesCurso((actual) => ({ ...actual, [id]: lista.map((clase) => clase.id) })), () => setError("No se pudieron consultar las clases.")));
+    return () => dejar.forEach((cerrar) => cerrar());
+  }, [idsCursos]);
 
   useEffect(() => {
     if (!usuario) return;
@@ -79,7 +88,7 @@ export default function MisEvaluaciones() {
                     <small>{curso?.nombre} · {examen.preguntas.length} {examen.preguntas.length === 1 ? "pregunta" : "preguntas"} · {examen.duracionMin > 0 ? `${examen.duracionMin} min` : "sin límite de tiempo"}</small>
                   </div>
                   <span className={`mis-evaluaciones__resultado mis-evaluaciones__resultado--${grupo(examen).toLowerCase()}`}>{bloqueado ? "Requiere el plan Premium" : texto}</span>
-                  {bloqueado ? <Lock className="mis-evaluaciones__candado" /> : <Link href={`/alumno/examen?id=${examen.id}`} className="mis-evaluaciones__accion">{accion}</Link>}
+                  {bloqueado ? <Lock className="mis-evaluaciones__candado" /> : !intentos.some((item) => item.examenId === examen.id) && (!clasesCurso[examen.cursoId]?.length || !clasesCurso[examen.cursoId].every((id) => progreso.some((item) => item.cursoId === examen.cursoId && item.claseId === id && item.completado))) ? <span className="mis-evaluaciones__accion"><Lock aria-hidden="true" />Completa las clases</span> : <Link href={`/alumno/examen?id=${examen.id}`} className="mis-evaluaciones__accion">{accion}</Link>}
                 </li>
               );
             })}

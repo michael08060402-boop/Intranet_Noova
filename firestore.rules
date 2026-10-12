@@ -355,19 +355,8 @@ service cloud.firestore {
       match /progreso/{progresoId} {
         allow get, list: if (esPropietario(uid) && esAlumnoVerificado()) || esAdministrador();
 
-        // Solo registra avance quien está inscrito en el curso.
-        allow create: if esPropietario(uid)
-          && esAlumnoVerificado()
-          && progresoValido(request.resource.data, progresoId)
-          && exists(/databases/$(database)/documents/usuarios/$(uid)/inscripciones/$(request.resource.data.cursoId));
-
-        allow update: if esPropietario(uid)
-          && esAlumnoVerificado()
-          && progresoValido(request.resource.data, progresoId)
-          && request.resource.data.cursoId == resource.data.cursoId
-          && request.resource.data.claseId == resource.data.claseId
-          && request.resource.data.diff(resource.data).affectedKeys()
-            .hasOnly(['completado', 'completadoEn', 'actualizadoEn']);
+        // registrarClaseCompletada comprueba inscripción y orden desde el servidor.
+        allow create, update: if false;
 
         allow delete: if false;
       }
@@ -531,8 +520,8 @@ service cloud.firestore {
         || (esAlumnoVerificado() && resource.data.uid == request.auth.uid);
 
       // Un intento por examen: el ID es examenId_uid y empieza al abrir el examen.
-      allow create: if esAlumnoVerificado()
-        && intentoInicialValido(request.resource.data, intentoId);
+      // iniciarExamenAlumno valida que todas las clases estén completadas.
+      allow create: if false;
 
       // El alumno guarda respuestas y entrega mientras corre el tiempo.
       allow update: if esAlumnoVerificado()

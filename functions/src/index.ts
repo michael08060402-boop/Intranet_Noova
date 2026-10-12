@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase-admin/app";
-import { FieldValue, getFirestore } from "firebase-admin/firestore";
+import { FieldValue, getFirestore, type Transaction } from "firebase-admin/firestore";
 import { getDownloadURL, getStorage } from "firebase-admin/storage";
 import { randomUUID } from "node:crypto";
 import { logger } from "firebase-functions";
@@ -76,6 +76,69 @@ function rutaValida(ruta: unknown): ruta is string {
     && !ruta.split("/").some((parte) => parte === "" || parte === "." || parte === "..");
 }
 
+async function avanceCurso(uid: string, cursoId: string, transaccion?: Transaction) {
+  const referencias = [db.doc(`usuarios/${uid}`), db.doc(`cursos/${cursoId}`), db.doc(`usuarios/${uid}/inscripciones/${cursoId}`)];
+  const [perfil, curso, inscripcion] = await Promise.all(referencias.map((referencia) => transaccion ? transaccion.get(referencia) : referencia.get()));
+  const alumno = perfil.data();
+  if (alumno?.rol !== "alumno" || alumno.estado === "suspendido") throw new HttpsError("permission-denied", "Tu cuenta no puede acceder al curso.");
+  if (!curso.data()?.publicado) throw new HttpsError("not-found", "El curso no está disponible.");
+  if (!inscripcion.exists) throw new HttpsError("failed-precondition", "Inscríbete en el curso para continuar.");
+  if (curso.data()?.acceso === "premium" && alumno.plan !== "premium") throw new HttpsError("permission-denied", "Este curso requiere Premium.");
+  const consultaClases = db.collection(`cursos/${cursoId}/clases`).where("publicado", "==", true);
+  const consultaProgreso = db.collection(`usuarios/${uid}/progreso`).where("cursoId", "==", cursoId);
+  const [clases, progreso] = await Promise.all([
+    transaccion ? transaccion.get(consultaClases) : consultaClases.get(),
+    transaccion ? transaccion.get(consultaProgreso) : consultaProgreso.get(),
+  ]);
+  const ordenadas = clases.docs.sort((a, b) => (a.data().orden - b.data().orden) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  const completadas = new Set(progreso.docs.filter((item) => item.data().completado === true).map((item) => item.data().claseId as string));
+  return { ordenadas, completadas, alumno };
+}
+
+function alumnoAutenticado(auth: { uid: string; token: { email_verified?: unknown } } | undefined) {
+  if (!auth || auth.token.email_verified !== true) throw new HttpsError("unauthenticated", "Inicia sesión con tu correo verificado.");
+  return auth.uid;
+}
+
+export const registrarClaseCompletada = onCall(async (peticion) => {
+  const uid = alumnoAutenticado(peticion.auth);
+  const { cursoId, claseId, completado } = peticion.data ?? {};
+  if (!idValido(cursoId) || !idValido(claseId) || typeof completado !== "boolean") throw new HttpsError("invalid-argument", "Selecciona una clase válida.");
+  return db.runTransaction(async (transaccion) => {
+    const { ordenadas, completadas } = await avanceCurso(uid, cursoId, transaccion);
+    const indice = ordenadas.findIndex((clase) => clase.id === claseId);
+    if (indice < 0) throw new HttpsError("not-found", "La clase no está disponible.");
+    if (!ordenadas.slice(0, indice).every((clase) => completadas.has(clase.id))) throw new HttpsError("failed-precondition", "Completa las clases anteriores primero.");
+    if (!completado && ordenadas.slice(indice + 1).some((clase) => completadas.has(clase.id))) throw new HttpsError("failed-precondition", "Desmarca primero las clases posteriores.");
+    transaccion.set(db.doc(`usuarios/${uid}/progreso/${cursoId}_${claseId}`), {
+      cursoId, claseId, completado, completadoEn: completado ? FieldValue.serverTimestamp() : null, actualizadoEn: FieldValue.serverTimestamp(),
+    }, { merge: true });
+    return { completado };
+  });
+});
+
+export const iniciarExamenAlumno = onCall(async (peticion) => {
+  const uid = alumnoAutenticado(peticion.auth);
+  const { examenId } = peticion.data ?? {};
+  if (!idValido(examenId)) throw new HttpsError("invalid-argument", "Selecciona un examen válido.");
+  return db.runTransaction(async (transaccion) => {
+    const examen = await transaccion.get(db.doc(`examenes/${examenId}`));
+    const datos = examen.data();
+    if (!datos?.publicado || datos.modo !== "manual" || !idValido(datos.cursoId) || !Array.isArray(datos.preguntas) || !datos.preguntas.length) throw new HttpsError("not-found", "El examen no está disponible.");
+    const { ordenadas, completadas, alumno } = await avanceCurso(uid, datos.cursoId, transaccion);
+    const referencia = db.doc(`intentos/${examenId}_${uid}`);
+    const intento = await transaccion.get(referencia);
+    // Reanudar un intento existente no cambia el tiempo ni sus respuestas.
+    if (intento.exists) return { iniciado: true };
+    if (!ordenadas.length || !ordenadas.every((clase) => completadas.has(clase.id))) throw new HttpsError("failed-precondition", "Completa todas las clases antes de iniciar el examen.");
+    transaccion.create(referencia, {
+      examenId, cursoId: datos.cursoId, uid, nombre: alumno.nombre, correo: alumno.correo,
+      inicio: FieldValue.serverTimestamp(), fin: null, estado: "en_curso", respuestas: {}, nota: null, actualizadoEn: FieldValue.serverTimestamp(),
+    });
+    return { iniciado: true };
+  });
+});
+
 export const obtenerVideo = onCall({ secrets: [secretoCliente] }, async (peticion) => {
   const uid = peticion.auth?.uid;
   if (!uid || peticion.auth?.token.email_verified !== true) {
@@ -106,6 +169,10 @@ export const obtenerVideo = onCall({ secrets: [secretoCliente] }, async (peticio
   if (requierePremium && alumno.plan !== "premium") {
     throw new HttpsError("permission-denied", "Este video es parte del plan Premium.", { motivo: "premium" });
   }
+
+  const { ordenadas, completadas } = await avanceCurso(uid, cursoId);
+  const posicion = ordenadas.findIndex((item) => item.id === claseId);
+  if (posicion < 0 || !ordenadas.slice(0, posicion).every((item) => completadas.has(item.id))) throw new HttpsError("failed-precondition", "Completa las clases anteriores para reproducir este video.");
 
   const ruta = video.data()?.ruta;
   try {

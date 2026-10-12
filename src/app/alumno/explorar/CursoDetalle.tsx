@@ -52,7 +52,7 @@ export default function CursoDetalle({ curso, categoria, bloqueado, inscrito, al
     <main className="alumno-explorar">
       <button type="button" className="alumno-explorar__volver" onClick={alVolver}><ArrowLeft />Volver al catálogo</button>
       <section className="alumno-curso" aria-labelledby="alumno-curso-titulo">
-        <PortadaCurso className="alumno-curso__portada" portadaKey={curso.portadaKey} nombre={curso.nombre} />
+        <PortadaCurso className="alumno-curso__portada" portadaKey={curso.portadaKey} version={curso.versionPortada} nombre={curso.nombre} />
         <div className="alumno-curso__info">
           <small className="alumno-curso__categoria">{categoria}</small>
           <h1 id="alumno-curso-titulo">{curso.nombre}</h1>
@@ -104,19 +104,20 @@ export default function CursoDetalle({ curso, categoria, bloqueado, inscrito, al
             <ol>
               {clases.map((clase, indice) => {
                 const completada = completadas.includes(clase);
+                const habilitada = inscrito && !bloqueado && clases.slice(0, indice).every((anterior) => completadas.includes(anterior));
                 return (
                   <li key={clase.id}>
                     <span className="alumno-curso__numero">{String(indice + 1).padStart(2, "0")}</span>
-                    <MiniaturaClase miniatura={clase.miniatura} className="alumno-curso__miniatura">{inscrito ? <CirclePlay /> : <Lock />}</MiniaturaClase>
+                    <MiniaturaClase miniatura={clase.miniatura} className="alumno-curso__miniatura">{habilitada ? <CirclePlay /> : <Lock />}</MiniaturaClase>
                     <div>
                       <strong>{clase.nombre}</strong>
                       {clase.descripcion && <small>{clase.descripcion}</small>}
                     </div>
-                    {inscrito && (
+                    {habilitada ? (
                       <Link href={enlaceClase(clase.id)} className={`alumno-curso__reproducir ${completada ? "is-completada" : ""}`}>
                         {completada ? <><CircleCheck />Completada</> : <><Play />Reproducir</>}
                       </Link>
-                    )}
+                    ) : inscrito && <span><Lock aria-hidden="true" />Bloqueada</span>}
                   </li>
                 );
               })}
@@ -136,7 +137,7 @@ export default function CursoDetalle({ curso, categoria, bloqueado, inscrito, al
                     <strong>{examen.nombre}</strong>
                     <small>{bloqueado ? "Requiere el plan Premium" : texto} · {examen.preguntas.length} {examen.preguntas.length === 1 ? "pregunta" : "preguntas"} · {examen.duracionMin > 0 ? `${examen.duracionMin} min` : "sin límite de tiempo"}</small>
                   </div>
-                  {bloqueado ? <Lock /> : <Link href={`/alumno/examen?id=${examen.id}`} className="alumno-curso__rendir">{accion}</Link>}
+                  {bloqueado || !inscrito || clases.length === 0 || completadas.length !== clases.length ? <span><Lock aria-hidden="true" />Completa todas las clases</span> : <Link href={`/alumno/examen?id=${examen.id}`} className="alumno-curso__rendir">{accion}</Link>}
                 </li>
               );
             })}

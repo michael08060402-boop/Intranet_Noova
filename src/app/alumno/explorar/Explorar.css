@@ -296,7 +296,7 @@
   min-height: 260px;
   flex-shrink: 0;
   border-radius: var(--radio-grande);
-  background: url("../../../assets/fondos/paisaje-mina.webp") center / cover;
+  background: #e7edf2 center / cover no-repeat;
 }
 .alumno-curso__categoria {
   color: var(--acento-oscuro);
@@ -482,9 +482,7 @@
   flex-shrink: 0;
   aspect-ratio: 16 / 9;
   border-radius: var(--radio);
-  background:
-    linear-gradient(rgb(4 43 78 / 45%), rgb(0 0 0 / 45%)),
-    url("../../../assets/fondos/paisaje-mina.webp") center / cover;
+  background: #29485f;
   color: #fff;
 }
 .alumno-explorar .alumno-curso__miniatura svg {

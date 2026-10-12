@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { Calculator, CircleCheck, Clock, Crown, ListChecks, Timer } from "lucide-react";
+import { Calculator, CircleCheck, Clock, Crown, ListChecks, Lock, Timer } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
-import { escucharCurso, type Curso } from "@/firebase/cursos";
+import { escucharClases, escucharCurso, escucharProgreso, type Clase, type Curso, type Progreso } from "@/firebase/cursos";
 import {
   entregarIntento,
   escucharExamen,
@@ -38,9 +38,19 @@ function RendirExamen() {
   const [curso, setCurso] = useState<Curso | null | undefined>(undefined);
   const [intento, setIntento] = useState<Intento | null | undefined>(undefined);
   const [iniciando, setIniciando] = useState(false);
+  const [errorIntento, setErrorIntento] = useState(false);
   const [error, setError] = useState("");
   const uid = usuario?.uid;
   const cursoId = examen?.cursoId;
+  const [clasesCurso, setClasesCurso] = useState<{ cursoId: string; lista: Clase[] }>();
+  const [avance, setAvance] = useState<{ cursoId: string; lista: Progreso[] }>();
+
+  useEffect(() => {
+    if (!cursoId || !uid) return;
+    const dejarClases = escucharClases(cursoId, true, (lista) => setClasesCurso({ cursoId, lista }), () => setClasesCurso({ cursoId, lista: [] }));
+    const dejarProgreso = escucharProgreso(uid, (lista) => setAvance({ cursoId, lista: lista.filter((item) => item.cursoId === cursoId && item.completado) }), () => setAvance({ cursoId, lista: [] }));
+    return () => { dejarClases(); dejarProgreso(); };
+  }, [cursoId, uid]);
 
   useEffect(() => {
     if (!id) return;
@@ -54,7 +64,13 @@ function RendirExamen() {
 
   useEffect(() => {
     if (!id || !uid) return;
-    return escucharIntento(id, uid, setIntento, () => setIntento(null));
+    return escucharIntento(id, uid, (actual) => {
+      setIntento(actual);
+      setErrorIntento(false);
+    }, () => {
+      setErrorIntento(true);
+      setIntento(null);
+    });
   }, [id, uid]);
 
   if (!id || examen === null || curso === null) {
@@ -69,14 +85,20 @@ function RendirExamen() {
 
   const volver = <Link href={`/alumno/explorar?curso=${examen.cursoId}`} className="alumno-examen__volver">← Volver al curso</Link>;
   const bloqueado = curso.acceso === "premium" && perfil?.plan !== "premium";
+  const clases = clasesCurso?.cursoId === curso.id ? clasesCurso.lista : [];
+  const progreso = avance?.cursoId === curso.id ? avance.lista : [];
+  const consultandoAvance = clasesCurso?.cursoId !== curso.id || avance?.cursoId !== curso.id;
+  const completadas = clases.filter((clase) => progreso.some((item) => item.claseId === clase.id)).length;
+  const cursoCompleto = !consultandoAvance && clases.length > 0 && completadas === clases.length;
 
   async function comenzar() {
-    if (!usuario || !perfil || !examen) return;
+    if (!usuario || !perfil || !examen || errorIntento || iniciando || !cursoCompleto) return;
     setIniciando(true);
     setError("");
-    try { await iniciarIntento(examen, usuario, perfil.nombre); }
-    catch {
-      setError("No se pudo iniciar el examen. Revisa tu conexión e inténtalo de nuevo.");
+    try { await iniciarIntento(examen); }
+    catch (fallo) {
+      setError(fallo instanceof Error ? fallo.message : "No se pudo iniciar el examen. Revisa tu conexión e inténtalo de nuevo.");
+    } finally {
       setIniciando(false);
     }
   }
@@ -111,6 +133,13 @@ function RendirExamen() {
             <p>Necesitas el plan Premium para rendir los exámenes de este curso.</p>
             <Link href="/alumno/premium" className="alumno-examen__boton">Hazte Premium</Link>
           </div>
+        ) : !cursoCompleto ? (
+          <div className="alumno-examen__resultado">
+            <Lock />
+            <h2>{consultandoAvance ? "Consultando tu avance…" : "Examen bloqueado"}</h2>
+            {!consultandoAvance && <p>Completa todas las clases para habilitar el examen: {completadas} de {clases.length} completadas.</p>}
+            <Link href={`/alumno/curso?id=${curso.id}`} className="alumno-examen__boton">Ir a las clases</Link>
+          </div>
         ) : (
           <>
             <ul className="alumno-examen__datos">
@@ -121,7 +150,8 @@ function RendirExamen() {
             </ul>
             <p className="alumno-examen__advertencia">Solo tienes un intento. {examen.duracionMin > 0 ? "El tiempo corre desde que empiezas y no se detiene aunque cierres la página." : "Tus respuestas se guardan mientras avanzas."}</p>
             {error && <p className="alumno-examen__error" role="alert">{error}</p>}
-            <button type="button" className="alumno-examen__boton" onClick={comenzar} disabled={iniciando || examen.preguntas.length === 0}>{iniciando ? "Iniciando…" : "Comenzar examen"}</button>
+            {errorIntento && <p className="alumno-examen__error" role="alert">No se pudo consultar tu intento. Revisa la conexión y recarga la página antes de comenzar.</p>}
+            <button type="button" className="alumno-examen__boton" onClick={comenzar} disabled={errorIntento || iniciando || examen.preguntas.length === 0}>{iniciando ? "Iniciando…" : "Comenzar examen"}</button>
           </>
         )}
       </section>

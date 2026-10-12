@@ -175,7 +175,7 @@
   width: 96px;
   flex-shrink: 0;
   border-radius: 10px;
-  background: url("../../assets/fondos/paisaje-mina.webp") center / cover;
+  background: #e7edf2 center / cover no-repeat;
 }
 .alumno-continuar__cuerpo {
   display: flex;
