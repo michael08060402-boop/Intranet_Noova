@@ -6,6 +6,7 @@
     "dev": "next dev",
     "test:videos": "node --test --test-isolation=none pruebas_emulador/videos.test.cjs",
     "test:reportes": "node --test --test-isolation=none pruebas_emulador/reportes.test.cjs",
+    "test:accesibilidad": "node --test --test-isolation=none pruebas_emulador/accesibilidad.test.cjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -20,10 +21,13 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@firebase/rules-unit-testing": "^5.0.2",
+    "@playwright/test": "^1.64.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
     "typescript": "^5"

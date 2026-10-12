@@ -9,7 +9,13 @@
   width: min(440px, 100vw);
   border-left: 1.5px solid #000;
   background: #fff;
+  margin: 0 0 0 auto;
+  max-width: 100vw;
+  max-height: calc(100dvh - 72px);
+  color: #10263b;
 }
+.panel-herramientas:not([open]) { display: none; }
+.panel-herramientas::backdrop { background: rgb(3 35 55 / 25%); }
 .panel-herramientas__cabecera {
   display: flex;
   align-items: center;

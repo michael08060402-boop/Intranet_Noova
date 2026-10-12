@@ -48,6 +48,7 @@ export type Intento = {
   nombre: string;
   correo: string;
   inicio: number;
+  duracionMin?: number;
   fin: number | null;
   estado: EstadoIntento;
   respuestas: Respuestas;
@@ -84,6 +85,7 @@ function leerIntento(id: string, datos: DocumentData): Intento {
     nombre: datos.nombre,
     correo: datos.correo,
     inicio: datos.inicio?.toMillis() ?? Date.now(),
+    duracionMin: typeof datos.duracionMin === "number" ? datos.duracionMin : undefined,
     fin: datos.fin?.toMillis() ?? null,
     estado: datos.estado,
     respuestas: datos.respuestas ?? {},
@@ -191,8 +193,10 @@ export function estadoExamen(examen: Examen, intento: Intento | undefined) {
   return { texto: `Nota ${intento.nota} de ${NOTA_MAXIMA} · ${(intento.nota ?? 0) >= examen.notaMinima ? "Aprobado" : "Desaprobado"}`, accion: "Ver resultado" };
 }
 
-export const vencimientoIntento = (examen: Examen, intento: Intento) =>
-  examen.duracionMin > 0 ? intento.inicio + examen.duracionMin * 60000 : null;
+export const vencimientoIntento = (examen: Examen, intento: Intento) => {
+  const minutos = intento.duracionMin ?? examen.duracionMin;
+  return minutos > 0 ? intento.inicio + minutos * 60000 : null;
+};
 
 export const esAutomatico = (examen: Examen) => examen.modo === "manual" && examen.preguntas.every((pregunta) => pregunta.tipo === "opcion");
 

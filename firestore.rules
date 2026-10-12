@@ -206,46 +206,14 @@ service cloud.firestore {
     }
 
     // Un examen se puede rendir si está publicado, su curso también y el alumno tiene acceso al curso.
-    function examenDisponible(examenId, cursoId) {
-      return exists(rutaExamen(examenId))
-        && exists(rutaCurso(cursoId))
-        && get(rutaExamen(examenId)).data.publicado == true
-        && get(rutaExamen(examenId)).data.modo == 'manual'
-        && get(rutaExamen(examenId)).data.cursoId == cursoId
-        && get(rutaCurso(cursoId)).data.publicado == true
-        && (get(rutaCurso(cursoId)).data.acceso == 'gratis' || tienePlanPremium());
-    }
 
-    function intentoInicialValido(datos, intentoId) {
-      return datos.keys().hasAll([
-          'examenId', 'cursoId', 'uid', 'nombre', 'correo', 'inicio', 'fin',
-          'estado', 'respuestas', 'nota', 'actualizadoEn'
-        ])
-        && datos.keys().hasOnly([
-          'examenId', 'cursoId', 'uid', 'nombre', 'correo', 'inicio', 'fin',
-          'estado', 'respuestas', 'nota', 'actualizadoEn'
-        ])
-        && idValido(datos.examenId)
-        && idValido(datos.cursoId)
-        && intentoId == datos.examenId + '_' + request.auth.uid
-        && datos.uid == request.auth.uid
-        && datos.correo == request.auth.token.email
-        && datos.nombre == perfilActual().nombre
-        && datos.inicio == request.time
-        && datos.fin == null
-        && datos.estado == 'en_curso'
-        && datos.respuestas is map
-        && datos.respuestas.size() == 0
-        && datos.nota == null
-        && datos.actualizadoEn == request.time
-        && examenDisponible(datos.examenId, datos.cursoId);
-    }
 
     // Margen de un minuto sobre el tiempo del examen para absorber la latencia de red.
     function dentroDelTiempo(intento) {
-      return get(rutaExamen(intento.examenId)).data.duracionMin == 0
+      let minutos = intento.get('duracionMin', get(rutaExamen(intento.examenId)).data.duracionMin);
+      return minutos == 0
         || request.time <= intento.inicio
-          + duration.value(get(rutaExamen(intento.examenId)).data.duracionMin + 1, 'm');
+          + duration.value(minutos + 1, 'm');
     }
 
     function notificacionValida(datos) {
@@ -303,23 +271,6 @@ service cloud.firestore {
         && ticketMensajeValido(despues[despues.size() - 1], de);
     }
 
-    function progresoValido(datos, progresoId) {
-      return datos.keys().hasAll([
-          'cursoId', 'claseId', 'completado', 'completadoEn', 'actualizadoEn'
-        ])
-        && datos.keys().hasOnly([
-          'cursoId', 'claseId', 'completado', 'completadoEn', 'actualizadoEn'
-        ])
-        && idValido(datos.cursoId)
-        && idValido(datos.claseId)
-        && progresoId == datos.cursoId + '_' + datos.claseId
-        && datos.completado is bool
-        && ((datos.completado == true && datos.completadoEn == request.time)
-          || (datos.completado == false && datos.completadoEn == null))
-        && datos.actualizadoEn == request.time
-        && cursoPublicado(datos.cursoId)
-        && clasePublicada(datos.cursoId, datos.claseId);
-    }
 
     match /usuarios/{uid} {
       // El dueño lee su perfil (también sin verificar el correo); el admin lista a los alumnos.
@@ -455,6 +406,18 @@ service cloud.firestore {
           && request.resource.data.creadoPor == resource.data.creadoPor;
 
         allow delete: if esAdministrador();
+
+        match /accesibilidad/{textoId} {
+          allow get, list: if esAdministrador();
+          allow create, update: if esAdministrador() && textoId == 'texto'
+            && exists(rutaClase(cursoId, claseId))
+            && request.resource.data.keys().hasAll(['subtitulos', 'transcripcion', 'actualizadoEn'])
+            && request.resource.data.keys().hasOnly(['subtitulos', 'transcripcion', 'actualizadoEn'])
+            && textoValido(request.resource.data.subtitulos, 0, 100000)
+            && textoValido(request.resource.data.transcripcion, 0, 50000)
+            && request.resource.data.actualizadoEn == request.time;
+          allow delete: if esAdministrador();
+        }
 
         // Los alumnos no leen contenidos desde el navegador: la función obtenerVideo entrega el video solo si su plan lo permite.
         match /contenidos/{contenidoId} {

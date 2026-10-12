@@ -102,7 +102,7 @@ export default function NuevoExamen({ examen, cursos, alCerrar }: { examen: Exam
           <X />
         </button>
       </header>
-      <form onSubmit={guardar}>
+      <form onSubmit={guardar} aria-describedby={error ? "error-nuevo-examen" : undefined}>
         <label className="nuevo-curso__campo">
           <span>Curso</span>
           <select value={cursoId} onChange={(evento) => setCursoId(evento.target.value)} disabled={!!examen} required>
@@ -166,13 +166,13 @@ export default function NuevoExamen({ examen, cursos, alCerrar }: { examen: Exam
                 </label>
                 <button type="button" onClick={() => setPreguntas((actuales) => actuales.filter((actual) => actual.id !== pregunta.id))} aria-label={`Eliminar pregunta ${indice + 1}`} title="Eliminar pregunta"><Trash2 /></button>
               </div>
-              <textarea value={pregunta.enunciado} onChange={(evento) => cambiar(pregunta.id, { enunciado: evento.target.value })} placeholder="Enunciado de la pregunta" aria-label={`Enunciado de la pregunta ${indice + 1}`} maxLength={1000} />
+              <textarea value={pregunta.enunciado} onChange={(evento) => cambiar(pregunta.id, { enunciado: evento.target.value })} placeholder="Enunciado de la pregunta" aria-label={`Enunciado de la pregunta ${indice + 1}`} maxLength={1000} required />
               {pregunta.tipo === "opcion" ? (
                 <div className="nuevo-examen__opciones">
                   {pregunta.opciones.map((opcion, posicion) => (
                     <div key={posicion} className="nuevo-examen__opcion">
                       <input type="radio" name={`correcta-${pregunta.id}`} checked={pregunta.correcta === posicion} onChange={() => cambiar(pregunta.id, { correcta: posicion })} aria-label={`Marcar la opción ${posicion + 1} como correcta`} title="Opción correcta" />
-                      <input type="text" value={opcion} onChange={(evento) => cambiarOpcion(pregunta, posicion, evento.target.value)} placeholder={`Opción ${posicion + 1}`} aria-label={`Opción ${posicion + 1} de la pregunta ${indice + 1}`} maxLength={300} />
+                      <input type="text" value={opcion} onChange={(evento) => cambiarOpcion(pregunta, posicion, evento.target.value)} placeholder={`Opción ${posicion + 1}`} aria-label={`Opción ${posicion + 1} de la pregunta ${indice + 1}`} maxLength={300} required />
                       <button type="button" onClick={() => quitarOpcion(pregunta, posicion)} disabled={pregunta.opciones.length <= 2} aria-label={`Quitar la opción ${posicion + 1}`}><X /></button>
                     </div>
                   ))}
@@ -187,7 +187,7 @@ export default function NuevoExamen({ examen, cursos, alCerrar }: { examen: Exam
           </div>
         </section>
 
-        {error && <p className="nuevo-curso__error" role="alert">{error}</p>}
+        {error && <p id="error-nuevo-examen" className="nuevo-curso__error" role="alert">{error}</p>}
         <footer className="nuevo-curso__pie">
           <button type="button" onClick={() => dialogo.current?.close()}>Cancelar</button>
           <button type="submit" className="nuevo-curso__enviar" disabled={guardando || cargandoClaves}>{guardando ? "Guardando…" : examen ? "Guardar cambios" : "Crear examen"}</button>

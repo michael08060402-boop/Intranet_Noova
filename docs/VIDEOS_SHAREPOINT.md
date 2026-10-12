@@ -1,5 +1,7 @@
 # Videos y portadas: configuración vigente
 
+Actualizado: 12 de octubre de 2026.
+
 Para habilitación y publicación en web.app, ver [Entrega al propietario](ENTREGA_PROPIETARIO.md).
 
 ## Almacenamiento
@@ -25,7 +27,7 @@ MS_CLIENT_ID y MS_VIDEO_USER se configuran en functions/.env.noova-intranet.
 ## Flujo actual
 
 1. Crear/editar curso permite elegir una portada de hasta 5 MB (JPG, PNG o WebP).
-   El navegador la reduce a 1280 px de ancho en JPEG antes de subirla.
+   El navegador la convierte a WebP (calidad 0,82), con un máximo de 1280 px en su lado mayor.
    Storage guarda portadas/{cursoId}; Firestore guarda portadaKey.
 2. Dentro del curso, Nueva clase / Editar clase permite navegar las carpetas de
    CURSOS y seleccionar MP4 o WebM existente. No hay que escribir rutas ni subirlo
@@ -40,10 +42,10 @@ MS_CLIENT_ID y MS_VIDEO_USER se configuran en functions/.env.noova-intranet.
    Las listas y el reproductor muestran esa imagen; ya no abren cada video. Las
    clases guardadas antes la generan al abrir Administrar curso.
 6. obtenerVideo valida sesión, correo verificado, rol alumno, estado activo,
-   publicación, inscripción y acceso. Devuelve un enlace temporal de Microsoft.
+   publicación, inscripción, plan y clases anteriores completadas. Devuelve un enlace temporal de Microsoft.
 
-El backend incluye funciones de subida de archivos por sesiones de Graph, pero
-quedaron fuera del formulario actual al elegirse el explorador de videos existentes.
+El flujo usa exclusivamente el explorador de videos existentes. El código de
+subida desde la computadora se retiró el 12 de octubre de 2026.
 La portada personalizada de clase se retiró; las reglas de `contenidos` todavía
 aceptan `portadaKey` para no rechazar documentos antiguos que la tengan.
 
@@ -60,6 +62,19 @@ No se envía el Client Secret al navegador. Los enlaces temporales son accesible
 para quien los posea mientras sigan válidos; no equivalen a protección DRM.
 
 ## Rendimiento
+
+- Las tarjetas, detalle, Mis cursos y Continúa aprendiendo comparten las cargas de
+  portadas. La caché persistente guarda hasta 100 imágenes por origen del navegador.
+  La versión se deriva de `actualizadoEn` del curso; al actualizarlo se utiliza una
+  URL versionada distinta. La primera carga descarga la imagen; las siguientes
+  pueden reutilizarla si el navegador conserva la caché.
+- La lectura para caché necesita CORS. El usuario aplicó `storage.cors.json` y
+  confirmó la mejora en localhost. El archivo permite localhost:3000 y los dos
+  dominios predeterminados de Hosting; revisar sus orígenes al cambiar dominio/puerto.
+- Durante la carga aparecen tres puntos. Si falta una portada o miniatura, se muestra
+  un fondo neutro; `paisaje-mina.webp` se conserva únicamente como fondo decorativo.
+- Las portadas antiguas no se convierten automáticamente: volver a subirlas para
+  obtener WebP y la reducción de tamaño.
 
 - Cada instancia de la función reutiliza el enlace de un video durante 30 minutos
   (Microsoft lo mantiene válido cerca de una hora), así no consulta Graph en cada clase.

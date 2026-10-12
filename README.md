@@ -2,7 +2,7 @@
 
 Intranet de capacitación minera de Contratistas Generales Noova S.A.C. (Noova Consulting). Alumnos y administradores acceden con correo o Google; los cursos se gestionan desde el panel de administración.
 
-Estado actual: funcionan el acceso, la gestión de cursos y categorías, los exámenes (creación, rendición y calificación), los reportes del administrador, las notificaciones dentro de la plataforma y las calculadoras de ventilación. La selección de videos de Microsoft está conectada en local; falta habilitar permisos y publicar la integración. La guía para el propietario está en [`docs/ENTREGA_PROPIETARIO.md`](docs/ENTREGA_PROPIETARIO.md). Lo que falta (publicación, pagos, bloqueo de clases, certificados, correos) está en [`docs/PENDIENTES.md`](docs/PENDIENTES.md).
+Estado al 12 de octubre de 2026: acceso por roles, gestión de cursos y categorías, videos de Microsoft, portadas WebP con caché, clases consecutivas con marcado manual, examen final con temporizador y herramientas, reportes Excel con logo, soporte, notificaciones internas y calculadoras. El usuario confirmó la subida de portadas y la mejora de carga después de configurar CORS. La última versión requiere comprobación completa en web.app; el agente no realizó despliegues. La guía de configuración y publicación está en [`docs/ENTREGA_PROPIETARIO.md`](docs/ENTREGA_PROPIETARIO.md). Los pendientes reales —pagos, certificados, seguimiento del video y otras mejoras— están en [`docs/PENDIENTES.md`](docs/PENDIENTES.md).
 
 ## Tecnologías
 
@@ -13,7 +13,7 @@ Estado actual: funcionan el acceso, la gestión de cursos y categorías, los ex�
 
 ## Puesta en marcha
 
-Requiere Node.js 20 o superior.
+Usar Node.js 22, también configurado para Functions.
 
 ```bash
 npm install
@@ -27,6 +27,17 @@ Abre <http://localhost:3000>. La configuración pública de Firebase está en `s
 | `npm run dev` | Servidor de desarrollo. |
 | `npm run build` | Genera el sitio estático en `out/`. |
 | `npm run lint` | Revisa el código con ESLint. |
+| `npm run test:videos` | Prueba autorización, videos y avance con servicios simulados. |
+| `npm run test:reglas` | Prueba reglas de Firestore en `demo-noova` (requiere Java 21). |
+| `npm run test:reportes` | Verifica los archivos Excel generados. |
+| `npm run test:accesibilidad` | Prueba teclado, axe, texto ampliado y móvil con servicios simulados. |
+
+Las mejoras y límites de la revisión WCAG están en [`docs/ACCESIBILIDAD_WCAG.md`](docs/ACCESIBILIDAD_WCAG.md): navegación por teclado, mensajes, ajuste de tiempo, subtítulos y transcripción protegida. No se declara conformidad completa sin revisar el contenido real y recorrer la aplicación con tecnologías de apoyo.
+
+Localhost usa las funciones desplegadas, Firestore y Storage reales de la intranet.
+No necesita scripts locales de Microsoft ni el emulador de Functions. La primera
+carga de una portada la descarga; después se reutiliza desde la caché del navegador
+mientras esté disponible. La configuración CORS está en `storage.cors.json`.
 
 ## Estructura
 
@@ -49,7 +60,7 @@ Las calculadoras (`src/app/alumno/herramientas/`) se abren desde el menú Herram
 
 El manual de uso de las calculadoras es [`public/manual-herramientas.pdf`](public/manual-herramientas.pdf); se abre desde el menú Herramientas y desde el botón "Manual de uso" de cada herramienta.
 
-Fuera de `src/`, `functions/` contiene la Cloud Function que entrega los videos de las clases (necesita Node 22 y el plan Blaze de Firebase).
+Fuera de `src/`, `functions/` contiene siete funciones para videos, miniaturas, eliminación administrativa, progreso y comienzo del examen. Los comandos de publicación están en la guía de entrega.
 
 Cada `.tsx` importa su propio `.css` desde la misma carpeta. `globals.css` solo contiene el reinicio base.
 

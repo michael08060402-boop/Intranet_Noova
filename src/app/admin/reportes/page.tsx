@@ -132,6 +132,7 @@ export default function ReportesPage() {
       <header className="admin-pagina__cabecera">
         <div>
           <h1>Reportes</h1>
+          <p>Las descargas con diseño se generan en Excel (.xlsx).</p>
         </div>
         <div className="admin-pagina__acciones">
           <button type="button" className="admin-boton admin-boton--secundario" title="Descarga Excel (.xlsx) con diseño y logo" onClick={exportarAlumnos} disabled={alumnos.length === 0 || exportandoAlumnos || !Object.values(datosReporteListos).every(Boolean)}><Download />{exportandoAlumnos ? "Generando…" : "Alumnos (CSV)"}</button>

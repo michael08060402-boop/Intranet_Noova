@@ -159,8 +159,17 @@ export async function guardarVideoClase(cursoId: string, claseId: string, video:
 }
 
 export async function pedirVideo(cursoId: string, claseId: string) {
-  const resultado = await httpsCallable<{ cursoId: string; claseId: string }, { url: string }>(funciones, "obtenerVideo")({ cursoId, claseId });
-  return resultado.data.url;
+  const resultado = await httpsCallable<{ cursoId: string; claseId: string }, { url: string; subtitulos?: string; transcripcion?: string }>(funciones, "obtenerVideo")({ cursoId, claseId });
+  return resultado.data;
+}
+
+export type AccesibilidadClase = { subtitulos: string; transcripcion: string };
+export async function leerAccesibilidadClase(cursoId: string, claseId: string): Promise<AccesibilidadClase> {
+  const datos = (await getDoc(doc(db, "cursos", cursoId, "clases", claseId, "accesibilidad", "texto"))).data();
+  return { subtitulos: datos?.subtitulos ?? "", transcripcion: datos?.transcripcion ?? "" };
+}
+export function guardarAccesibilidadClase(cursoId: string, claseId: string, texto: AccesibilidadClase) {
+  return setDoc(doc(db, "cursos", cursoId, "clases", claseId, "accesibilidad", "texto"), { ...texto, actualizadoEn: serverTimestamp() });
 }
 
 export async function actualizarMiniaturaClase(cursoId: string, claseId: string) {
@@ -221,25 +230,6 @@ export async function listarInscritos(cursoId: string): Promise<Inscrito[]> {
 export async function contarClasesPublicadas(cursoId: string) {
   const resultado = await getCountFromServer(query(collection(db, "cursos", cursoId, "clases"), where("publicado", "==", true)));
   return resultado.data().count;
-}
-
-export async function subirVideoClase(cursoId: string, claseId: string, archivo: File, acceso: Acceso, progreso: (porcentaje: number) => void) {
-  if (!/\.(mp4|webm)$/i.test(archivo.name) || archivo.size <= 0 || archivo.size > 10 * 1024 ** 3) throw new Error("Selecciona un video MP4 o WebM de hasta 10 GB.");
-  const iniciar = httpsCallable<{ cursoId: string; claseId: string; nombre: string; tamano: number; acceso: Acceso }, { subidaId: string; uploadUrl: string }>(funciones, "iniciarSubidaVideo");
-  const { data } = await iniciar({ cursoId, claseId, nombre: archivo.name, tamano: archivo.size, acceso });
-  const bloque = 10 * 320 * 1024;
-  for (let inicio = 0; inicio < archivo.size; inicio += bloque) {
-    const fin = Math.min(inicio + bloque, archivo.size);
-    // La URL de sesión ya autoriza la carga; no se envían tokens de Microsoft.
-    const respuesta = await fetch(data.uploadUrl, {
-      method: "PUT", headers: { "Content-Range": `bytes ${inicio}-${fin - 1}/${archivo.size}` }, body: archivo.slice(inicio, fin),
-    });
-    if (![200, 201, 202].includes(respuesta.status)) throw new Error("La subida se interrumpió. Guarda la clase y vuelve a seleccionar el video para reintentar.");
-    if (fin === archivo.size && respuesta.status === 202) throw new Error("Microsoft todavía no confirmó el archivo. Reintenta la subida.");
-    progreso(Math.round(fin / archivo.size * 100));
-  }
-  const confirmar = httpsCallable<{ subidaId: string }, { ruta: string }>(funciones, "confirmarSubidaVideo");
-  return (await confirmar({ subidaId: data.subidaId })).data.ruta;
 }
 
 export type ArchivoMicrosoft = { nombre: string; carpeta: boolean; ruta: string };

@@ -56,6 +56,32 @@
   font-size: 14px;
   font-weight: 600;
 }
+.admin-encabezado__cuenta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border: 1px solid rgb(255 255 255 / 30%);
+  border-radius: 12px;
+  color: #fff;
+  background: rgb(255 255 255 / 8%);
+  cursor: pointer;
+}
+.admin-encabezado__cuenta > svg { width: 16px; }
+.admin-encabezado__menu { display: none; color: white; padding: 8px; cursor: pointer; }
+.admin-menu-cuenta {
+  inset: 76px 3% auto auto;
+  width: min(92%, 260px);
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: white;
+  color: var(--texto);
+}
+.admin-menu-cuenta small { display: block; margin: 4px 0 12px; color: var(--texto-suave); }
+.admin-menu-cuenta button { display: flex; align-items: center; gap: 10px; padding: 12px; width: 100%; border-radius: 8px; color: var(--texto); cursor: pointer; }
+.admin-menu-cuenta button:hover { background: var(--acento-suave); }
 .admin-encabezado__avatar {
   display: grid;
   place-items: center;
@@ -251,35 +277,33 @@
   .admin-encabezado {
     grid-template-columns: minmax(0, 1fr) auto;
     row-gap: 10px;
-    padding: 12px 4% 6px;
+    padding: 12px 4%;
   }
   .admin-encabezado__marca img {
     height: 40px;
   }
   .admin-encabezado__navegacion {
+    display: none;
     grid-column: 1 / -1;
     order: 4;
     justify-self: stretch;
-    justify-content: space-between;
+    align-items: stretch;
+    flex-direction: column;
     gap: 2px;
     min-width: 0;
   }
+  .admin-encabezado__navegacion.is-abierto { display: flex; }
+  .admin-encabezado__menu { display: grid; place-items: center; }
   .admin-encabezado__navegacion svg {
     display: block;
     width: 21px;
     height: 21px;
   }
   .admin-encabezado__navegacion a {
-    flex-direction: column;
-    gap: 4px;
-    padding: 8px 6px;
-    font-size: 12px;
-  }
-}
-@media (max-width: 380px) {
-  .admin-encabezado__navegacion a {
-    padding: 8px 4px;
-    font-size: 11px;
+    flex-direction: row;
+    gap: 12px;
+    padding: 12px;
+    font-size: 14px;
   }
 }
 

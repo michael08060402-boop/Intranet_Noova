@@ -131,6 +131,7 @@
 }
 .admin-tarjeta__titulo {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
@@ -140,6 +141,10 @@
   margin: 0;
 }
 .admin-limpiar {
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -157,6 +162,7 @@
   color: var(--peligro);
 }
 .admin-limpiar svg {
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
 }

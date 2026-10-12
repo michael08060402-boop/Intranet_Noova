@@ -215,30 +215,40 @@
   }
   .alumno-explorar__categorias,
   .alumno-explorar__tipos {
-    flex-direction: row;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 16px;
     padding: 0 0 4px;
-    overflow-x: auto;
   }
   .alumno-explorar__categorias button,
   .alumno-explorar__tipos label {
-    flex-shrink: 0;
-    width: auto;
+    flex-shrink: 1;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     gap: 8px;
     padding: 8px 14px;
     border: 1px solid var(--borde);
     border-radius: 30px;
     background: #fff;
     font-size: 13px;
-    white-space: nowrap;
+    white-space: normal;
   }
   .alumno-explorar__categorias button svg {
+    flex-shrink: 0;
     width: 18px;
     height: 18px;
   }
   .alumno-explorar__categorias button small,
   .alumno-explorar__tipos small {
-    margin-left: 0;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .alumno-explorar__tipos input {
+    flex-shrink: 0;
+  }
+  .alumno-explorar__controles .alumno-orden {
+    width: 100%;
   }
   .alumno-explorar__categorias button.is-activo {
     border-color: var(--acento);
@@ -569,4 +579,30 @@
 }
 .alumno-curso__rendir:hover {
   background: #e4e4e4;
+}
+@media (max-width: 600px) {
+  .alumno-curso__examenes li {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+  .alumno-curso__examenes li > div {
+    min-width: 0;
+    width: auto;
+  }
+  .alumno-curso__examenes li > span:last-child,
+  .alumno-curso__examenes li > .alumno-curso__rendir {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: normal;
+    min-width: 0;
+  }
+  .alumno-curso__examenes li > span:last-child svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
 }

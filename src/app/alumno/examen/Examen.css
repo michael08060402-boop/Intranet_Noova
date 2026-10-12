@@ -396,3 +396,8 @@
     padding-bottom: 62svh;
   }
 }
+@media (max-width: 600px) {
+  .alumno-examen__barra { position: static; flex-wrap: wrap; gap: 12px; }
+  .alumno-examen__lado { flex-wrap: wrap; }
+  .alumno-examen__dialogo-acciones { flex-wrap: wrap; }
+}

@@ -15,7 +15,6 @@ import {
   escucharClases,
   escucharCurso,
   guardarVideoClase,
-  subirVideoClase,
   leerVideoClase,
   listarVideosMicrosoft,
   previsualizarVideoMicrosoft,
@@ -88,7 +87,7 @@ function CursoAdmin() {
 
   const publicadas = clases.filter((clase) => clase.publicado).length;
 
-  async function guardarClase(datos: DatosFormulario, video: VideoClase | null, archivo: File | null, progreso: (porcentaje: number) => void) {
+  async function guardarClase(datos: DatosFormulario, video: VideoClase | null) {
     if (!usuario) throw new Error("Inicia sesión nuevamente.");
     let claseId = editando?.id ?? claseNuevaPendiente.current;
     if (!claseId) {
@@ -96,11 +95,7 @@ function CursoAdmin() {
       claseId = nueva.id;
       claseNuevaPendiente.current = claseId;
     }
-    if (archivo) {
-      await subirVideoClase(id, claseId, archivo, "gratis", progreso);
-    } else {
-      await guardarVideoClase(id, claseId, video);
-    }
+    await guardarVideoClase(id, claseId, video);
     await actualizarClase(id, claseId, datos);
     actualizarMiniaturaClase(id, claseId).catch(() => {});
     claseNuevaPendiente.current = null;
@@ -257,19 +252,18 @@ function CursoAdmin() {
   );
 }
 
-function ClaseFormulario({ cursoId, clase, alGuardar, alCerrar }: { cursoId: string; clase: Clase | null; alGuardar: (datos: DatosFormulario, video: VideoClase | null, archivo: File | null, progreso: (porcentaje: number) => void) => Promise<void>; alCerrar: () => void }) {
+function ClaseFormulario({ cursoId, clase, alGuardar, alCerrar }: { cursoId: string; clase: Clase | null; alGuardar: (datos: DatosFormulario, video: VideoClase | null) => Promise<void>; alCerrar: () => void }) {
   const dialogo = useRef<HTMLDialogElement>(null);
   const [nombre, setNombre] = useState(clase?.nombre ?? "");
   const [descripcion, setDescripcion] = useState(clase?.descripcion ?? "");
+  const [falloLectura, setFalloLectura] = useState(false);
 
   const [ruta, setRuta] = useState("");
-  const [archivo, setArchivo] = useState<File | null>(null);
   const [explorando, setExplorando] = useState(false);
 
 
 
 
-  const [progreso, setProgreso] = useState(0);
 
   const [cargandoVideo, setCargandoVideo] = useState(clase !== null);
   const [guardando, setGuardando] = useState(false);
@@ -283,13 +277,14 @@ function ClaseFormulario({ cursoId, clase, alGuardar, alCerrar }: { cursoId: str
       .then((video) => {
         if (video) setRuta(video.ruta);
       })
-      .catch(() => setError("No se pudo cargar el video de esta clase."))
+      .catch(() => { setFalloLectura(true); setError("No se pudieron cargar el video y sus textos. Recarga antes de editar para no sobrescribirlos."); })
       .finally(() => setCargandoVideo(false));
   }, [cursoId, clase]);
 
 
   async function enviar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
+    if (falloLectura || cargandoVideo) return;
     if (nombre.trim().length < 2) return setError("El nombre debe tener al menos 2 caracteres.");
     const rutaVideo = ruta.trim();
     if (rutaVideo && !/\.(mp4|webm)$/i.test(rutaVideo)) return setError("La ruta del video debe terminar en .mp4 o .webm.");
@@ -298,7 +293,7 @@ function ClaseFormulario({ cursoId, clase, alGuardar, alCerrar }: { cursoId: str
     setGuardando(true);
     setError("");
     try {
-      await alGuardar({ nombre: nombre.trim(), descripcion: descripcion.trim(), publicado: true }, (rutaVideo || archivo) ? { ruta: rutaVideo, acceso: "gratis" } : null, archivo, setProgreso);
+      await alGuardar({ nombre: nombre.trim(), descripcion: descripcion.trim(), publicado: true }, rutaVideo ? { ruta: rutaVideo, acceso: "gratis" } : null);
       dialogo.current?.close();
     } catch (fallo) {
       setError(fallo instanceof Error ? fallo.message : "No se pudo guardar la clase. Inténtalo nuevamente.");
@@ -310,7 +305,7 @@ function ClaseFormulario({ cursoId, clase, alGuardar, alCerrar }: { cursoId: str
     <dialog ref={dialogo} className={`clase-modal${ruta ? " clase-modal--con-video" : ""}`} aria-labelledby="clase-modal-titulo" onClose={alCerrar} onCancel={(evento) => { if (guardando) evento.preventDefault(); }}>
       <h2 id="clase-modal-titulo">{clase ? "Editar clase" : "Nueva clase"}</h2>
       <div className="clase-modal__distribucion">
-      <form onSubmit={enviar}>
+      <form onSubmit={enviar} aria-describedby={error ? "error-clase" : undefined}>
         <fieldset disabled={guardando} className="clase-modal__campos">
         <label>
           <span>Nombre de la clase</span>
@@ -325,13 +320,12 @@ function ClaseFormulario({ cursoId, clase, alGuardar, alCerrar }: { cursoId: str
           {ruta ? <p>Seleccionado: {ruta.split("/").pop()}</p> : <p>Elige un video de la carpeta de cursos.</p>}
           <button type="button" disabled={cargandoVideo} onClick={() => setExplorando(!explorando)}>{explorando ? "Cerrar carpetas" : "Elegir de Microsoft"}</button>
           {ruta && <button type="button" onClick={() => setRuta("")}>Quitar selección</button>}
-          {explorando && <ExploradorVideos alElegir={(video) => { setRuta(video.ruta); setArchivo(null); setExplorando(false); }} />}
+          {explorando && <ExploradorVideos alElegir={(video) => { setRuta(video.ruta); setExplorando(false); }} />}
         </section>
-        {guardando && archivo && <p role="status">Subiendo video: {progreso}%</p>}
-        {error && <p className="clase-modal__error" role="alert">{error}</p>}
+        {error && <p id="error-clase" className="clase-modal__error" role="alert">{error}</p>}
         <div className="clase-modal__acciones">
           <button type="button" onClick={() => dialogo.current?.close()}>Cancelar</button>
-          <button type="submit" className="clase-modal__guardar" disabled={guardando || cargandoVideo}>{guardando ? "Guardando…" : clase ? "Guardar cambios" : "Crear clase"}</button>
+          <button type="submit" className="clase-modal__guardar" disabled={guardando || cargandoVideo || falloLectura}>{guardando ? "Guardando…" : clase ? "Guardar cambios" : "Crear clase"}</button>
         </div>
         </fieldset>
       </form>
@@ -409,7 +403,7 @@ function PrevisualizacionVideo({ cursoId, ruta }: { cursoId: string; ruta: strin
     {!actual && <p role="status">Cargando video…</p>}
     {actual?.error && <p role="alert">{actual.error} <button type="button" onClick={() => { setResultado(null); setIntento((valor) => valor + 1); }}>Reintentar</button></p>}
     {actual?.url && <video key={actual.url} className="videos-microsoft__video" src={actual.url} controls playsInline preload="metadata"
-      onError={() => setResultado({ ruta, error: "El enlace del video no está disponible. Reintenta para actualizarlo." })} />}
+      onError={() => setResultado({ ruta, error: "El enlace del video no está disponible. Reintenta para actualizarlo." })}></video>}
   </section>;
 }
 // Las clases con video guardado antes de existir las miniaturas la generan al abrir esta página.

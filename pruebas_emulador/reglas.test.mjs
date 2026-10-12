@@ -68,6 +68,27 @@ beforeEach(async () => {
 });
 
 describe("Lo que el alumno no debe poder hacer", () => {
+  it("no puede cambiar el tiempo asignado por el servidor; sin límite permite entregar", async () => {
+    await entorno.withSecurityRulesDisabled(async (contexto) => {
+      await setDoc(doc(contexto.firestore(), "examenes/tiempo"), { cursoId: "gratis", publicado: true, modo: "manual", duracionMin: 1 });
+      await setDoc(doc(contexto.firestore(), "intentos/tiempo_alumno"), { examenId: "tiempo", cursoId: "gratis", uid: "alumno", inicio: Timestamp.fromMillis(Date.now() - 600000), estado: "en_curso", duracionMin: 0, respuestas: {}, fin: null });
+    });
+    await assertFails(updateDoc(doc(como("alumno"), "intentos/tiempo_alumno"), { duracionMin: 10, actualizadoEn: serverTimestamp() }));
+    await assertSucceeds(updateDoc(doc(como("alumno"), "intentos/tiempo_alumno"), { respuestas: { p1: 0 }, estado: "entregado", fin: serverTimestamp(), actualizadoEn: serverTimestamp() }));
+  });
+  it("el tiempo estándar vencido sigue bloqueando entregas tardías", async () => {
+    await entorno.withSecurityRulesDisabled(async (contexto) => {
+      await setDoc(doc(contexto.firestore(), "examenes/tiempo"), { cursoId: "gratis", publicado: true, modo: "manual", duracionMin: 1 });
+      await setDoc(doc(contexto.firestore(), "intentos/tiempo_alumno"), { examenId: "tiempo", cursoId: "gratis", uid: "alumno", inicio: Timestamp.fromMillis(Date.now() - 600000), estado: "en_curso", duracionMin: 1, respuestas: {}, fin: null });
+    });
+    await assertFails(updateDoc(doc(como("alumno"), "intentos/tiempo_alumno"), { respuestas: { p1: 0 }, estado: "entregado", fin: serverTimestamp(), actualizadoEn: serverTimestamp() }));
+  });
+  it("el admin puede adjuntar subtítulos y transcripción; el alumno no los modifica", async () => {
+    const ruta = "cursos/gratis/clases/c1/accesibilidad/texto";
+    await assertSucceeds(setDoc(doc(como("admin"), ruta), { subtitulos: "WEBVTT\n\n00:00:00.000 --> 00:00:03.000\nClase de prueba.", transcripcion: "Descripción del contenido visual y diálogo.", actualizadoEn: serverTimestamp() }));
+    await assertFails(updateDoc(doc(como("alumno"), ruta), { subtitulos: "WEBVTT", actualizadoEn: serverTimestamp() }));
+    await assertFails(getDoc(doc(como("alumno"), ruta)));
+  });
   it("consultar su intento inexistente y encontrarlo después de iniciar el examen", async () => {
     const db = como("alumno");
     const consulta = query(collection(db, "intentos"), where("uid", "==", "alumno"), where("examenId", "==", "e2"));

@@ -22,7 +22,10 @@ export default function MisEvaluaciones() {
   const [filtro, setFiltro] = useState("Todas");
   const [progreso, setProgreso] = useState<Progreso[]>([]);
   const [clasesCurso, setClasesCurso] = useState<Record<string, string[]>>({});
-  const idsCursos = [...new Set(examenes.filter((examen) => inscritos.includes(examen.cursoId)).map((examen) => examen.cursoId))].sort().join(",");
+  // Una inscripción puede permanecer después de retirar un curso del catálogo.
+  // Solo consultar clases de cursos publicados que el alumno puede leer.
+  const idsCursos = [...new Set(examenes.filter((examen) => inscritos.includes(examen.cursoId)
+    && cursos.some((curso) => curso.id === examen.cursoId && curso.publicado)).map((examen) => examen.cursoId))].sort().join(",");
   useEffect(() => usuario ? escucharProgreso(usuario.uid, setProgreso, () => setError("No se pudo consultar tu avance.")) : undefined, [usuario]);
   useEffect(() => {
     if (!idsCursos) return;

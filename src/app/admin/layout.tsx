@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { signOut } from "firebase/auth";
-import { Bell, BookOpen, ChartColumn, ChevronRight, ClipboardCheck, LayoutDashboard, LifeBuoy, LogOut, Users } from "lucide-react";
+import { Bell, BookOpen, ChartColumn, ChevronDown, ChevronRight, ClipboardCheck, LayoutDashboard, LifeBuoy, LogOut, Menu, Users, X } from "lucide-react";
 import logoNoova from "@/assets/marca/noova.webp";
 import AccesoPorRol from "@/components/acceso/AccesoPorRol";
 import { useSesion } from "@/components/acceso/SesionProvider";
@@ -35,6 +35,8 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   const { perfil, usuario } = useSesion();
   const confirmarSalida = useRef<HTMLDialogElement>(null);
   const panelPendientes = useRef<HTMLDivElement>(null);
+  const menuCuenta = useRef<HTMLDivElement>(null);
+  const [menuAbierto, setMenuAbierto] = useState(false);
   const nombre = capitalizarNombre(perfil?.nombre.split(" ")[0] || "Administrador");
   const uid = usuario?.uid;
   const [entregas, setEntregas] = useState<Intento[]>([]);
@@ -76,7 +78,9 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
           >
             <Image src={logoNoova} alt="" preload />
           </Link>
-          <nav className="admin-encabezado__navegacion" aria-label="Secciones de administración">
+          <nav id="admin-navegacion" className={`admin-encabezado__navegacion ${menuAbierto ? "is-abierto" : ""}`} aria-label="Secciones de administración" onKeyDown={(evento) => {
+            if (evento.key === "Escape") { setMenuAbierto(false); document.getElementById("admin-menu-boton")?.focus(); }
+          }}>
             {enlaces.map(({ href, etiqueta, Icono }) => {
               const activo = href === "/admin" ? ruta === "/admin" : ruta.startsWith(href);
 
@@ -86,6 +90,7 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
                   href={href}
                   className={activo ? "is-activo" : ""}
                   aria-current={activo ? "page" : undefined}
+                  onClick={() => setMenuAbierto(false)}
                 >
                   <Icono />
                   {etiqueta}
@@ -104,20 +109,19 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
               <Bell />
               {nuevos > 0 && <span>{nuevos > 99 ? "99+" : nuevos}</span>}
             </button>
+            <button type="button" className="admin-encabezado__cuenta" popoverTarget="admin-menu-cuenta" aria-label="Abrir menú de la cuenta">
             <span className="admin-encabezado__avatar">{nombre.charAt(0).toUpperCase()}</span>
             <span className="admin-encabezado__identidad">
               {nombre}
               <small>Administrador</small>
             </span>
-            <button
-              type="button"
-              className="admin-encabezado__salir"
-              onClick={() => confirmarSalida.current?.showModal()}
-              aria-label="Cerrar sesión"
-              title="Cerrar sesión"
-            >
-              <LogOut />
+            <ChevronDown />
             </button>
+            <button id="admin-menu-boton" type="button" className="admin-encabezado__menu" aria-controls="admin-navegacion" aria-expanded={menuAbierto} aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"} onClick={() => setMenuAbierto(!menuAbierto)}>{menuAbierto ? <X /> : <Menu />}</button>
+          </div>
+          <div id="admin-menu-cuenta" ref={menuCuenta} popover="auto" className="admin-menu-cuenta" aria-label="Menú de la cuenta">
+            <strong>{nombre}</strong><small>Administrador</small>
+            <button type="button" onClick={() => { menuCuenta.current?.hidePopover(); confirmarSalida.current?.showModal(); }}><LogOut />Cerrar sesión</button>
           </div>
           <div
             id="admin-pendientes"

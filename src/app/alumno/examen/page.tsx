@@ -81,7 +81,7 @@ function RendirExamen() {
       </main>
     );
   }
-  if (!examen || !curso || intento === undefined) return <main className="alumno-examen"><p className="alumno-examen__aviso">Cargando examen…</p></main>;
+  if (!examen || !curso || intento === undefined) return <main className="alumno-examen"><p className="alumno-examen__aviso" role="status">Cargando examen…</p></main>;
 
   const volver = <Link href={`/alumno/explorar?curso=${examen.cursoId}`} className="alumno-examen__volver">← Volver al curso</Link>;
   const bloqueado = curso.acceso === "premium" && perfil?.plan !== "premium";
@@ -219,14 +219,15 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
   return (
     <main className={herramientasAbiertas ? "alumno-examen alumno-examen--con-panel" : "alumno-examen"}>
       {volver}
+      <h1 className="solo-lectores">{examen.nombre}</h1>
       <div className={`alumno-examen__barra ${restante !== null && restante < 300000 ? "is-urgente" : ""}`}>
         <div>
           <strong>{examen.nombre}</strong>
-          <small>{guardado === "guardando" ? "Guardando…" : guardado === "guardado" ? "Respuestas guardadas" : guardado === "error" ? "No se pudo guardar; se reintentará al responder" : "Tus respuestas se guardan automáticamente"}</small>
+          <small role="status" aria-live="polite" aria-atomic="true">{guardado === "guardando" ? "Guardando…" : guardado === "guardado" ? "Respuestas guardadas" : guardado === "error" ? "No se pudo guardar; se reintentará al responder" : "Tus respuestas se guardan automáticamente"}</small>
         </div>
         <div className="alumno-examen__lado">
           {examen.herramientas && (
-            <button type="button" className="alumno-examen__herramientas" aria-expanded={herramientasAbiertas} onClick={() => setHerramientasAbiertas(!herramientasAbiertas)}>
+            <button type="button" className="alumno-examen__herramientas" aria-controls="panel-herramientas-examen" aria-expanded={herramientasAbiertas} onClick={() => setHerramientasAbiertas(!herramientasAbiertas)}>
               <Calculator aria-hidden="true" />Calculadoras
             </button>
           )}
@@ -236,6 +237,8 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
         </div>
       </div>
 
+      <p className="solo-lectores" role="status" aria-live="polite" aria-atomic="true">{agotado ? "El tiempo se agotó. Se está entregando el examen." : restante !== null && restante <= 60000 ? "Queda menos de un minuto." : restante !== null && restante <= 300000 ? "Quedan menos de cinco minutos." : ""}</p>
+
       {examen.herramientas && herramientasAbiertas && <PanelHerramientas alCerrar={cerrarHerramientas} />}
       {error && <p className="alumno-examen__error" role="alert">{error}</p>}
       <form onSubmit={(evento) => { evento.preventDefault(); confirmar.current?.showModal(); }}>
@@ -244,11 +247,11 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
             <section key={pregunta.id} className="alumno-examen__pregunta">
               <header>
                 <span className="alumno-examen__numero">{indice + 1}</span>
-                <p>{pregunta.enunciado}</p>
+                <p id={`enunciado-${pregunta.id}`}>{pregunta.enunciado}</p>
                 <small>{pregunta.puntos} {pregunta.puntos === 1 ? "punto" : "puntos"}</small>
               </header>
               {pregunta.tipo === "opcion" ? (
-                <div className="alumno-examen__opciones" role="radiogroup" aria-label={`Pregunta ${indice + 1}`}>
+                <div className="alumno-examen__opciones" role="radiogroup" aria-labelledby={`enunciado-${pregunta.id}`}>
                   {pregunta.opciones.map((opcion, posicion) => (
                     <label key={posicion} className={respuestas[pregunta.id] === posicion ? "is-elegida" : ""}>
                       <input type="radio" name={`pregunta-${pregunta.id}`} checked={respuestas[pregunta.id] === posicion} onChange={() => responder(pregunta.id, posicion)} />
@@ -257,7 +260,7 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
                   ))}
                 </div>
               ) : (
-                <textarea value={typeof respuestas[pregunta.id] === "string" ? String(respuestas[pregunta.id]) : ""} onChange={(evento) => responder(pregunta.id, evento.target.value)} placeholder="Escribe tu respuesta" aria-label={`Respuesta de la pregunta ${indice + 1}`} maxLength={5000} />
+                <textarea value={typeof respuestas[pregunta.id] === "string" ? String(respuestas[pregunta.id]) : ""} onChange={(evento) => responder(pregunta.id, evento.target.value)} placeholder="Escribe tu respuesta" aria-labelledby={`enunciado-${pregunta.id}`} maxLength={5000} />
               )}
             </section>
           ))}

@@ -127,6 +127,7 @@
 }
 .alumnos-tabla {
   width: 100%;
+  min-width: 1000px;
 }
 .alumnos-tabla thead {
   background: #f0f4f8;
@@ -150,8 +151,18 @@
 }
 .alumnos-persona {
   display: flex;
+  min-width: 240px;
   align-items: center;
   gap: 12px;
+}
+.alumnos-persona strong {
+  min-width: 180px;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+.alumnos-tabla td:nth-child(2) {
+  min-width: 260px;
+  white-space: nowrap;
 }
 .alumnos-avatar {
   display: grid;
@@ -165,6 +176,10 @@
   font-weight: 700;
 }
 .alumnos-insignia {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+  flex-shrink: 0;
   display: inline-block;
   padding: 4px 12px;
   border-radius: 999px;

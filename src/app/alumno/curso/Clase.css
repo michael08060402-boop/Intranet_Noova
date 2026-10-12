@@ -289,3 +289,12 @@
   padding: 12px;
   color: #526779;
 }
+.clase-pagina__transcripcion {
+  padding: 16px;
+  margin-block: 12px;
+  border: 1px solid #6c8293;
+  border-radius: 8px;
+  background: #fff;
+}
+.clase-pagina__transcripcion summary { font-weight: 600; }
+.clase-pagina__transcripcion p { white-space: pre-wrap; padding-top: 12px; }

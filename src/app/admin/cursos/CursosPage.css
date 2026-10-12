@@ -173,6 +173,7 @@
 }
 .cursos-tabla {
   width: 100%;
+  min-width: 980px;
 }
 .cursos-tabla thead {
   background: #f0f4f8;
@@ -216,14 +217,18 @@
 }
 .cursos-curso {
   display: flex;
+  min-width: 280px;
   align-items: center;
   gap: 16px;
 }
 .cursos-curso > div {
-  min-width: 0;
+  flex: 1;
+  min-width: 160px;
 }
 .cursos-nombre {
   display: block;
+  overflow-wrap: break-word;
+  word-break: normal;
   font-size: 15px;
   font-weight: 700;
 }

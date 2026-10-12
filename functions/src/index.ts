@@ -119,7 +119,8 @@ export const registrarClaseCompletada = onCall(async (peticion) => {
 
 export const iniciarExamenAlumno = onCall(async (peticion) => {
   const uid = alumnoAutenticado(peticion.auth);
-  const { examenId } = peticion.data ?? {};
+  const { examenId, sinLimite = false } = peticion.data ?? {};
+  if (sinLimite !== false) throw new HttpsError("invalid-argument", "Selecciona una opción de tiempo válida.");
   if (!idValido(examenId)) throw new HttpsError("invalid-argument", "Selecciona un examen válido.");
   return db.runTransaction(async (transaccion) => {
     const examen = await transaccion.get(db.doc(`examenes/${examenId}`));
@@ -134,6 +135,7 @@ export const iniciarExamenAlumno = onCall(async (peticion) => {
     transaccion.create(referencia, {
       examenId, cursoId: datos.cursoId, uid, nombre: alumno.nombre, correo: alumno.correo,
       inicio: FieldValue.serverTimestamp(), fin: null, estado: "en_curso", respuestas: {}, nota: null, actualizadoEn: FieldValue.serverTimestamp(),
+      duracionMin: datos.duracionMin,
     });
     return { iniciado: true };
   });
@@ -177,7 +179,13 @@ export const obtenerVideo = onCall({ secrets: [secretoCliente] }, async (peticio
   const ruta = video.data()?.ruta;
   try {
     const archivo = rutaValida(ruta) ? await enlaceDelVideo(ruta) : null;
-    if (archivo) return { url: archivo.url };
+    if (archivo) {
+      const texto = (await db.doc(`cursos/${cursoId}/clases/${claseId}/accesibilidad/texto`).get()).data();
+      return { url: archivo.url,
+        ...(typeof texto?.subtitulos === "string" && texto.subtitulos ? { subtitulos: texto.subtitulos } : {}),
+        ...(typeof texto?.transcripcion === "string" && texto.transcripcion ? { transcripcion: texto.transcripcion } : {}),
+      };
+    }
     logger.warn("No se encontró el video en SharePoint", { cursoId, claseId, ruta });
   } catch (error) {
     logger.error("Falló la consulta a Microsoft Graph", error);
@@ -186,78 +194,25 @@ export const obtenerVideo = onCall({ secrets: [secretoCliente] }, async (peticio
 });
 
 const carpetaCursos = "NOOVA SAC/11.  MULTIMEDIA/CONTENIDO DISCO/CURSOS";
-const maximoVideo = 10 * 1024 ** 3;
 
 async function exigirAdmin(uid: string | undefined, verificado: unknown) {
   if (!uid || verificado !== true) throw new HttpsError("unauthenticated", "Inicia sesión con tu correo verificado.");
   const perfil = (await db.doc(`usuarios/${uid}`).get()).data();
-  if (perfil?.rol !== "admin" || perfil.estado === "suspendido") throw new HttpsError("permission-denied", "Solo un administrador activo puede subir videos.");
+  if (perfil?.rol !== "admin" || perfil.estado === "suspendido") throw new HttpsError("permission-denied", "Solo un administrador activo puede gestionar videos.");
   return uid;
 }
 
-async function consultarGraph(endpoint: string, metodo = "GET", cuerpo?: unknown) {
+async function consultarGraph(endpoint: string) {
   const respuesta = await fetch(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(usuarioVideos.value())}/drive${endpoint}`, {
-    method: metodo,
+    method: "GET",
     headers: { Authorization: `Bearer ${await tokenMicrosoft()}`, "Content-Type": "application/json" },
-    body: cuerpo === undefined ? undefined : JSON.stringify(cuerpo),
   });
   if (!respuesta.ok) {
-    logger.warn("Consulta de subida a Graph rechazada", { estado: respuesta.status });
-    throw new HttpsError(respuesta.status === 403 ? "permission-denied" : "unavailable", respuesta.status === 403 ? "Microsoft no permite escribir en la carpeta de videos." : "No se pudo consultar Microsoft. Reintenta en unos minutos.");
+    logger.warn("Consulta a Graph rechazada", { estado: respuesta.status });
+    throw new HttpsError(respuesta.status === 403 ? "permission-denied" : "unavailable", respuesta.status === 403 ? "Microsoft no permite acceder a la carpeta de videos." : "No se pudo consultar Microsoft. Reintenta en unos minutos.");
   }
   return respuesta.json();
 }
-
-export const iniciarSubidaVideo = onCall({ secrets: [secretoCliente] }, async (peticion) => {
-  const uid = await exigirAdmin(peticion.auth?.uid, peticion.auth?.token.email_verified);
-  const { cursoId, claseId, nombre, tamano, acceso } = peticion.data ?? {};
-  if (!idValido(cursoId) || !idValido(claseId) || typeof nombre !== "string" || !/\.(mp4|webm)$/i.test(nombre) || !Number.isSafeInteger(tamano) || tamano <= 0 || tamano > maximoVideo || !["gratis", "premium"].includes(acceso)) {
-    throw new HttpsError("invalid-argument", "Selecciona un video MP4 o WebM de hasta 10 GB.");
-  }
-  const [curso, clase] = await Promise.all([db.doc(`cursos/${cursoId}`).get(), db.doc(`cursos/${cursoId}/clases/${claseId}`).get()]);
-  if (!curso.exists || !clase.exists) throw new HttpsError("not-found", "El curso o la clase ya no existe.");
-  const raiz = await consultarGraph(`/root:/${carpetaCursos.split("/").map(encodeURIComponent).join("/")}`);
-  const carpeta = await consultarGraph(`/items/${encodeURIComponent(raiz.id)}/children`, "POST", {
-    name: `intranet-${cursoId}`, folder: {}, "@microsoft.graph.conflictBehavior": "fail",
-  }).catch(async (error) => {
-    // Puede existir por una subida anterior o haberse creado simultáneamente.
-    const ruta = `${carpetaCursos}/intranet-${cursoId}`.split("/").map(encodeURIComponent).join("/");
-    try { return await consultarGraph(`/root:/${ruta}`); } catch { throw error; }
-  });
-  const registro = db.collection("subidasVideos").doc();
-  const extension = nombre.toLowerCase().endsWith(".webm") ? "webm" : "mp4";
-  const nombreArchivo = `${claseId}-${registro.id}.${extension}`;
-  const ruta = `${carpetaCursos}/intranet-${cursoId}/${nombreArchivo}`;
-  const sesion = await consultarGraph(`/items/${encodeURIComponent(carpeta.id)}:/${nombreArchivo}:/createUploadSession`, "POST", {
-    item: { "@microsoft.graph.conflictBehavior": "fail", name: nombreArchivo },
-  });
-  await registro.set({ uid, cursoId, claseId, ruta, tamano, acceso, vence: Date.parse(sesion.expirationDateTime), confirmada: false });
-  return { subidaId: registro.id, uploadUrl: sesion.uploadUrl };
-});
-
-export const confirmarSubidaVideo = onCall({ secrets: [secretoCliente] }, async (peticion) => {
-  const uid = await exigirAdmin(peticion.auth?.uid, peticion.auth?.token.email_verified);
-  const subidaId = peticion.data?.subidaId;
-  if (!idValido(subidaId)) throw new HttpsError("invalid-argument", "La subida no es válida.");
-  const referencia = db.doc(`subidasVideos/${subidaId}`);
-  const datos = (await referencia.get()).data();
-  if (!datos || datos.uid !== uid) throw new HttpsError("permission-denied", "No tienes acceso a esta subida.");
-  if (datos.confirmada) return { ruta: datos.ruta };
-  if (datos.vence < Date.now()) throw new HttpsError("failed-precondition", "La subida venció. Vuelve a seleccionar el video.");
-  const archivo = await consultarGraph(`/root:/${datos.ruta.split("/").map(encodeURIComponent).join("/")}`);
-  if (!archivo.file || archivo.size !== datos.tamano) throw new HttpsError("failed-precondition", "El video no terminó de subir.");
-  await db.runTransaction(async (transaccion) => {
-    const actual = await transaccion.get(referencia);
-    const clase = await transaccion.get(db.doc(`cursos/${datos.cursoId}/clases/${datos.claseId}`));
-    if (!clase.exists) throw new HttpsError("not-found", "La clase fue eliminada.");
-    if (actual.data()?.confirmada) return;
-    transaccion.set(db.doc(`cursos/${datos.cursoId}/clases/${datos.claseId}/contenidos/video`), {
-      nombre: "Video de la clase", tipo: "video", orden: 0, ruta: datos.ruta, acceso: datos.acceso, creadoEn: FieldValue.serverTimestamp(), actualizadoEn: FieldValue.serverTimestamp(),
-    });
-    transaccion.update(referencia, { confirmada: true });
-  });
-  return { ruta: datos.ruta };
-});
 
 export const listarVideosMicrosoft = onCall({ secrets: [secretoCliente] }, async (peticion) => {
   await exigirAdmin(peticion.auth?.uid, peticion.auth?.token.email_verified);

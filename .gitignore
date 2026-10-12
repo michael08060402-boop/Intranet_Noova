@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+/.a11y-temporal/
 
 # next.js
 /.next/

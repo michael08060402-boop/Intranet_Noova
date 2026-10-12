@@ -110,7 +110,7 @@ export default function PortadaCurso({ portadaKey, version = 0, nombre, classNam
 
   return (
     <span className={`${className} portada-curso${cargando ? " portada-curso--cargando" : ""}`}
-      role="img"
+      role="group"
       aria-busy={cargando}
       aria-label={cargando ? `Cargando portada de ${nombre}` : `Portada de ${nombre}`}
       style={cargando ? { backgroundImage: "none", backgroundColor: "#e7edf2" } : url ? { backgroundImage: `url(${JSON.stringify(url)})` } : undefined}>

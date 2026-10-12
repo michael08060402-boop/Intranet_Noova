@@ -21,21 +21,22 @@ const herramientas = [
 export default function PanelHerramientas({ alCerrar }: { alCerrar: () => void }) {
   const [actual, setActual] = useState(herramientas[0].clave);
   const cerrar = useRef<HTMLButtonElement>(null);
+  const dialogo = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
+    const anterior = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    dialogo.current?.showModal();
     cerrar.current?.focus();
-    const alTeclear = (evento: KeyboardEvent) => {
-      if (evento.key === "Escape") alCerrar();
+    return () => {
+      if (anterior?.isConnected) anterior.focus();
     };
-    document.addEventListener("keydown", alTeclear);
-    return () => document.removeEventListener("keydown", alTeclear);
-  }, [alCerrar]);
+  }, []);
 
   return (
-    <section className="panel-herramientas" role="dialog" aria-modal="false" aria-label="Herramientas de cálculo">
+    <dialog ref={dialogo} onClose={alCerrar} id="panel-herramientas-examen" className="panel-herramientas" aria-label="Herramientas de cálculo">
       <header className="panel-herramientas__cabecera">
         <strong>Herramientas</strong>
-        <button ref={cerrar} type="button" aria-label="Cerrar herramientas" onClick={alCerrar}><X aria-hidden="true" /></button>
+        <button ref={cerrar} type="button" aria-label="Cerrar herramientas" onClick={() => dialogo.current?.close()}><X aria-hidden="true" /></button>
       </header>
       <div className="panel-herramientas__pestanas" role="group" aria-label="Elegir herramienta">
         {herramientas.map(({ clave, nombre }) => (
@@ -49,6 +50,6 @@ export default function PanelHerramientas({ alCerrar }: { alCerrar: () => void }
           ))}
         </ContextoCompacto.Provider>
       </div>
-    </section>
+    </dialog>
   );
 }

@@ -1,6 +1,6 @@
 # Firebase: configuración paso a paso
 
-Guía del proyecto Firebase `noova-intranet`. Los videos y archivos viven en la nube de Noova (SharePoint) y se entregan con una Cloud Function, lo que requiere el plan Blaze; ver `docs/VIDEOS_SHAREPOINT.md`. Las reglas de Firestore están en `firestore.rules`.
+Actualizado: 12 de octubre de 2026. Guía del proyecto Firebase `noova-intranet`. Los videos viven en Microsoft; portadas y miniaturas, en Firebase Storage. Las funciones validan videos, progreso e inicio del examen. Las reglas están en `firestore.rules` y `storage.rules`; la configuración y publicación completas están en [ENTREGA_PROPIETARIO.md](ENTREGA_PROPIETARIO.md).
 
 ## 1. Modelo usado por las reglas
 
@@ -8,7 +8,9 @@ El perfil es `usuarios/{uid}` con `nombre`, `correo`, `rol` (`alumno` o `admin`)
 
 - `categorias/{categoriaId}`: `nombre`, `descripcion`, `activa`, `creadoEn`, `actualizadoEn`.
 - `cursos/{cursoId}`: `nombre`, `descripcion`, `categoriaId`, `nivel` (`basico`, `intermedio`, `avanzado`), `publicado`, `acceso` (`gratis`, `premium`), `portadaKey` opcional, `creadoEn`, `actualizadoEn`, `creadoPor`.
-- `cursos/{cursoId}/clases/{claseId}`: `nombre`, `descripcion`, `orden`, `publicado`, `creadoEn`, `actualizadoEn`, `creadoPor`.
+- `cursos/{cursoId}/clases/{claseId}`: `nombre`, `descripcion`, `orden`, `publicado`, `miniatura` opcional, `creadoEn`, `actualizadoEn`, `creadoPor`.
+- `cursos/{cursoId}/clases/{claseId}/accesibilidad/texto`: `subtitulos`, `transcripcion`, `actualizadoEn`. Solo el admin lo lee/escribe directamente; `obtenerVideo` entrega el texto al alumno autorizado.
+- `intentos/{examenId_uid}.duracionMin`: duración efectiva guardada por el servidor (0 significa sin límite). El alumno no puede modificarla; las reglas usan este valor o, para intentos antiguos, la duración del examen.
 - `cursos/{cursoId}/clases/{claseId}/contenidos/{contenidoId}`: `nombre`, `tipo` (`video`, `documento`), `ruta`, `orden`, `acceso` (`gratis`, `premium`), `creadoEn`, `actualizadoEn`. Solo los administradores lo leen; el alumno pide el video a la función.
 - `examenes/{examenId}` (con `claves/clave` aparte), `intentos/{examenId_uid}`, `usuarios/{uid}/progreso`, `usuarios/{uid}/inscripciones` y `usuarios/{uid}/notificaciones`: ver `DECISIONES_TECNICAS.md`.
 
@@ -70,9 +72,9 @@ En este orden, crea un documento de categoría activa, un curso asociado, una cl
 - Clase: `nombre`, `descripcion`, `orden: 0`, `publicado: false`, `creadoPor` (UID admin), y fechas.
 - Contenido: `nombre`, `tipo: "video"`, `acceso: "gratis"`, `orden: 0`, `ruta` con la ruta del archivo en la biblioteca de SharePoint (por ejemplo `Ventsim/basico-1.mp4`), y fechas.
 
-Las consultas del catálogo deben incluir `publicado == true`; las de categorías, `activa == true`; y las de contenido para alumnos gratis, `acceso == "gratis"`. Firestore Rules no filtran consultas: si una consulta podría devolver un documento no permitido, Firestore rechaza toda la consulta. Si una combinación necesita índice, registra el índice sugerido en `firestore.indexes.json`.
+Las consultas del catálogo deben incluir `publicado == true`; las de categorías, `activa == true`. Los alumnos no consultan `contenidos` directamente: piden el enlace a `obtenerVideo`, que verifica inscripción, plan y clases anteriores. Firestore Rules no filtran consultas: si una consulta podría devolver un documento no permitido, Firestore rechaza toda la consulta. Si una combinación necesita índice, registra el índice sugerido en `firestore.indexes.json`.
 
-No elimines una categoría mientras tenga cursos asociados; primero reasigna esos cursos o marca la categoría `activa: false`. Borrar un curso tampoco borra automáticamente sus clases ni los archivos de SharePoint: borra los archivos a mano desde la biblioteca o conserva el curso como borrador (`publicado: false`).
+No elimines una categoría mientras tenga cursos asociados; primero reasigna esos cursos o marca la categoría `activa: false`. La app borra cursos/clases mediante `eliminarContenidoAdmin`, que elimina también sus subcolecciones. Los archivos de Storage/Microsoft y registros externos permanecen; su limpieza automática está pendiente.
 
 ## 7. Prueba permisos antes de usar datos reales
 
@@ -87,7 +89,10 @@ En Firebase Console abre **Firestore Database → Rules → Rules Playground**. 
 | Alumno crear/modificar/eliminar curso o categoría | Denegado |
 | Alumno cambiar su `rol` o `plan` | Denegado |
 | Alumno gratis leer contenido `premium` | Denegado |
-| Alumno premium leer contenido `premium` | Permitido |
+| Alumno premium leer `contenidos` directamente | Denegado; la reproducción se autoriza en `obtenerVideo` |
+| Alumno escribir progreso directamente | Denegado; usar `registrarClaseCompletada` |
+| Alumno crear un intento directamente | Denegado; usar `iniciarExamenAlumno` |
+| Alumno consultar su intento aún inexistente | Consulta por `uid` y `examenId`: devuelve vacío y escucha su creación |
 | Administrador crear/editar contenido | Permitido |
 | Administrador listar alumnos y cambiar `plan`/`estado` | Permitido |
 | Administrador cambiar el `rol` de un perfil | Denegado |
@@ -99,7 +104,7 @@ Repite las pruebas con el emulador de Firestore antes de publicar cambios import
 
 ### Revisión de intentos de abuso
 
-Las reglas cambiaron el 30 de septiembre de 2026 (lectura de perfiles por el admin, campo `estado`, una categoría inactiva ya no bloquea editar sus cursos), por lo que la validación anterior en el emulador ya no aplica. Vuelve a pasar la matriz de arriba en el emulador de Firestore antes de publicar. Una prueba de reglas no valida una instancia real, la interfaz, Culqi ni la función de videos.
+Las reglas actuales, incluidas las restricciones de progreso e inicio del examen, pasaron 25 pruebas en el emulador el 12 de octubre de 2026. Se ejecutan con `npm run test:reglas` (Java 21, proyecto `demo-noova`). Repetirlas al cambiar las reglas. Una prueba del emulador no valida Firebase real, la interfaz, Culqi ni Microsoft; falta ampliar la cobertura de entrega fuera de tiempo.
 
 | Intento | Protección de estas reglas |
 |---|---|

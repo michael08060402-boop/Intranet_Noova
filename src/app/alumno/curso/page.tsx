@@ -1,6 +1,7 @@
 "use client";
 
 import MiniaturaClase from "@/components/alumno/MiniaturaClase";
+import SubtitulosVideo from "@/components/alumno/SubtitulosVideo";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
@@ -167,7 +168,7 @@ function ClaseCurso() {
 }
 
 type Problema = "sinVideo" | "premium" | "fallo";
-type Video = { claseId: string; url: string } | { claseId: string; problema: Problema };
+type Video = { claseId: string; url: string; subtitulos?: string; transcripcion?: string } | { claseId: string; problema: Problema };
 
 function problemaDe(error: unknown): Problema {
   const { code, details } = error as FunctionsError;
@@ -185,7 +186,7 @@ function ReproductorClase({ cursoId, claseId, poster }: { cursoId: string; clase
   useEffect(() => {
     let vigente = true;
     pedirVideo(cursoId, claseId)
-      .then((url) => vigente && setVideo({ claseId, url }))
+      .then((datos) => vigente && setVideo({ claseId, ...datos }))
       .catch((error) => vigente && setVideo({ claseId, problema: problemaDe(error) }));
     return () => { vigente = false; };
   }, [cursoId, claseId, intento]);
@@ -208,13 +209,13 @@ function ReproductorClase({ cursoId, claseId, poster }: { cursoId: string; clase
   }
 
   return (
-    <div className="clase-pagina__video">
-      {!actual && <p>Cargando video…</p>}
+    <><div className="clase-pagina__video">
+      {!actual && <p role="status">Cargando video…</p>}
       {actual && "url" in actual && (
         <video src={actual.url} poster={poster} controls controlsList="nodownload" disablePictureInPicture playsInline preload="metadata"
           onContextMenu={(evento) => evento.preventDefault()} onError={(evento) => alFallar(evento.currentTarget)}
           onLoadedMetadata={(evento) => { if (reanudarEn.current > 0) evento.currentTarget.currentTime = reanudarEn.current; }}
-          onPlaying={() => { renovado.current = false; reanudarEn.current = 0; }} />
+          onPlaying={() => { renovado.current = false; reanudarEn.current = 0; }}><SubtitulosVideo texto={actual.subtitulos} /></video>
       )}
       {actual && "problema" in actual && (
         <div className="clase-pagina__video-aviso">
@@ -233,6 +234,6 @@ function ReproductorClase({ cursoId, claseId, poster }: { cursoId: string; clase
           )}
         </div>
       )}
-    </div>
+    </div>{actual && "url" in actual && actual.transcripcion && <details className="clase-pagina__transcripcion"><summary>Transcripción y descripción del video</summary><p>{actual.transcripcion}</p></details>}</>
   );
 }

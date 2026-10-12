@@ -14,6 +14,8 @@ todavía el porcentaje del video reproducido.
   su inicio ni sus respuestas. Los intentos previos se conservan.
 - Las reglas rechazan crear intentos y escribir progreso directamente desde el
   navegador. Las respuestas y entregas siguen usando las reglas existentes.
+- El servidor guarda el tiempo definido por el administrador en cada nuevo intento.
+  El alumno no puede elegir otro tiempo. Los intentos existentes se conservan.
 - Los borradores no cuentan. Publicar otra clase o cambiar el orden puede cambiar
   los requisitos para iniciar un examen nuevo.
 
@@ -40,4 +42,5 @@ se habilite la segunda y luego completar la segunda para desbloquear el examen.
 Iniciar el examen y recargar: el tiempo y las respuestas guardadas deben conservarse.
 
 Verificación local: compilación de Functions, TypeScript y ESLint correctos;
-24 pruebas simuladas de Functions y 25 pruebas de reglas en el emulador pasan.
+22 pruebas simuladas de Functions y 28 pruebas de reglas en el emulador pasan,
+incluidas las nuevas comprobaciones de tiempo y textos protegidos.

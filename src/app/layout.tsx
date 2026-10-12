@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import SesionProvider from "@/components/acceso/SesionProvider";
+import Accesibilidad from "@/components/acceso/Accesibilidad";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={geistSans.variable}>
       <body>
+        <Accesibilidad />
         <SesionProvider>{children}</SesionProvider>
       </body>
     </html>
