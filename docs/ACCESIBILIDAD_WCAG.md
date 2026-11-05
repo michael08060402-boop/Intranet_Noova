@@ -33,6 +33,8 @@ Las adaptaciones de tiempo para WCAG 2.2.1 quedan pendientes de definir.
 Los campos de carga de subtitulos y transcripcion y el boton CC personalizado
 se retiraron por solicitud del usuario. Los textos ya guardados se conservan;
 las pistas existentes pueden usar los controles nativos del reproductor.
+Ahora se incluyen subtítulos automáticos para once videos confirmados, protegidos
+por los mismos permisos del video. Ver [SUBTITULOS_AUTOMATICOS.md](SUBTITULOS_AUTOMATICOS.md).
 
 ## Pruebas ejecutadas
 

@@ -193,7 +193,7 @@ function Cursos() {
 
       <dialog ref={confirmar} className="cursos-confirmar" aria-labelledby="cursos-confirmar-titulo" onClose={() => setEliminando(null)}>
         <h2 id="cursos-confirmar-titulo">¿Eliminar curso?</h2>
-        <p>Se eliminará <strong>{eliminando?.nombre}</strong> de forma permanente. También se eliminarán sus clases y referencias de contenido. Los archivos originales de Microsoft se conservarán. Esta acción no se puede deshacer.</p>
+        <p>Se eliminará <strong>{eliminando?.nombre}</strong> junto con sus clases, evaluaciones, intentos, notas, inscripciones, progreso y portadas. Los archivos originales de Microsoft se conservarán. Esta acción no se puede deshacer.</p>
         <div className="cursos-confirmar__acciones">
           <button type="button" onClick={() => confirmar.current?.close()}>Cancelar</button>
           <button type="button" className="cursos-confirmar__eliminar" onClick={eliminar}>Eliminar</button>

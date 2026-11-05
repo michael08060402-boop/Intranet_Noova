@@ -328,6 +328,6 @@ export async function subirPortadaCurso(cursoId: string, archivo: File, progreso
   await actualizarCurso(cursoId, { portadaKey: `portadas/${cursoId}` });
 }
 export async function previsualizarVideoMicrosoft(cursoId: string, ruta: string) {
-  const consultar = httpsCallable<{ cursoId: string; ruta: string }, { url: string }>(funciones, "previsualizarVideoMicrosoft");
-  return (await consultar({ cursoId, ruta })).data.url;
+  const consultar = httpsCallable<{ cursoId: string; ruta: string }, { url: string; subtitulos?: string }>(funciones, "previsualizarVideoMicrosoft");
+  return (await consultar({ cursoId, ruta })).data;
 }

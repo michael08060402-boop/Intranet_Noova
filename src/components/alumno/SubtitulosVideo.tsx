@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function SubtitulosVideo({ texto }: { texto?: string }) {
+export default function SubtitulosVideo({ texto, activados = true }: { texto?: string; activados?: boolean }) {
+  const pista = useRef<HTMLTrackElement>(null);
   const [archivo, setArchivo] = useState<{ texto: string; url: string }>();
   useEffect(() => {
     if (!texto) return;
@@ -10,5 +11,8 @@ export default function SubtitulosVideo({ texto }: { texto?: string }) {
     queueMicrotask(() => { if (activo) setArchivo({ texto, url }); });
     return () => { activo = false; URL.revokeObjectURL(url); };
   }, [texto]);
-  return archivo?.texto === texto && archivo ? <track key={archivo.url} kind="captions" src={archivo.url} srcLang="es" label="Español" default /> : null;
+  useEffect(() => {
+    if (pista.current) pista.current.track.mode = activados ? "showing" : "disabled";
+  }, [activados, archivo, texto]);
+  return archivo?.texto === texto && archivo ? <track ref={pista} key={archivo.url} kind="captions" src={archivo.url} srcLang="es" label="Español" default onLoad={() => { if (pista.current) pista.current.track.mode = activados ? "showing" : "disabled"; }} /> : null;
 }

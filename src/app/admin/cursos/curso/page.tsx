@@ -6,6 +6,7 @@ import { Suspense, useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowLeft, Pencil, Plus, Trash2, Users, Video } from "lucide-react";
 import { useSesion } from "@/components/acceso/SesionProvider";
 import MiniaturaClase from "@/components/alumno/MiniaturaClase";
+import ReproductorVideo from "@/components/alumno/ReproductorVideo";
 import {
   actualizarClase,
   actualizarMiniaturaClase,
@@ -399,11 +400,11 @@ function ExploradorVideos({ cursoId, claseId, alElegir }: { cursoId: string; cla
   </div>;
 }
 function PrevisualizacionVideo({ cursoId, ruta }: { cursoId: string; ruta: string }) {
-  const [resultado, setResultado] = useState<{ ruta: string; url?: string; error?: string } | null>(null);
+  const [resultado, setResultado] = useState<{ ruta: string; url?: string; subtitulos?: string; error?: string } | null>(null);
   const [intento, setIntento] = useState(0);
   useEffect(() => {
     let activo = true;
-    previsualizarVideoMicrosoft(cursoId, ruta).then((url) => { if (activo) setResultado({ ruta, url }); })
+    previsualizarVideoMicrosoft(cursoId, ruta).then((datos) => { if (activo) setResultado({ ruta, ...datos }); })
       .catch(() => { if (activo) setResultado({ ruta, error: "No se pudo cargar la previsualización. Comprueba que el emulador esté actualizado." }); });
     return () => { activo = false; };
   }, [cursoId, ruta, intento]);
@@ -412,8 +413,8 @@ function PrevisualizacionVideo({ cursoId, ruta }: { cursoId: string; ruta: strin
     <strong>Previsualización del video</strong>
     {!actual && <p role="status">Cargando video…</p>}
     {actual?.error && <p role="alert">{actual.error} <button type="button" onClick={() => { setResultado(null); setIntento((valor) => valor + 1); }}>Reintentar</button></p>}
-    {actual?.url && <video key={actual.url} className="videos-microsoft__video" src={actual.url} controls playsInline preload="metadata"
-      onError={() => setResultado({ ruta, error: "El enlace del video no está disponible. Reintenta para actualizarlo." })}></video>}
+    {actual?.url && <ReproductorVideo subtitulos={actual.subtitulos} key={actual.url} className="videos-microsoft__video" src={actual.url} controls playsInline preload="metadata"
+      onError={() => setResultado({ ruta, error: "El enlace del video no está disponible. Reintenta para actualizarlo." })} />}
   </section>;
 }
 // Las clases con video guardado antes de existir las miniaturas la generan al abrir esta página.

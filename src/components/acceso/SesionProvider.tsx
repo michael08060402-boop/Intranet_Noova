@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { onIdTokenChanged, type User } from "firebase/auth";
-import { onSnapshot } from "firebase/firestore";
-import { auth } from "@/firebase/config";
+import { doc, onSnapshot } from "firebase/firestore";
+import { auth, db } from "@/firebase/config";
 import { asegurarPerfil, leerPerfil, type Perfil } from "@/firebase/perfiles";
 
 type Sesion = { usuario: User | null; perfil: Perfil | null; cargando: boolean; error: string };
@@ -35,7 +35,7 @@ export default function SesionProvider({ children }: { children: ReactNode }) {
     let version = 0;
     let dejarPerfil: (() => void) | undefined;
     let espera: ReturnType<typeof setTimeout> | undefined;
-    const dejarAuth = onIdTokenChanged(auth, async (usuario) => {
+    const dejarAuth = onIdTokenChanged(auth, (usuario) => {
       const actual = ++version;
       dejarPerfil?.();
       clearTimeout(espera);
@@ -56,15 +56,23 @@ export default function SesionProvider({ children }: { children: ReactNode }) {
         });
       }
       espera = setTimeout(fallo, 20000);
+      let creandoPerfil = false;
       try {
-        const referencia = await asegurarPerfil(usuario);
-        if (actual !== version) return;
+        const referencia = doc(db, "usuarios", usuario.uid);
         dejarPerfil = onSnapshot(
           referencia,
           { includeMetadataChanges: true },
           (snapshot) => {
             if (actual !== version || snapshot.metadata.fromCache || snapshot.metadata.hasPendingWrites)
               return;
+            if (!snapshot.exists()) {
+              if (!creandoPerfil) {
+                creandoPerfil = true;
+                // Solo el primer acceso necesita crear el perfil en una transacción.
+                asegurarPerfil(usuario).catch(fallo);
+              }
+              return;
+            }
             clearTimeout(espera);
             const perfil = leerPerfil(snapshot.data());
             setSesion({

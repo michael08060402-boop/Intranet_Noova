@@ -63,5 +63,5 @@ export async function eliminarClase() {}
 export async function guardarVideoClase() {}
 export async function leerVideoClase() { return null; }
 export async function listarVideosMicrosoft() { return { elementos: [], siguiente: null }; }
-export async function previsualizarVideoMicrosoft() { return ''; }
+export async function previsualizarVideoMicrosoft() { return { url: '' }; }
 export async function rutasVideosUsados() { return []; }

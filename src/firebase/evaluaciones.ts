@@ -4,6 +4,7 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
   query,
   serverTimestamp,
@@ -131,7 +132,15 @@ export function guardarExamen(id: string | null, datos: DatosExamen, claves: Cla
   return lote.commit();
 }
 
-export function eliminarExamen(id: string) {
+export async function eliminarExamen(id: string) {
+  // Retirar el examen primero impide iniciar nuevos intentos durante el borrado.
+  await updateDoc(doc(db, "examenes", id), { publicado: false, actualizadoEn: serverTimestamp() });
+  const intentos = await getDocs(query(collection(db, "intentos"), where("examenId", "==", id)));
+  for (let inicio = 0; inicio < intentos.docs.length; inicio += 400) {
+    const loteIntentos = writeBatch(db);
+    intentos.docs.slice(inicio, inicio + 400).forEach((intento) => loteIntentos.delete(intento.ref));
+    await loteIntentos.commit();
+  }
   const lote = writeBatch(db);
   lote.delete(doc(db, "examenes", id, "claves", "clave"));
   lote.delete(doc(db, "examenes", id));

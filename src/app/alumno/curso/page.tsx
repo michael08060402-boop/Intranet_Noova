@@ -1,7 +1,7 @@
 "use client";
 
 import MiniaturaClase from "@/components/alumno/MiniaturaClase";
-import SubtitulosVideo from "@/components/alumno/SubtitulosVideo";
+import ReproductorVideo from "@/components/alumno/ReproductorVideo";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
@@ -212,10 +212,10 @@ function ReproductorClase({ cursoId, claseId, poster }: { cursoId: string; clase
     <><div className="clase-pagina__video">
       {!actual && <p role="status">Cargando video…</p>}
       {actual && "url" in actual && (
-        <video src={actual.url} poster={poster} controls controlsList="nodownload" disablePictureInPicture playsInline preload="metadata"
+        <ReproductorVideo key={claseId + actual.url} subtitulos={actual.subtitulos} src={actual.url} poster={poster} controls controlsList="nodownload" disablePictureInPicture playsInline preload="metadata"
           onContextMenu={(evento) => evento.preventDefault()} onError={(evento) => alFallar(evento.currentTarget)}
           onLoadedMetadata={(evento) => { if (reanudarEn.current > 0) evento.currentTarget.currentTime = reanudarEn.current; }}
-          onPlaying={() => { renovado.current = false; reanudarEn.current = 0; }}><SubtitulosVideo texto={actual.subtitulos} /></video>
+          onPlaying={() => { renovado.current = false; reanudarEn.current = 0; }} />
       )}
       {actual && "problema" in actual && (
         <div className="clase-pagina__video-aviso">

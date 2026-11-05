@@ -9,15 +9,21 @@ function cargar(perfil, respuestaGraph, documentos = {}) {
   let llamadasGraph = 0;
   const eliminados = [];
   const escritos = [];
+  const archivos = [];
+  const referencia = (ruta) => ({ ruta, update: async (datos) => escritos.push({ ruta, datos }) });
+  const consulta = (filtrar) => ({ where: (campo, operador, valor) => ({ get: async () => ({ docs: Object.entries(documentos).filter(([path, datos]) => filtrar(path) && datos[campo] === valor).map(([path, datos]) => ({ id: path.split('/').at(-1), ref: referencia(path), data: () => datos })) }) }) });
   const db = {
     recursiveDelete: async (referencia) => eliminados.push(referencia.ruta),
-    doc: (ruta) => ({ ruta, get: async () => ({ exists: ruta.startsWith('intentos/') ? Boolean(documentos[ruta]) : ruta.endsWith('/inscripciones/curso') ? documentos.inscrito !== false : true, data: () => /^usuarios\/[^/]+$/.test(ruta) ? perfil : documentos[ruta] ?? {} }) }),
-    collection: (ruta) => ({ where: (campo, operador, valor) => ({ get: async () => ({ docs: Object.entries(documentos).filter(([path, datos]) => path.startsWith(ruta + '/') && !path.slice(ruta.length + 1).includes('/') && datos[campo] === valor).map(([path, datos]) => ({ id: path.split('/').at(-1), data: () => datos })) }) }) }),
+    doc: (ruta) => ({ ...referencia(ruta), get: async () => ({ exists: ruta.startsWith('intentos/') ? Boolean(documentos[ruta]) : ruta.endsWith('/inscripciones/curso') ? documentos.inscrito !== false : true, data: () => /^usuarios\/[^/]+$/.test(ruta) ? perfil : documentos[ruta] ?? {} }) }),
+    collection: (ruta) => consulta(path => path.startsWith(ruta + '/') && !path.slice(ruta.length + 1).includes('/')),
+    collectionGroup: (grupo) => consulta(path => path.split('/').at(-2) === grupo),
     runTransaction: async (handler) => handler({ get: (referencia) => referencia.get(), set: (referencia, datos) => escritos.push({ ruta: referencia.ruta, datos }), create: (referencia, datos) => escritos.push({ ruta: referencia.ruta, datos }) }),
   };
   class HttpsError extends Error { constructor(code, message) { super(message); this.code = code; } }
   const modulos = {
+    './subtitulos-videos.json': { default: require('../functions/src/subtitulos-videos.json') },
     'firebase-admin/app': { initializeApp() {} },
+    'firebase-admin/storage': { getStorage: () => ({ bucket: () => ({ file: ruta => ({ delete: async () => archivos.push(ruta) }), deleteFiles: async ({ prefix }) => archivos.push(prefix) }) }) },
     'firebase-admin/firestore': { getFirestore: () => db, FieldValue: { serverTimestamp: () => 'fecha-simulada' } },
     'firebase-functions': { logger: { warn() {}, error() {} } },
     'firebase-functions/params': { defineString: (_, opciones) => ({ value: () => opciones?.default ?? 'id' }), defineSecret: () => ({ value: () => 'secreto-simulado' }) },
@@ -29,9 +35,32 @@ function cargar(perfil, respuestaGraph, documentos = {}) {
     llamadasGraph++;
     return { ok: true, json: async () => url.includes('oauth2') ? { access_token: 'token-simulado', expires_in: 3600 } : typeof respuestaGraph === "function" ? respuestaGraph(url) : respuestaGraph };
   } });
-  return { exports, llamadas: () => llamadasGraph, eliminados, escritos };
+  return { exports, llamadas: () => llamadasGraph, eliminados, escritos, archivos };
 }
 const auth = { uid: 'admin', token: { email_verified: true } };
+
+test('los once videos tienen WebVTT; el siete queda sin subtitulos', async () => {
+  const textos = require('../functions/src/subtitulos-videos.json');
+  assert.equal(Object.keys(textos).length, 11);
+  for (const [nombre, texto] of Object.entries(textos)) {
+    assert.ok(texto.startsWith('WEBVTT'));
+    const documentos = documentosVideo();
+    documentos['cursos/curso/clases/clase/contenidos/video'].ruta = `NOOVA SAC/11.  MULTIMEDIA/CONTENIDO DISCO/CURSOS/${nombre}`;
+    const app = cargar({ rol: 'alumno', estado: 'activo' }, { id: 'video', '@microsoft.graph.downloadUrl': 'https://example.com/video' }, documentos);
+    const resultado = await app.exports.obtenerVideo({ auth, data: { cursoId: 'curso', claseId: 'clase' } });
+    assert.equal(resultado.subtitulos, texto);
+  }
+  const documentos = documentosVideo();
+  documentos['cursos/curso/clases/clase/contenidos/video'].ruta = 'NOOVA SAC/11.  MULTIMEDIA/CONTENIDO DISCO/CURSOS/Pumpsim 03.mp4';
+  const app = cargar({ rol: 'alumno', estado: 'activo' }, { id: 'video', '@microsoft.graph.downloadUrl': 'https://example.com/video' }, documentos);
+  assert.equal((await app.exports.obtenerVideo({ auth, data: { cursoId: 'curso', claseId: 'clase' } })).subtitulos, undefined);
+});
+
+test('el administrador obtiene los subtitulos automaticos en la previsualizacion', async () => {
+  const app = cargar({ rol: 'admin', estado: 'activo' }, { id: 'video', '@microsoft.graph.downloadUrl': 'https://example.com/video' }, documentosVideo());
+  const resultado = await app.exports.previsualizarVideoMicrosoft({ auth, data: { cursoId: 'curso', ruta: 'NOOVA SAC/11.  MULTIMEDIA/CONTENIDO DISCO/CURSOS/Vuma 02.mp4' } });
+  assert.ok(resultado.subtitulos.startsWith('WEBVTT'));
+});
 test('alumno no puede explorar los videos de Microsoft', async () => {
   const app = cargar({ rol: 'alumno', estado: 'activo' });
   await assert.rejects(app.exports.listarVideosMicrosoft({ auth, data: {} }), { code: 'permission-denied' });
@@ -106,6 +135,26 @@ test('administrador elimina curso de forma recursiva y rechaza rutas invalidas',
   await assert.rejects(app.exports.eliminarContenidoAdmin({ auth, data: { cursoId: '../otro' } }), { code: 'invalid-argument' });
   await app.exports.eliminarContenidoAdmin({ auth, data: { cursoId: 'curso' } });
   assert.equal(app.eliminados[0], 'cursos/curso');
+});
+test('borrar curso limpia relaciones y portadas conservando otros cursos', async () => {
+  const documentos = {
+    'cursos/curso': { publicado: true },
+    'examenes/examen': { cursoId: 'curso' },
+    'intentos/intento': { examenId: 'examen', cursoId: 'curso' },
+    'intentos/huerfano': { examenId: 'borrado', cursoId: 'curso' },
+    'usuarios/alumno/inscripciones/curso': { cursoId: 'curso' },
+    'usuarios/alumno/progreso/clase': { cursoId: 'curso', claseId: 'clase' },
+    'examenes/otro': { cursoId: 'otro' },
+    'usuarios/alumno/progreso/otro': { cursoId: 'otro', claseId: 'clase' },
+  };
+  const app = cargar({ rol: 'admin', estado: 'activo' }, {}, documentos);
+  await app.exports.eliminarContenidoAdmin({ auth, data: { cursoId: 'curso' } });
+  for (const ruta of ['examenes/examen', 'intentos/intento', 'intentos/huerfano', 'usuarios/alumno/inscripciones/curso', 'usuarios/alumno/progreso/clase', 'cursos/curso']) assert.ok(app.eliminados.includes(ruta));
+  assert.ok(!app.eliminados.includes('examenes/otro'));
+  assert.ok(!app.eliminados.includes('usuarios/alumno/progreso/otro'));
+  assert.deepEqual(app.archivos, ['portadas/curso', 'portadas-clases/curso/']);
+  assert.equal(app.escritos[0].datos.publicado, false);
+  assert.equal(app.llamadas(), 0);
 });
 function documentosSecuencia(completadas = []) {
   return {

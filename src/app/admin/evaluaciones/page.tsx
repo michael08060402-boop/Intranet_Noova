@@ -29,6 +29,7 @@ function Evaluaciones() {
   const [filtro, setFiltro] = useState("todos");
   const [editando, setEditando] = useState<Examen | null | undefined>(undefined);
   const [eliminando, setEliminando] = useState<Examen | null>(null);
+  const [borrando, setBorrando] = useState(false);
   const confirmar = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -45,11 +46,15 @@ function Evaluaciones() {
   }
 
   async function eliminar() {
-    if (!eliminando) return;
+    if (!eliminando || borrando) return;
+    setBorrando(true);
     setError("");
-    try { await eliminarExamen(eliminando.id); }
+    try {
+      await eliminarExamen(eliminando.id);
+      confirmar.current?.close();
+    }
     catch { setError(`No se pudo eliminar "${eliminando.nombre}".`); }
-    confirmar.current?.close();
+    finally { setBorrando(false); }
   }
 
   const nombreCurso = (id: string) => cursos.find((curso) => curso.id === id)?.nombre ?? "Curso eliminado";
@@ -116,8 +121,8 @@ function Evaluaciones() {
                       <div className="admin-acciones">
                         <Link href={`/admin/evaluaciones/entregas?id=${examen.id}`} className="admin-boton admin-boton--secundario"><ListChecks />Entregas</Link>
                         <button type="button" className="admin-icono" onClick={() => setEditando(examen)} aria-label={`Editar ${examen.nombre}`} title="Editar"><Pencil /></button>
-                        <button type="button" className="admin-icono admin-icono--peligro" onClick={() => pedirEliminar(examen)} disabled={entregas.length > 0}
-                          aria-label={`Eliminar ${examen.nombre}`} title={entregas.length > 0 ? "Solo se pueden eliminar exámenes sin entregas. Pásalo a borrador para ocultarlo." : "Eliminar"}>
+                        <button type="button" className="admin-icono admin-icono--peligro" onClick={() => pedirEliminar(examen)}
+                          aria-label={`Eliminar ${examen.nombre}`} title="Eliminar examen">
                           <Trash2 />
                         </button>
                       </div>
@@ -138,12 +143,13 @@ function Evaluaciones() {
         </div>
       </section>
 
-      <dialog ref={confirmar} className="admin-confirmar" aria-labelledby="examen-confirmar-titulo" onClose={() => setEliminando(null)}>
+      <dialog ref={confirmar} className="admin-confirmar" aria-labelledby="examen-confirmar-titulo" onCancel={(evento) => { if (borrando) evento.preventDefault(); }} onClose={() => setEliminando(null)}>
         <h2 id="examen-confirmar-titulo">¿Eliminar examen?</h2>
-        <p>Se eliminará <strong>{eliminando?.nombre}</strong> de forma permanente. Esta acción no se puede deshacer.</p>
+        <p>Se eliminará <strong>{eliminando?.nombre}</strong> junto con todos sus intentos, respuestas y notas. Esta acción no se puede deshacer.</p>
+        {error && <p className="admin-error" role="alert">{error}</p>}
         <div className="admin-confirmar__acciones">
-          <button type="button" onClick={() => confirmar.current?.close()}>Cancelar</button>
-          <button type="button" className="admin-confirmar__peligro" onClick={eliminar}>Eliminar</button>
+          <button type="button" disabled={borrando} onClick={() => confirmar.current?.close()}>Cancelar</button>
+          <button type="button" disabled={borrando} className="admin-confirmar__peligro" onClick={eliminar}>{borrando ? "Eliminando…" : "Eliminar examen y entregas"}</button>
         </div>
       </dialog>
       {(editando !== undefined || (pedidoNuevo && cursos.length > 0)) && <NuevoExamen examen={editando ?? null} cursos={cursos} alCerrar={() => {

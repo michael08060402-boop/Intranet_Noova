@@ -292,6 +292,14 @@
   background: #e6f6ee;
   color: #176f42;
 }
+.admin-insignia--gratis {
+  background: var(--acento-suave);
+  color: var(--texto);
+}
+.admin-insignia--premium {
+  background: var(--acento);
+  color: var(--superficie);
+}
 .admin-insignia--info {
   background: var(--acento-suave);
   color: var(--acento-oscuro);

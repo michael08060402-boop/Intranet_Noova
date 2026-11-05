@@ -6,6 +6,7 @@ import { logger } from "firebase-functions";
 import { defineSecret, defineString } from "firebase-functions/params";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { setGlobalOptions } from "firebase-functions/v2";
+import subtitulosVideos from "./subtitulos-videos.json";
 
 initializeApp();
 setGlobalOptions({ region: "us-east1", maxInstances: 10 });
@@ -181,8 +182,10 @@ export const obtenerVideo = onCall({ secrets: [secretoCliente] }, async (peticio
     const archivo = rutaValida(ruta) ? await enlaceDelVideo(ruta) : null;
     if (archivo) {
       const texto = (await db.doc(`cursos/${cursoId}/clases/${claseId}/accesibilidad/texto`).get()).data();
+      const subtitulos = typeof texto?.subtitulos === "string" && texto.subtitulos
+        ? texto.subtitulos : subtitulosAutomaticos(ruta);
       return { url: archivo.url,
-        ...(typeof texto?.subtitulos === "string" && texto.subtitulos ? { subtitulos: texto.subtitulos } : {}),
+        ...(subtitulos ? { subtitulos } : {}),
         ...(typeof texto?.transcripcion === "string" && texto.transcripcion ? { transcripcion: texto.transcripcion } : {}),
       };
     }
@@ -194,6 +197,14 @@ export const obtenerVideo = onCall({ secrets: [secretoCliente] }, async (peticio
 });
 
 const carpetaCursos = "NOOVA SAC/11.  MULTIMEDIA/CONTENIDO DISCO/CURSOS";
+
+function subtitulosAutomaticos(ruta: string): string | undefined {
+  // Solo los archivos confirmados de esta carpeta; no asociar por orden o por coincidencia parcial.
+  if (!ruta.startsWith(`${carpetaCursos}/`)) return undefined;
+  const nombre = ruta.slice(carpetaCursos.length + 1);
+  return Object.prototype.hasOwnProperty.call(subtitulosVideos, nombre)
+    ? (subtitulosVideos as Record<string, string>)[nombre] : undefined;
+}
 
 async function exigirAdmin(uid: string | undefined, verificado: unknown) {
   if (!uid || verificado !== true) throw new HttpsError("unauthenticated", "Inicia sesión con tu correo verificado.");
@@ -241,7 +252,7 @@ export const previsualizarVideoMicrosoft = onCall({ secrets: [secretoCliente] },
   if (!(await db.doc(`cursos/${cursoId}`).get()).exists) throw new HttpsError("not-found", "El curso no existe.");
   const archivo = await enlaceDelVideo(ruta);
   if (!archivo) throw new HttpsError("not-found", "No se encontró el video seleccionado.");
-  return { url: archivo.url };
+  return { url: archivo.url, ...(subtitulosAutomaticos(ruta) ? { subtitulos: subtitulosAutomaticos(ruta) } : {}) };
 });
 
 // La miniatura se guarda una sola vez en Storage para que las listas de clases no abran cada video.
@@ -281,6 +292,36 @@ export const eliminarContenidoAdmin = onCall(async (peticion) => {
   if (!idValido(cursoId) || (claseId !== undefined && !idValido(claseId))) throw new HttpsError("invalid-argument", "Selecciona un curso o clase válido.");
   const ruta = claseId ? `cursos/${cursoId}/clases/${claseId}` : `cursos/${cursoId}`;
   const referencia = db.doc(ruta);
+  const bucket = getStorage().bucket();
+  if (!claseId) {
+    // Retirarlo antes de limpiar bloquea nuevas inscripciones e intentos.
+    if ((await referencia.get()).exists) await referencia.update({ publicado: false, actualizadoEn: FieldValue.serverTimestamp() });
+    const examenes = await db.collection("examenes").where("cursoId", "==", cursoId).get();
+    for (const examen of examenes.docs) {
+      await examen.ref.update({ publicado: false, actualizadoEn: FieldValue.serverTimestamp() });
+      const intentos = await db.collection("intentos").where("examenId", "==", examen.id).get();
+      for (const intento of intentos.docs) await db.recursiveDelete(intento.ref);
+      await db.recursiveDelete(examen.ref);
+    }
+    // Incluye intentos de evaluaciones que ya hubieran sido borradas.
+    const consultas = [
+      db.collection("intentos").where("cursoId", "==", cursoId),
+      db.collectionGroup("inscripciones").where("cursoId", "==", cursoId),
+      db.collectionGroup("progreso").where("cursoId", "==", cursoId),
+    ];
+    for (const consulta of consultas) {
+      const documentos = await consulta.get();
+      for (const documento of documentos.docs) await db.recursiveDelete(documento.ref);
+    }
+    await bucket.file(`portadas/${cursoId}`).delete({ ignoreNotFound: true });
+    await bucket.deleteFiles({ prefix: `portadas-clases/${cursoId}/` });
+  } else {
+    await bucket.file(`portadas-clases/${cursoId}/${claseId}`).delete({ ignoreNotFound: true });
+    const progreso = await db.collectionGroup("progreso").where("cursoId", "==", cursoId).get();
+    for (const documento of progreso.docs) {
+      if (documento.data().claseId === claseId) await db.recursiveDelete(documento.ref);
+    }
+  }
   // Firestore no elimina las subcolecciones al borrar un documento.
   // El borrado recursivo elimina también las referencias de videos, sin llamar a Microsoft.
   await db.recursiveDelete(referencia);

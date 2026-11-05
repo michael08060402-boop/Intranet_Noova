@@ -169,11 +169,14 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
   const confirmar = useRef<HTMLDialogElement>(null);
   const temporizador = useRef<ReturnType<typeof setTimeout>>(undefined);
   const enviado = useRef(false);
+  const proximoReintento = useRef(0);
 
   useEffect(() => {
     const intervalo = setInterval(() => setAhora(Date.now()), 1000);
     return () => clearInterval(intervalo);
   }, []);
+
+  useEffect(() => () => clearTimeout(temporizador.current), []);
 
   const vence = vencimientoIntento(examen, intento);
   const restante = vence === null ? null : Math.max(0, vence - ahora);
@@ -200,16 +203,18 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
     setError("");
     try { await entregarIntento(intento.id, respuestas); }
     catch {
-      if (!agotado) enviado.current = false;
+      proximoReintento.current = Date.now() + 5000;
+      enviado.current = false;
       setEntregando(false);
       setError(agotado
-        ? "Se acabó el tiempo y la entrega ya no se pudo registrar. Tus últimas respuestas guardadas las revisará tu instructor."
+        ? "No se pudo registrar la entrega. Reintentaremos automáticamente cada 5 segundos mientras siga abierto el plazo de entrega."
         : "No se pudo entregar el examen. Revisa tu conexión e inténtalo de nuevo.");
     }
   }
 
   useEffect(() => {
-    if (agotado && !enviado.current) void entregar();
+    if (agotado && !enviado.current && Date.now() >= proximoReintento.current
+      && vence !== null && Date.now() <= vence + 60000) void entregar();
   });
 
   const sinResponder = examen.preguntas.filter((pregunta) => respuestas[pregunta.id] === undefined || respuestas[pregunta.id] === "").length;
@@ -240,7 +245,9 @@ function Rendicion({ examen, intento, volver }: { examen: Examen; intento: Inten
       <p className="solo-lectores" role="status" aria-live="polite" aria-atomic="true">{agotado ? "El tiempo se agotó. Se está entregando el examen." : restante !== null && restante <= 60000 ? "Queda menos de un minuto." : restante !== null && restante <= 300000 ? "Quedan menos de cinco minutos." : ""}</p>
 
       {examen.herramientas && herramientasAbiertas && <PanelHerramientas alCerrar={cerrarHerramientas} />}
-      {error && <p className="alumno-examen__error" role="alert">{error}</p>}
+      {error && <p className="alumno-examen__error" role="alert">{agotado && vence !== null && ahora > vence + 60000
+        ? "El plazo de entrega terminó. Tu instructor podrá revisar las últimas respuestas guardadas."
+        : error}</p>}
       <form onSubmit={(evento) => { evento.preventDefault(); confirmar.current?.showModal(); }}>
         <fieldset disabled={agotado || entregando} className="alumno-examen__preguntas">
           {examen.preguntas.map((pregunta, indice) => (

@@ -304,7 +304,15 @@
   --peligro: #b42318;
   --peligro-suave: #fdecea;
   --premium: #e9b949;
-  --fondo-barra: linear-gradient(100deg, #042b4e 0%, #063a66 55%, #0a568a 100%);
+  --fondo-barra: #063a66;
+  --marca: #075a85;
+  --marca-suave: #e3eff5;
+  --grafico-principal: #000;
+  --grafico-secundario: #666;
+  --grafico-terciario: #aaa;
+  --superficie: #fff;
+  --superficie-suave: #f4f4f4;
+  --grafico-rejilla: #edf2f6;
   --radio: 8px;
   --radio-grande: 14px;
   display: grid;

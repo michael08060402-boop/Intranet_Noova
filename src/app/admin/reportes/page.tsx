@@ -155,7 +155,7 @@ export default function ReportesPage() {
           <div><p>Exámenes publicados</p><strong>{examenes.filter((examen) => examen.publicado).length}</strong><small>de {examenes.length} en total</small></div>
         </div>
         <div className="reportes__kpi">
-          <span className="reportes__kpi-icono reportes__kpi-icono--aviso"><ClipboardCheck /></span>
+          <span className="reportes__kpi-icono"><ClipboardCheck /></span>
           <div><p>Por calificar</p><strong>{porCalificar}</strong><small>de {intentos.length} {intentos.length === 1 ? "intento" : "intentos"}</small></div>
         </div>
       </section>
@@ -296,7 +296,7 @@ export default function ReportesPage() {
               {filasAlumnos.map(({ alumno, rendidos, promedio: nota, aprobados, calificados }) => (
                 <tr key={alumno.id}>
                   <td><strong>{alumno.nombre}</strong><small>{alumno.correo}</small></td>
-                  <td><span className={`admin-insignia ${alumno.plan === "premium" ? "admin-insignia--aviso" : "admin-insignia--ok"}`}>{alumno.plan === "premium" ? "Premium" : "Gratis"}</span></td>
+                  <td><span className={`admin-insignia ${alumno.plan === "premium" ? "admin-insignia--premium" : "admin-insignia--gratis"}`}>{alumno.plan === "premium" ? "Premium" : "Gratis"}</span></td>
                   <td>{alumno.creadoEn > 0 ? formatoFecha.format(alumno.creadoEn) : "—"}</td>
                   <td>{rendidos}</td>
                   <td>{nota === null ? "—" : `${nota} / ${NOTA_MAXIMA}`}</td>

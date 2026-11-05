@@ -126,5 +126,45 @@ test('el reproductor incorpora un track WebVTT en español', async () => {
   await page.waitForFunction(() => document.querySelector('track')?.src.startsWith('blob:'));
   assert.equal(await page.locator('track').getAttribute('kind'), 'captions');
   assert.equal(await page.locator('track').getAttribute('srclang'), 'es');
+  await page.getByRole('button', { name: 'Desactivar subtítulos' }).click();
+  await page.waitForFunction(() => document.querySelector('track').track.mode === 'disabled');
+  assert.equal(await page.getByRole('button', { name: 'Activar subtítulos' }).getAttribute('aria-pressed'), 'false');
+  await page.getByRole('button', { name: 'Activar subtítulos' }).click();
+  await page.waitForFunction(() => document.querySelector('track').track.mode === 'showing');
+  await page.getByRole('button', { name: 'Pantalla completa', exact: true }).click();
+  await page.waitForFunction(() => document.fullscreenElement?.classList.contains('reproductor-video'));
+  assert.equal(await page.getByRole('button', { name: 'Desactivar subtítulos' }).isVisible(), true);
+  await page.getByRole('button', { name: 'Salir de pantalla completa' }).click();
+  await page.waitForFunction(() => document.fullscreenElement === null);
+  await analizar(page);
   await page.close();
+});
+
+test('el reproductor permite Play dentro de la tarjeta sin pantalla completa', async () => {
+  for (const ancho of [1280, 375]) {
+    const page = await abrir('subtitulos', ancho);
+    await page.evaluate(() => {
+      const contenedor = document.querySelector('.reproductor-video');
+      const marco = document.createElement('div');
+      marco.style.cssText = 'display:grid;place-items:center;overflow:hidden;aspect-ratio:16/9;width:100%;max-width:800px';
+      contenedor.parentNode.insertBefore(marco, contenedor);
+      marco.appendChild(contenedor);
+      const canvas = document.createElement('canvas');
+      canvas.width = 320; canvas.height = 180;
+      const pintar = () => { const contexto = canvas.getContext('2d'); contexto.fillStyle = '#123456'; contexto.fillRect(0, 0, 320, 180); };
+      pintar(); setInterval(pintar, 50);
+      const video = document.querySelector('video');
+      video.srcObject = canvas.captureStream(20);
+      video.muted = true;
+    });
+    await page.waitForFunction(() => document.querySelector('video').readyState >= 2);
+    const cuadro = await page.locator('video').boundingBox();
+    const marco = await page.locator('.reproductor-video').boundingBox();
+    assert.ok(cuadro.y + cuadro.height <= marco.y + marco.height + 1, 'Los controles permanecen dentro de la tarjeta');
+    await page.mouse.move(cuadro.x + 20, cuadro.y + cuadro.height - 20);
+    await page.mouse.click(cuadro.x + 20, cuadro.y + cuadro.height - 20);
+    await page.waitForFunction(() => !document.querySelector('video').paused);
+    assert.equal(await page.evaluate(() => document.fullscreenElement), null);
+    await page.close();
+  }
 });

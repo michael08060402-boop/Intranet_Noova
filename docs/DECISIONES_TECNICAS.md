@@ -60,6 +60,8 @@ Actualizado: 12 de octubre de 2026. Este documento recoge las decisiones vigente
 ## Accesibilidad y diseño
 
 - **Color:** encabezado, pie y portada en azul marino (`--fondo-barra`); superficies blancas y grises; negro solo para acciones principales y resultados; dorado (`--dorado`, `--premium`) exclusivo de Premium; rojo solo vía `--peligro`. No usar colores sueltos en las hojas de estilo.
+- **Dashboard del administrador:** navbar azul marino sólido; iconos de contenido oscuros (`--texto`) sobre fondo gris (`--acento-suave`), sin colores distintos por módulo. Barras negras y dona en negro y grises mediante `--grafico-principal`, `--grafico-secundario` y `--grafico-terciario`. Los estados también se identifican con nombres, cantidades y porcentajes. Se omiten iconos decorativos repetidos en títulos de gráficos y se conservan en navegación y accesos. Sin sombras ni degradados en gráficos.
+- **Planes en administración:** Gratis en gris claro con texto oscuro y Premium en negro con texto blanco, tanto en Cursos como en Alumnos y Reportes. El indicador Por calificar usa el mismo icono oscuro sobre gris que los demás indicadores de Reportes.
 - Sin sombras: la jerarquía se marca con bordes y color; el foco usa contorno de 2 px.
 - Campos y botones principales de 44 px o más, contorno de foco de 2 px, `prefers-reduced-motion` respetado y contraste mínimo 4,5:1 (revisado con axe en todas las rutas, móvil y escritorio).
 - Tablas anchas del panel admin con scroll horizontal enfocable por teclado. El contenedor con scroll lleva `position: relative`: el texto oculto "Acciones" de la última columna es `position: absolute` y, sin eso, ensanchaba la página y el móvil la mostraba alejada.

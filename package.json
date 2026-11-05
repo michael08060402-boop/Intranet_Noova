@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "test:videos": "node --test --test-isolation=none pruebas_emulador/videos.test.cjs",
+    "test:sesion": "node --test --test-isolation=none pruebas_emulador/sesion.test.cjs",
     "test:reportes": "node --test --test-isolation=none pruebas_emulador/reportes.test.cjs",
     "test:accesibilidad": "node --test --test-isolation=none pruebas_emulador/accesibilidad.test.cjs",
     "build": "next build",
